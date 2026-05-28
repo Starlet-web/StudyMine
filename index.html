@@ -16,17 +16,9 @@
       --text-main: #18181b; --text-muted: #71717a;
       --notification-blue: #2563eb; 
       --red-500: #ef4444; --green-500: #10b981; --purple-500: #8b5cf6;
-      
-      --ai-bubble-bg: #ffffff;
-      --ai-bubble-border: #e2e8f0;
-      --ai-bubble-text: #334155;
-      
-      --scholar-bubble-bg: #f4f9ff;
-      --scholar-bubble-border: #e0f0fe;
-      --scholar-bubble-text: #0f172a;
-      
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05);
-      --shadow: 0 4px 12px rgba(0,0,0,0.05); 
+      --ai-bubble-bg: #ffffff; --ai-bubble-border: #e2e8f0; --ai-bubble-text: #334155;
+      --scholar-bubble-bg: #f4f9ff; --scholar-bubble-border: #e0f0fe; --scholar-bubble-text: #0f172a;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow: 0 4px 12px rgba(0,0,0,0.05); 
       --shadow-2xl: 0 25px 50px rgba(0,0,0,0.1);
       --radius-sm: 6px; --radius: 8px; --radius-lg: 12px; --radius-xl: 16px; 
       --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
@@ -42,8 +34,6 @@
       border-radius: var(--radius-lg); box-shadow: var(--shadow-2xl); display: flex; flex-direction: column;
       overflow: hidden; border: 1px solid var(--border-medium); position: relative;
     }
-    
-    /* Auth Screen */
     .auth-screen { display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; }
     .auth-wrapper { width: 100%; max-width: 460px; padding: 24px; }
     .auth-card {
@@ -63,9 +53,8 @@
     .error-message { color: var(--red-500); font-size: 0.75rem; min-height: 20px; margin-top: 10px; text-align: center; }
     .security-notice { text-align: center; margin-top: 20px; font-size: 0.65rem; color: #a1a1aa; }
 
-    /* Main App */
     .app-workspace { display: none; flex-direction: column; height: 100%; background: #ffffff; }
-    .top-govt-bar { background: #000000; color: #ffffff; padding: 6px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 0.55rem; font-weight: 500; }
+    .top-govt-bar { background: #000000; color: #ffffff; padding: 6px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 0.55rem; font-weight: 500; flex-wrap: wrap; gap: 8px; }
     .new-msg-notification {
       background: var(--notification-blue); color: white; border: none; font-size: 0.55rem; padding: 4px 10px;
       border-radius: 20px; cursor: pointer; font-weight: 700; display: none; align-items: center; gap: 4px;
@@ -79,47 +68,35 @@
     .org-name h3 { font-size: 0.85rem; font-weight: 700; color: #111111; }
     .org-name p { font-size: 0.65rem; color: #71717a; }
     .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    
     .session-indicator { display: flex; align-items: center; gap: 6px; background: #f4f4f5; padding: 6px 12px; border-radius: 20px; font-size: 0.65rem; }
     .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
     .status-dot.offline { background: #ef4444; animation: none; }
     @keyframes pulse { 0%,100%{box-shadow:0 0 3px #10b981} 50%{box-shadow:0 0 8px #10b981} }
-    
     .header-btn { background: #ffffff; border: 1px solid var(--border-medium); color: #18181b; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.65rem; font-weight: 600; }
     .header-btn:hover { background: #f4f4f5; }
     .header-btn.danger { border-color: #fecaca; color: #ef4444; background: #fef2f2; }
-    
     .nav-bar { padding: 8px 16px; background: #fafafa; display: flex; gap: 6px; font-size: 0.65rem; overflow-x: auto; border-bottom: 1px solid var(--border-light); }
     .nav-item { white-space: nowrap; padding: 6px 14px; border-radius: 16px; cursor: pointer; transition: 0.2s; font-weight: 500; color: #52525b; }
     .nav-item:hover { background: #f4f4f5; color: #111111; }
     .nav-item.active { background: #111111; color: #ffffff; font-weight: 600; }
-
     .main-layout { display: flex; flex: 1; overflow: hidden; }
     .sidebar { width: 220px; background: #fafafa; border-right: 1px solid var(--border-light); padding: 16px 10px; overflow-y: auto; flex-shrink: 0; }
     .sidebar-title { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #71717a; margin: 16px 0 8px 8px; }
     .sidebar-item { padding: 8px 12px; border-radius: 8px; font-size: 0.75rem; color: #3f3f46; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
     .sidebar-item:hover { background: #f4f4f5; }
     .sidebar-item.active { background: #e4e4e7; color: #111111; font-weight: 600; }
-    
     .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #ffffff; }
     .section-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
     .section-panel.active { display: flex; }
 
     .assistant-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
     .date-divider { text-align: center; font-size: 0.65rem; font-weight: 600; color: #94a3b8; padding: 12px 0; margin: 10px 0; border-bottom: 1px solid var(--border-light); }
-    
-    .message-bubble { 
-      max-width: 72%; padding: 10px 14px; border-radius: 8px; 
-      background: var(--ai-bubble-bg); color: var(--ai-bubble-text); 
-      font-size: 0.8rem; line-height: 1.5; align-self: flex-start; 
-      border: 1px solid var(--ai-bubble-border); animation: msgIn 0.2s ease-out; word-wrap: break-word; 
-    }
+    .message-bubble { max-width: 72%; padding: 10px 14px; border-radius: 8px; background: var(--ai-bubble-bg); color: var(--ai-bubble-text); font-size: 0.8rem; line-height: 1.5; align-self: flex-start; border: 1px solid var(--ai-bubble-border); animation: msgIn 0.2s ease-out; word-wrap: break-word; }
     .message-bubble .msg-label { font-size: 0.55rem; font-weight: 700; display: block; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--ai-bubble-border); color: #64748b; }
     .message-bubble.own { align-self: flex-end; background: var(--scholar-bubble-bg); color: var(--scholar-bubble-text); border: 1px solid var(--scholar-bubble-border); }
     .message-bubble.own .msg-label { color: #0284c7; border-bottom-color: var(--scholar-bubble-border); }
     .message-bubble img { max-width: 250px; max-height: 250px; border-radius: 6px; cursor: pointer; margin-top: 6px; display: block; }
     @keyframes msgIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
-    
     .message-meta { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 6px; font-size: 0.55rem; color: #94a3b8; }
     .seen-tick { color: #10b981; font-size: 0.65rem; }
     .seen-tick.single { color: #94a3b8; }
@@ -134,7 +111,6 @@
     .workspace-footer { padding: 12px 20px; background: #ffffff; border-top: 1px solid var(--border-light); display: flex; gap: 8px; align-items: center; }
     .query-input { flex: 1; padding: 10px 16px; border-radius: 6px; border: 1px solid var(--border-medium); font-size: 0.8rem; outline: none; background: #fafafa; }
     .query-input:focus { border-color: #111111; background: #ffffff; }
-    
     .attach-btn, .send-btn { width: 36px; height: 36px; border-radius: 6px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
     .attach-btn { background: #f4f4f5; border: 1px solid var(--border-medium); color: #52525b; }
     .send-btn { background: #111111; border: none; color: #fff; }
@@ -142,7 +118,6 @@
 
     .mocktest-container, .pyq-container, .video-container, .progress-container, .notes-container { flex: 1; overflow-y: auto; padding: 24px; background: #fafafa; }
     h3 { color: #111111; margin-bottom: 20px; font-size: 1.2rem; }
-    
     .question-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
     .options { display: flex; flex-direction: column; gap: 8px; }
     .option { padding: 10px 14px; border: 1px solid var(--border-medium); border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
@@ -153,26 +128,21 @@
     .explanation.show { display: block; }
     .submit-test-btn { background: #111111; color: #fff; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; margin-top: 16px; }
     .score-display { font-weight: 700; color: #111111; font-size: 1.1rem; margin-top: 16px; }
-
     .pyq-card { background: #fff; border-left: 4px solid #111111; border-radius: 6px; padding: 16px; margin-bottom: 12px; cursor: pointer; }
     .pyq-answer { margin-top: 12px; font-size: 0.8rem; color: #111111; font-weight: 600; display: none; padding-top: 10px; border-top: 1px dashed var(--border-medium); }
     .pyq-answer.show { display: block; }
-    
     .video-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; cursor: pointer; }
     .video-thumb { width: 70px; height: 44px; background: #111111; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
-    
     .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 16px; margin-bottom: 24px; }
     .stat-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 20px; text-align: center; }
     .stat-val { font-size: 1.8rem; font-weight: 800; color: #111111; }
     .stat-label { font-size: 0.75rem; color: #71717a; margin-top: 6px; }
-    
     .note-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 16px; margin-bottom: 16px; font-size: 0.85rem; }
     .note-title { font-weight: 700; color: #111111; margin-bottom: 8px; }
     .flashcard { background: #111111; color: #ffffff; border-radius: 8px; padding: 16px; margin-bottom: 12px; cursor: pointer; text-align: center; }
 
     /* Admin Panel Styles */
-    .admin-panel { display: none; padding: 20px; overflow-y: auto; }
-    .admin-panel.active { display: block; }
+    .admin-panel { padding: 20px; overflow-y: auto; }
     .admin-section { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
     .admin-section h4 { font-size: 0.9rem; margin-bottom: 15px; color: #111; }
     .user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f0f0; gap: 10px; flex-wrap: wrap; }
@@ -192,7 +162,6 @@
 
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: #111111; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; z-index: 9999; transition: 0.3s; }
     .toast.show { transform: translateX(-50%) translateY(0); }
-    
     .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9998; align-items: center; justify-content: center; }
     .modal-overlay.active { display: flex; }
     .modal { background: #fff; border-radius: 12px; padding: 32px; max-width: 400px; width: 90%; text-align: center; }
@@ -201,11 +170,9 @@
     .modal-btn.confirm { background: #ef4444; color: #fff; }
     .delete-progress { font-size: 0.75rem; color: #71717a; margin: 12px 0; display: none; }
     .delete-progress.show { display: block; }
-    
     .fullscreen-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; cursor: pointer; }
     .fullscreen-overlay.active { display: flex; }
     .fullscreen-overlay img { max-width: 90%; max-height: 90%; border-radius: 8px; }
-
     .video-modal-content { padding: 16px; max-width: 800px; width: 95%; background: #fff; border-radius: 12px; }
     .video-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
     .video-close-btn { background: #f4f4f5; border: 1px solid var(--border-medium); border-radius: 6px; padding: 4px 12px; cursor: pointer; }
@@ -228,14 +195,14 @@
     <div class="auth-wrapper">
       <div class="auth-card">
         <h2>CSIR NET Ecology Hub</h2>
-        <p class="subtitle">Multi-User Research Platform</p>
-        <div class="input-group"><label>Email ID</label><input type="email" id="emailInput" class="auth-input" placeholder="scholar@email.com"></div>
-        <div class="input-group"><label>Password</label><input type="password" id="passwordInput" class="auth-input" placeholder="••••••••"></div>
+        <p class="subtitle">Multi-User Research Platform • Admin Controlled Pairing</p>
+        <div class="input-group"><label>Email ID</label><input type="email" id="emailInput" class="auth-input" placeholder="scholar@email.com" autocomplete="email"></div>
+        <div class="input-group"><label>Password</label><input type="password" id="passwordInput" class="auth-input" placeholder="••••••••" autocomplete="current-password"></div>
         <button id="authActionBtn" class="auth-btn">Access Portal</button>
         <div class="error-message" id="authError"></div>
-        <button id="toggleAuthBtn" class="auth-toggle">New Scholar? Register</button>
+        <button id="toggleAuthBtn" class="auth-toggle">New Scholar? Register Here</button>
       </div>
-      <div class="security-notice">🔒 NTA Secured • Multi-User System</div>
+      <div class="security-notice">🔒 Secure Multi-User System • Firebase Auth</div>
     </div>
   </div>
 
@@ -243,8 +210,8 @@
   <div id="appWorkspace" class="app-workspace" style="display:none">
     <div class="top-govt-bar">
       <div style="display:flex;align-items:center;gap:10px;">
-        <span>🇮🇳 NTA ECOLOGY RESEARCH</span>
-        <span id="userRoleBadge" style="background:#333;padding:2px 8px;border-radius:10px;font-size:0.5rem;"></span>
+        <span>🇮🇳 STUDYMINE ECOLOGY</span>
+        <span id="userRoleBadge" style="background:#333;padding:2px 10px;border-radius:10px;font-size:0.5rem;"></span>
       </div>
       <div style="display:flex;align-items:center;gap:10px;">
         <span id="govtLiveTime">--:--:--</span>
@@ -282,13 +249,16 @@
         <div class="sidebar-title">🌱 Population</div>
         <div class="sidebar-item" data-section="ai-assistant">Growth Models</div>
         <div class="sidebar-item" data-section="ai-assistant">r & K Selection</div>
+        <div class="sidebar-title">🦋 Community</div>
+        <div class="sidebar-item" data-section="ai-assistant">Interactions</div>
+        <div class="sidebar-item" data-section="ai-assistant">Succession</div>
       </div>
       
       <div class="content-area">
-        <!-- Admin Panel -->
+        <!-- Admin Panel Section -->
         <div class="section-panel" id="section-admin">
-          <div class="admin-panel active" id="adminPanelContent">
-            <h3>⚙️ Admin Dashboard</h3>
+          <div class="admin-panel" id="adminPanelContent">
+            <h3>⚙️ Admin Dashboard - StudyMine</h3>
             <div class="admin-section">
               <h4>📋 Pending Approvals</h4>
               <div id="pendingUsersList"><p style="color:#71717a;">Loading...</p></div>
@@ -306,15 +276,20 @@
 
         <!-- Chat Section -->
         <div class="section-panel active" id="section-ai-assistant">
-          <div class="assistant-container" id="messagesContainer"></div>
+          <div class="assistant-container" id="messagesContainer">
+            <div style="text-align:center;color:#94a3b8;padding:40px;">
+              <h3>💬 Welcome to StudyMine Chat</h3>
+              <p style="font-size:0.8rem;">Your private chat room. No message blending.</p>
+            </div>
+          </div>
           <div id="typingIndicator" class="typing-indicator"><span>✨ Partner is typing...</span><div class="typing-dots"><span></span><span></span><span></span></div></div>
           <div class="workspace-footer">
             <input type="file" id="cameraInput" accept="image/*" capture="environment">
-            <button id="cameraButton" class="attach-btn">📷</button>
+            <button id="cameraButton" class="attach-btn" title="Take Photo">📷</button>
             <input type="file" id="fileInput" accept="image/*">
-            <button id="attachButton" class="attach-btn">📎</button>
-            <input type="text" id="messageInput" class="query-input" placeholder="Type your message..." autocomplete="off">
-            <button id="sendButton" class="send-btn">▶</button>
+            <button id="attachButton" class="attach-btn" title="Upload Image">📎</button>
+            <input type="text" id="messageInput" class="query-input" placeholder="Type your message here..." autocomplete="off">
+            <button id="sendButton" class="send-btn" title="Send">▶</button>
           </div>
         </div>
 
@@ -332,24 +307,24 @@
 <!-- Modals -->
 <div id="deleteModal" class="modal-overlay">
   <div class="modal">
-    <h4>⚠️ Reset Chat?</h4>
-    <p style="font-size:0.85rem;color:#71717a;">All messages in this room will be cleared.</p>
-    <div class="delete-progress" id="deleteProgress">Clearing...</div>
+    <h4>⚠️ Reset Chat Room?</h4>
+    <p style="font-size:0.85rem;color:#71717a;">All messages in your private room will be cleared.</p>
+    <div class="delete-progress" id="deleteProgress">Clearing messages...</div>
     <div style="margin-top:20px">
       <button id="cancelDeleteBtn" class="modal-btn cancel">Cancel</button>
-      <button id="confirmDeleteBtn" class="modal-btn confirm">Reset</button>
+      <button id="confirmDeleteBtn" class="modal-btn confirm">Reset Room</button>
     </div>
   </div>
 </div>
 
 <div id="fullscreenOverlay" class="fullscreen-overlay" onclick="this.classList.remove('active')">
-  <img id="fullscreenImage" src="" alt="Fullscreen">
+  <img id="fullscreenImage" src="" alt="Fullscreen Image">
 </div>
 
 <div id="videoModal" class="modal-overlay" onclick="if(event.target===this)closeVideoModal()">
   <div class="video-modal-content">
     <div class="video-header">
-      <h4 id="videoModalTitle">Lecture</h4>
+      <h4 id="videoModalTitle">Video Lecture</h4>
       <button class="video-close-btn" onclick="closeVideoModal()">✕ Close</button>
     </div>
     <div class="video-wrapper"><iframe id="videoIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
@@ -360,27 +335,27 @@
 
 <script>
 (function() {
-  // ============ FIREBASE CONFIG ============
+  // ============ FIREBASE CONFIG - studymine-fa92d ============
   const firebaseConfig = {
-    apiKey: "AIzaSyARe7db1EH7WPdsiltI4kSSNq3RdW5vaqQ",
-    authDomain: "faststudy-63901.firebaseapp.com",
-    projectId: "faststudy-63901",
-    storageBucket: "faststudy-63901.firebasestorage.app",
-    messagingSenderId: "535000421855",
-    appId: "1:535000421855:web:cb8c94dc259a0765d1a06a",
-    measurementId: "G-R2P8XL83ZX"
+    apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
+    authDomain: "studymine-fa92d.firebaseapp.com",
+    projectId: "studymine-fa92d",
+    storageBucket: "studymine-fa92d.firebasestorage.app",
+    messagingSenderId: "460797718327",
+    appId: "1:460797718327:web:66316f16930b304b2e34b2",
+    measurementId: "G-ZBJ6GLM3L8"
   };
   
   const IMGBB_API_KEY = "53fb01955a45c5462724b8f7d238500a";
   
   // ============ ADMIN CONFIG ============
-  // Add admin emails here
+  // Add admin emails here - these users will have admin privileges
   const ADMIN_EMAILS = ["mgbhaukali@gmail.com", "manshi@gmail.com"];
   
   try { firebase.initializeApp(firebaseConfig); } catch(e) {}
   const auth = firebase.auth(), db = firebase.firestore();
 
-  // ============ STATE ============
+  // ============ GLOBAL STATE ============
   let currentUser = null;
   let isLoginMode = true;
   let currentRoomId = null;
@@ -408,13 +383,17 @@
   const fullscreenOverlay = $('fullscreenOverlay'), fullscreenImage = $('fullscreenImage');
   const adminPanelBtn = $('adminPanelBtn'), userRoleBadge = $('userRoleBadge');
 
-  // Clock
-  setInterval(() => { if(govtLiveTime) govtLiveTime.textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' IST'; }, 1000);
+  // Clock update
+  setInterval(() => { 
+    if(govtLiveTime) govtLiveTime.textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' IST'; 
+  }, 1000);
 
-  // ============ UTILS ============
+  // ============ UTILITY FUNCTIONS ============
   function showToast(msg, type='') { 
-    toast.textContent=msg; toast.className='toast '+type+' show'; 
-    clearTimeout(toast._t); toast._t=setTimeout(()=>toast.classList.remove('show'),3000); 
+    toast.textContent=msg; 
+    toast.className='toast '+type+' show'; 
+    clearTimeout(toast._t); 
+    toast._t=setTimeout(()=>toast.classList.remove('show'),3000); 
   }
 
   function scrollBottom() { 
@@ -441,14 +420,13 @@
   navBar.addEventListener('click', e => { if(e.target.classList.contains('nav-item')) window._switchSection(e.target.dataset.section); });
   sidebar.addEventListener('click', e => { if(e.target.dataset.section) window._switchSection(e.target.dataset.section); });
 
-  // ============ ADMIN PANEL ============
+  // ============ ADMIN PANEL FUNCTIONS ============
   function toggleAdminPanel() {
     if (!isAdmin) return;
     const adminSection = document.getElementById('section-admin');
     if (adminSection.classList.contains('active')) {
       window._switchSection('ai-assistant');
     } else {
-      // Add admin nav item temporarily
       if (!document.querySelector('.nav-item[data-section="admin"]')) {
         const adminNav = document.createElement('span');
         adminNav.className = 'nav-item';
@@ -464,7 +442,7 @@
   async function loadAdminPanel() {
     if (!isAdmin) return;
     
-    // Load pending users
+    // Pending users
     const pendingSnap = await db.collection('users').where('status', '==', 'pending').get();
     let pendingHtml = '';
     pendingSnap.forEach(doc => {
@@ -473,7 +451,7 @@
         <div class="user-row">
           <div class="user-info">
             <div class="user-email">${u.email}</div>
-            <div class="user-role">${u.role || 'scholar'}</div>
+            <div class="user-role">Role: ${u.role || 'scholar'}</div>
           </div>
           <div>
             <button class="admin-btn approve" onclick="approveUser('${doc.id}')">✅ Approve</button>
@@ -483,7 +461,7 @@
     });
     $('pendingUsersList').innerHTML = pendingHtml || '<p style="color:#71717a;">No pending users</p>';
 
-    // Load all approved users for partner assignment
+    // All approved users
     const allSnap = await db.collection('users').where('status', '==', 'approved').get();
     const users = [];
     allSnap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
@@ -507,39 +485,37 @@
     });
     $('allUsersList').innerHTML = allHtml || '<p style="color:#71717a;">No approved users</p>';
 
-    // Load chat rooms
+    // Chat rooms
     const roomsSnap = await db.collection('chatrooms').get();
     let roomsHtml = '';
     roomsSnap.forEach(doc => {
       const r = doc.data();
-      const participantEmails = r.participants.map(p => users.find(u => u.id === p)?.email || 'Unknown').join(' ↔ ');
+      const participantEmails = (r.participants || []).map(p => users.find(u => u.id === p)?.email || 'Unknown').join(' ↔ ');
       roomsHtml += `<div class="user-row"><div class="user-info"><div class="user-email">${participantEmails}</div></div><span class="user-status status-approved">Active</span></div>`;
     });
     $('chatRoomsList').innerHTML = roomsHtml || '<p style="color:#71717a;">No active rooms</p>';
   }
 
-  // Global functions for admin
+  // Global admin functions
   window.approveUser = async function(uid) {
     await db.collection('users').doc(uid).update({ status: 'approved' });
-    showToast('User approved!', 'success');
+    showToast('✅ User approved!', 'success');
     loadAdminPanel();
   };
   
   window.rejectUser = async function(uid) {
     await db.collection('users').doc(uid).update({ status: 'rejected' });
-    showToast('User rejected', 'error');
+    showToast('❌ User rejected', 'error');
     loadAdminPanel();
   };
   
   window.assignPartner = async function(uid, partnerId) {
     if (!partnerId) {
-      // Remove partner
       await db.collection('users').doc(uid).update({ partnerId: null });
       showToast('Partner removed');
       return;
     }
     
-    // Create chat room
     const roomId = [uid, partnerId].sort().join('_');
     await db.collection('chatrooms').doc(roomId).set({
       participants: [uid, partnerId],
@@ -547,11 +523,10 @@
       createdBy: currentUser.uid
     }, { merge: true });
     
-    // Update both users
     await db.collection('users').doc(uid).update({ partnerId });
     await db.collection('users').doc(partnerId).update({ partnerId: uid });
     
-    showToast('Partner assigned! Room created.', 'success');
+    showToast('✅ Partner assigned! Room created.', 'success');
     loadAdminPanel();
   };
 
@@ -588,19 +563,19 @@
   async function handleImageUpload(e) {
     const file = e.target.files[0]; 
     if(!file||!currentUser||!currentRoomId) { e.target.value=''; return; }
-    if(!file.type.startsWith('image/')) { showToast('Only images','error'); e.target.value=''; return; }
-    if(file.size>10*1024*1024) { showToast('Max 10MB','error'); e.target.value=''; return; }
+    if(!file.type.startsWith('image/')) { showToast('Only images allowed','error'); e.target.value=''; return; }
+    if(file.size>10*1024*1024) { showToast('Max 10MB size','error'); e.target.value=''; return; }
     
     const tempDiv = document.createElement('div'); 
     tempDiv.className='message-bubble own'; 
-    tempDiv.innerHTML='<span class="msg-label">📤 Uploading...</span>';
+    tempDiv.innerHTML='<span class="msg-label">📤 Uploading image...</span>';
     messagesContainer.appendChild(tempDiv); 
     scrollBottom();
     
     try {
       const compressed = await compressImage(file);
       const result = await uploadImageToImgBB(compressed);
-      if(!result) throw new Error('Failed');
+      if(!result) throw new Error('Upload failed');
       tempDiv.remove();
       await db.collection('messages').add({ 
         type:'image', imageUrl:result.url, deleteUrl:result.deleteUrl, text:'', 
@@ -608,7 +583,7 @@
         timestamp:firebase.firestore.FieldValue.serverTimestamp(), seen:false 
       });
     } catch(err) { 
-      tempDiv.innerHTML='<span style="color:#ef4444;">❌ Failed</span>'; 
+      tempDiv.innerHTML='<span style="color:#ef4444;">❌ Upload failed</span>'; 
       setTimeout(()=>tempDiv.remove(),2500); 
     }
     e.target.value='';
@@ -619,7 +594,7 @@
   fileInput.addEventListener('change', handleImageUpload);
   cameraInput.addEventListener('change', handleImageUpload);
 
-  // ============ DATA ============
+  // ============ STUDY DATA ============
   const mockQuestions = [
     { id:1, q:"Logistic growth equation?", options:["dN/dt=rN","dN/dt=rN(1-N/K)","dN/dt=K-N","dN/dt=rK"], correct:1, exp:"dN/dt=rN(1-N/K) - sigmoid growth." },
     { id:2, q:"Aquatic biomass pyramid is:", options:["Upright","Inverted","Spindle","None"], correct:1, exp:"Inverted due to rapid phytoplankton turnover." },
@@ -645,13 +620,12 @@
     { title:"📈 Population", content:"Exponential: dN/dt=rN. Logistic: dN/dt=rN(1-N/K)." }
   ];
 
-  // ============ LOAD FUNCTIONS ============
   function loadMockTest() {
     let html='<h3>📝 Mock Test</h3>';
     mockQuestions.forEach((q,i)=>{
-      html+=`<div class="question-card"><div class="q-num">Q${i+1}. ${q.q}</div><div class="options">${q.options.map((o,oi)=>`<div class="option" data-q="${q.id}" data-o="${oi}" onclick="window._sel(this,${q.id},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div><div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div></div>`;
+      html+=`<div class="question-card"><div><b>Q${i+1}.</b> ${q.q}</div><div class="options">${q.options.map((o,oi)=>`<div class="option" data-q="${q.id}" data-o="${oi}" onclick="window._sel(this,${q.id},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div><div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div></div>`;
     });
-    html+='<button class="submit-test-btn" onclick="window._sub()">Submit</button><div class="score-display" id="scoreDisplay"></div>';
+    html+='<button class="submit-test-btn" onclick="window._sub()">Submit Test</button><div class="score-display" id="scoreDisplay"></div>';
     $('mocktestContainer').innerHTML=html; mockTestSubmitted=false;
   }
   window._sel=function(el,qId,oIdx){
@@ -671,17 +645,17 @@
       const exp=$('exp-'+q.id); if(exp)exp.classList.add('show');
       if(sel&&parseInt(sel.dataset.selected)===q.correct) score++;
     });
-    $('scoreDisplay').textContent=`✅ ${score}/${mockQuestions.length}`;
+    $('scoreDisplay').textContent=`✅ Score: ${score}/${mockQuestions.length}`;
   };
 
   function loadPYQs(){ 
-    let html='<h3>📖 PYQs</h3>'; 
-    pyqData.forEach((p,i)=>html+=`<div class="pyq-card" onclick="this.querySelector('.pyq-answer').classList.toggle('show')"><b>Q${i+1}. ${p.year}</b><div>${p.q}</div><div class="pyq-answer">✅ ${p.ans}</div></div>`); 
+    let html='<h3>📖 Previous Year Questions</h3>'; 
+    pyqData.forEach((p,i)=>html+=`<div class="pyq-card" onclick="this.querySelector('.pyq-answer').classList.toggle('show')"><b>Q${i+1}. [${p.year}]</b><div style="margin-top:6px">${p.q}</div><div class="pyq-answer">✅ ${p.ans}</div></div>`); 
     $('pyqContainer').innerHTML=html; 
   }
   
   function loadVideos(){ 
-    let html='<h3>🎥 Lectures</h3>'; 
+    let html='<h3>🎥 Video Lectures</h3>'; 
     videoData.forEach(v=>html+=`<div class="video-card" onclick="openVideo('${v.id}', '${v.title}')"><div class="video-thumb">▶</div><div class="video-info"><h4>${v.title}</h4><p>${v.duration} • ${v.author}</p></div></div>`); 
     $('videoContainer').innerHTML=html; 
   }
@@ -697,13 +671,13 @@
   };
 
   function loadNotes(){ 
-    let html='<h3>📚 Notes</h3>'; 
+    let html='<h3>📚 Study Notes</h3>'; 
     notesData.forEach(n=>html+=`<div class="note-card"><div class="note-title">${n.title}</div><p>${n.content}</p></div>`); 
     $('notesContainer').innerHTML=html; 
   }
   
   function loadProgress(){ 
-    $('progressContainer').innerHTML=`<h3>📊 Stats</h3><div class="stat-grid">${['Tests','PYQs','Lectures','Notes'].map(t=>`<div class="stat-card"><div class="stat-val">${t==='Tests'?mockQuestions.length:t==='PYQs'?pyqData.length:t==='Lectures'?videoData.length:notesData.length}</div><div class="stat-label">${t}</div></div>`).join('')}</div>`; 
+    $('progressContainer').innerHTML=`<h3>📊 Statistics</h3><div class="stat-grid">${['Tests','PYQs','Lectures','Notes'].map(t=>`<div class="stat-card"><div class="stat-val">${t==='Tests'?mockQuestions.length:t==='PYQs'?pyqData.length:t==='Lectures'?videoData.length:notesData.length}</div><div class="stat-label">${t}</div></div>`).join('')}</div>`; 
   }
 
   // ============ CHAT FUNCTIONS ============
@@ -725,21 +699,20 @@
       .where('roomId', '==', roomId)
       .orderBy('timestamp', 'asc')
       .onSnapshot(snap => {
-        // Clear only dynamic messages (keep any static content minimal)
         messagesContainer.innerHTML = '';
         
         if (snap.empty) {
-          messagesContainer.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:40px;">No messages yet. Start the conversation!</div>';
+          messagesContainer.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:40px;"><h3>💬 No messages yet</h3><p>Start the conversation with your partner!</p></div>';
           return;
         }
         
-        let ld = '';
+        let lastDate = '';
         snap.forEach(d => {
           const m = d.data();
           if (m.timestamp?.toDate) {
             const md = m.timestamp.toDate().toLocaleDateString('en-IN', {weekday:'long',day:'numeric',month:'short'});
-            if (md !== ld) {
-              ld = md;
+            if (md !== lastDate) {
+              lastDate = md;
               const dd = document.createElement('div');
               dd.className = 'date-divider';
               dd.textContent = md;
@@ -754,7 +727,7 @@
           
           let contentHtml = '';
           if (m.type === 'image' && m.imageUrl) {
-            contentHtml = `<img src="${m.imageUrl}" onclick="event.stopPropagation();document.getElementById('fullscreenOverlay').classList.add('active');document.getElementById('fullscreenImage').src='${m.imageUrl}';" loading="lazy">`;
+            contentHtml = `<img src="${m.imageUrl}" onclick="event.stopPropagation();$('fullscreenOverlay').classList.add('active');$('fullscreenImage').src='${m.imageUrl}';" loading="lazy" alt="Shared image">`;
           } else {
             contentHtml = String(m.text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
           }
@@ -822,7 +795,7 @@
         seen: false
       });
     } catch(e) {
-      showToast('Failed to send', 'error');
+      showToast('Failed to send message', 'error');
     }
   }
 
@@ -869,16 +842,16 @@
       const batch = db.batch();
       snap.forEach(d => batch.delete(d.ref));
       await batch.commit();
-      showToast('✅ Chat cleared', 'success');
+      showToast('✅ Chat room cleared', 'success');
     } catch(e) {
-      showToast('Error clearing', 'error');
+      showToast('Error clearing messages', 'error');
     }
     deleteModal.classList.remove('active');
     deleteProgress.classList.remove('show');
     confirmDeleteBtn.disabled = false;
   });
 
-  // ============ AUTH ============
+  // ============ AUTHENTICATION ============
   const doAuth = async () => {
     const email = emailInput.value.trim().toLowerCase();
     const pw = passwordInput.value.trim();
@@ -889,14 +862,17 @@
       return;
     }
     
+    if (pw.length < 6) {
+      authError.textContent = 'Password must be at least 6 characters';
+      return;
+    }
+    
     authActionBtn.disabled = true;
     try {
       if (isLoginMode) {
         await auth.signInWithEmailAndPassword(email, pw);
       } else {
-        // Registration
         const cred = await auth.createUserWithEmailAndPassword(email, pw);
-        // Create user profile
         await db.collection('users').doc(cred.user.uid).set({
           email: email,
           role: ADMIN_EMAILS.includes(email) ? 'admin' : 'scholar',
@@ -907,12 +883,13 @@
       }
     } catch(e) {
       const errorMap = {
-        'auth/user-not-found': 'Account not found',
+        'auth/user-not-found': 'Account not found. Please register.',
         'auth/wrong-password': 'Incorrect password',
         'auth/email-already-in-use': 'Email already registered',
-        'auth/weak-password': 'Password too weak (min 6 characters)'
+        'auth/weak-password': 'Password too weak (min 6 chars)',
+        'auth/invalid-email': 'Invalid email format'
       };
-      authError.textContent = errorMap[e.code] || 'Authentication failed';
+      authError.textContent = errorMap[e.code] || 'Authentication error. Try again.';
     }
     authActionBtn.disabled = false;
   };
@@ -923,7 +900,8 @@
   toggleAuthBtn.addEventListener('click', () => {
     isLoginMode = !isLoginMode;
     authActionBtn.textContent = isLoginMode ? 'Access Portal' : 'Register Account';
-    toggleAuthBtn.textContent = isLoginMode ? 'New Scholar? Register' : 'Already registered? Login';
+    toggleAuthBtn.textContent = isLoginMode ? 'New Scholar? Register Here' : 'Already registered? Login';
+    authError.textContent = '';
   });
   
   logoutButton.addEventListener('click', async () => {
@@ -938,9 +916,8 @@
     }
   });
 
-  // ============ AUTH STATE ============
+  // ============ AUTH STATE LISTENER ============
   auth.onAuthStateChanged(async user => {
-    // Cleanup
     if (unsubscribeMessages) { unsubscribeMessages(); unsubscribeMessages = null; }
     if (unsubscribeTyping) { unsubscribeTyping(); unsubscribeTyping = null; }
     if (unsubscribePresence) { unsubscribePresence(); unsubscribePresence = null; }
@@ -948,12 +925,10 @@
     if (user) {
       currentUser = user;
       
-      // Get user profile
       const userDoc = await db.collection('users').doc(user.uid).get();
-      const userData = userDoc.data();
+      let userData = userDoc.data();
       
       if (!userData) {
-        // Create profile if doesn't exist
         await db.collection('users').doc(user.uid).set({
           email: user.email,
           role: ADMIN_EMAILS.includes(user.email) ? 'admin' : 'scholar',
@@ -961,49 +936,45 @@
           partnerId: null,
           createdAt: firebase.firestore.FieldValue.serverTimestamp()
         });
+        userData = { status: ADMIN_EMAILS.includes(user.email) ? 'approved' : 'pending', role: ADMIN_EMAILS.includes(user.email) ? 'admin' : 'scholar', partnerId: null };
       }
       
-      const profile = userData || { status: 'pending', role: 'scholar', partnerId: null };
-      
-      // Check if admin
-      isAdmin = ADMIN_EMAILS.includes(user.email) || profile.role === 'admin';
+      isAdmin = ADMIN_EMAILS.includes(user.email) || userData.role === 'admin';
       adminPanelBtn.style.display = isAdmin ? 'inline-block' : 'none';
-      userRoleBadge.textContent = isAdmin ? 'ADMIN' : (profile.role || 'SCHOLAR');
+      userRoleBadge.textContent = isAdmin ? 'ADMIN' : (userData.role || 'SCHOLAR');
       
-      // Check approval status
-      if (profile.status !== 'approved' && !isAdmin) {
-        showToast('⏳ Account pending approval. Contact admin.', 'error');
+      if (userData.status !== 'approved' && !isAdmin) {
+        showToast('⏳ Your account is pending admin approval.', 'error');
         await auth.signOut();
         return;
       }
       
       showWorkspace();
       
-      // Set presence
       await db.collection('presence').doc(user.uid).set({
         online: true,
         email: user.email,
         lastSeen: firebase.firestore.FieldValue.serverTimestamp()
       });
       
-      // Setup partner
-      currentPartnerId = profile.partnerId || null;
+      currentPartnerId = userData.partnerId || null;
       
       if (currentPartnerId) {
         const partnerDoc = await db.collection('users').doc(currentPartnerId).get();
         const partnerData = partnerDoc.data();
-        partnerInfo.textContent = `Connected to: ${partnerData?.email || 'Unknown'}`;
+        partnerInfo.textContent = `Connected to: ${partnerData?.email || 'Unknown Partner'}`;
         currentRoomId = await getOrCreateRoom();
         setupMessages(currentRoomId);
         listenTyping(currentPartnerId);
         listenPartnerPresence(currentPartnerId);
       } else {
-        partnerInfo.textContent = 'No partner assigned yet';
+        partnerInfo.textContent = 'No partner assigned yet. Contact admin.';
         partnerDisplayName.textContent = 'Waiting for partner';
         statusDot.className = 'status-dot offline';
+        messagesContainer.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:40px;"><h3>👋 Welcome!</h3><p>You will be paired with a partner soon.</p></div>';
       }
       
-      showToast('✅ Welcome!', 'success');
+      showToast('✅ Welcome to StudyMine!', 'success');
     } else {
       currentUser = null;
       currentRoomId = null;
@@ -1028,6 +999,9 @@
   }
 
   showAuth();
+  console.log('🚀 StudyMine Multi-User System Ready');
+  console.log('📋 Admin emails:', ADMIN_EMAILS);
+  console.log('🔥 Firebase Project:', firebaseConfig.projectId);
 })();
 </script>
 </body>

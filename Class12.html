@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Class 12th - StudyMine</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f3f4f6;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        
+        .header h1 { font-size: 1.8rem; }
+        
+        .container {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+        }
+        
+        .welcome-banner {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+        }
+        
+        .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .subject-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+        
+        .subject-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+        }
+        
+        .subject-icon { font-size: 3rem; margin-bottom: 15px; }
+        .subject-title { font-size: 1.3rem; font-weight: 700; color: #1f2937; margin-bottom: 10px; }
+        .chapter-list { list-style: none; margin-top: 15px; }
+        .chapter-list li { 
+            padding: 8px 0; 
+            border-bottom: 1px solid #e5e7eb; 
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .logout-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 10px 20px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        
+        .nav-bar {
+            background: white;
+            padding: 15px;
+            display: flex;
+            gap: 20px;
+            overflow-x: auto;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .nav-link {
+            padding: 10px 20px;
+            background: #e5e7eb;
+            border-radius: 8px;
+            text-decoration: none;
+            color: #374151;
+            font-weight: 600;
+            white-space: nowrap;
+            transition: all 0.3s;
+        }
+        
+        .nav-link:hover {
+            background: #667eea;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>📕 Class 12th - Complete Study Material</h1>
+        <p>Physics | Chemistry | Mathematics | Biology</p>
+    </div>
+    
+    <button class="logout-btn" onclick="window.location.href='index.html'">🚪 Logout</button>
+    
+    <div class="nav-bar">
+        <a href="#physics" class="nav-link">⚡ Physics</a>
+        <a href="#chemistry" class="nav-link">🧪 Chemistry</a>
+        <a href="#maths" class="nav-link">📐 Mathematics</a>
+        <a href="#biology" class="nav-link">🧬 Biology</a>
+    </div>
+    
+    <div class="container">
+        <div class="welcome-banner">
+            <h2>🎉 Welcome to Class 12th Complete Course!</h2>
+            <p style="color:#6b7280;margin-top:10px;">Access all chapters, notes, mock tests, and previous year questions</p>
+        </div>
+        
+        <div class="subject-grid">
+            <!-- Physics -->
+            <div class="subject-card" id="physics">
+                <div class="subject-icon">⚡</div>
+                <div class="subject-title">Physics</div>
+                <ul class="chapter-list">
+                    <li>📖 Electric Charges and Fields</li>
+                    <li>📖 Electrostatic Potential</li>
+                    <li>📖 Current Electricity</li>
+                    <li>📖 Moving Charges and Magnetism</li>
+                    <li>📖 Electromagnetic Induction</li>
+                    <li>📖 Alternating Current</li>
+                    <li>📖 Electromagnetic Waves</li>
+                    <li>📖 Ray Optics</li>
+                    <li>📖 Wave Optics</li>
+                    <li>📖 Dual Nature of Matter</li>
+                    <li>📖 Atoms and Nuclei</li>
+                    <li>📖 Semiconductor Electronics</li>
+                </ul>
+            </div>
+            
+            <!-- Chemistry -->
+            <div class="subject-card" id="chemistry">
+                <div class="subject-icon">🧪</div>
+                <div class="subject-title">Chemistry</div>
+                <ul class="chapter-list">
+                    <li>📖 Solid State</li>
+                    <li>📖 Solutions</li>
+                    <li>📖 Electrochemistry</li>
+                    <li>📖 Chemical Kinetics</li>
+                    <li>📖 Surface Chemistry</li>
+                    <li>📖 p-Block Elements</li>
+                    <li>📖 d and f Block Elements</li>
+                    <li>📖 Coordination Compounds</li>
+                    <li>📖 Haloalkanes and Haloarenes</li>
+                    <li>📖 Alcohols, Phenols and Ethers</li>
+                    <li>📖 Aldehydes, Ketones</li>
+                    <li>📖 Amines</li>
+                    <li>📖 Biomolecules</li>
+                </ul>
+            </div>
+            
+            <!-- Mathematics -->
+            <div class="subject-card" id="maths">
+                <div class="subject-icon">📐</div>
+                <div class="subject-title">Mathematics</div>
+                <ul class="chapter-list">
+                    <li>📖 Relations and Functions</li>
+                    <li>📖 Inverse Trigonometric Functions</li>
+                    <li>📖 Matrices</li>
+                    <li>📖 Determinants</li>
+                    <li>📖 Continuity and Differentiability</li>
+                    <li>📖 Application of Derivatives</li>
+                    <li>📖 Integrals</li>
+                    <li>📖 Application of Integrals</li>
+                    <li>📖 Differential Equations</li>
+                    <li>📖 Vector Algebra</li>
+                    <li>📖 Three Dimensional Geometry</li>
+                    <li>📖 Linear Programming</li>
+                    <li>📖 Probability</li>
+                </ul>
+            </div>
+            
+            <!-- Biology -->
+            <div class="subject-card" id="biology">
+                <div class="subject-icon">🧬</div>
+                <div class="subject-title">Biology</div>
+                <ul class="chapter-list">
+                    <li>📖 Reproduction in Organisms</li>
+                    <li>📖 Sexual Reproduction in Plants</li>
+                    <li>📖 Human Reproduction</li>
+                    <li>📖 Reproductive Health</li>
+                    <li>📖 Principles of Inheritance</li>
+                    <li>📖 Molecular Basis of Inheritance</li>
+                    <li>📖 Evolution</li>
+                    <li>📖 Human Health and Disease</li>
+                    <li>📖 Biotechnology</li>
+                    <li>📖 Ecology and Environment</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Check if user is logged in
+        firebase.auth().onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'index.html';
+            }
+        });
+    </script>
+</body>
+</html>

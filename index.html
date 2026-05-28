@@ -1,1008 +1,864 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>CSIR NET Ecology | Multi-User Research Hub</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
-  <style>
-    :root {
-      --primary-black: #000000; --dark-gray: #111111; --medium-gray: #27272a;
-      --border-light: #e4e4e7; --border-medium: #d4d4d8;
-      --bg-main: #f4f4f5; --bg-card: #ffffff;
-      --text-main: #18181b; --text-muted: #71717a;
-      --notification-blue: #2563eb; 
-      --red-500: #ef4444; --green-500: #10b981; --purple-500: #8b5cf6;
-      --ai-bubble-bg: #ffffff; --ai-bubble-border: #e2e8f0; --ai-bubble-text: #334155;
-      --scholar-bubble-bg: #f4f9ff; --scholar-bubble-border: #e0f0fe; --scholar-bubble-text: #0f172a;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow: 0 4px 12px rgba(0,0,0,0.05); 
-      --shadow-2xl: 0 25px 50px rgba(0,0,0,0.1);
-      --radius-sm: 6px; --radius: 8px; --radius-lg: 12px; --radius-xl: 16px; 
-      --transition: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body {
-      font-family: 'Inter', -apple-system, sans-serif;
-      background: #e4e4e7;
-      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;
-    }
-    .app-container {
-      width: 100%; max-width: 1300px; height: 92vh; max-height: 950px; background: var(--bg-card);
-      border-radius: var(--radius-lg); box-shadow: var(--shadow-2xl); display: flex; flex-direction: column;
-      overflow: hidden; border: 1px solid var(--border-medium); position: relative;
-    }
-    .auth-screen { display: flex; align-items: center; justify-content: center; height: 100%; background: #ffffff; }
-    .auth-wrapper { width: 100%; max-width: 460px; padding: 24px; }
-    .auth-card {
-      background: #fff; border-radius: 16px; padding: 36px 32px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.04); border: 1px solid var(--border-light);
-    }
-    .auth-card h2 { font-weight: 800; font-size: 1.4rem; color: #111111; text-align: center; margin: 12px 0 4px; }
-    .auth-card .subtitle { text-align: center; color: #71717a; font-size: 0.8rem; margin-bottom: 28px; }
-    .input-group { margin-bottom: 16px; }
-    .input-group label { display: block; font-size: 0.7rem; font-weight: 600; color: #18181b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .auth-input { width: 100%; padding: 12px 16px; border: 1px solid var(--border-medium); border-radius: 8px; background: #fafafa; font-size: 0.9rem; outline: none; }
-    .auth-input:focus { border-color: #111111; background: #fff; }
-    .auth-btn { width: 100%; padding: 14px; border: none; border-radius: 8px; background: #111111; color: #fff; font-weight: 600; font-size: 0.95rem; cursor: pointer; margin-top: 8px; }
-    .auth-btn:hover { background: #000000; }
-    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .auth-toggle { display: block; width: 100%; margin-top: 20px; background: none; border: none; color: #52525b; font-size: 0.85rem; cursor: pointer; text-align: center; }
-    .error-message { color: var(--red-500); font-size: 0.75rem; min-height: 20px; margin-top: 10px; text-align: center; }
-    .security-notice { text-align: center; margin-top: 20px; font-size: 0.65rem; color: #a1a1aa; }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>StudyMine - Learning Platform</title>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    .app-workspace { display: none; flex-direction: column; height: 100%; background: #ffffff; }
-    .top-govt-bar { background: #000000; color: #ffffff; padding: 6px 16px; display: flex; justify-content: space-between; align-items: center; font-size: 0.55rem; font-weight: 500; flex-wrap: wrap; gap: 8px; }
-    .new-msg-notification {
-      background: var(--notification-blue); color: white; border: none; font-size: 0.55rem; padding: 4px 10px;
-      border-radius: 20px; cursor: pointer; font-weight: 700; display: none; align-items: center; gap: 4px;
-      animation: glowPulse 1.5s infinite;
-    }
-    .new-msg-notification.show { display: flex; }
-    @keyframes glowPulse { 0%,100% { box-shadow: 0 0 8px rgba(37,99,235,0.4); } 50% { box-shadow: 0 0 16px rgba(37,99,235,0.8); } }
-    
-    .main-header { background: #ffffff; border-bottom: 1px solid var(--border-light); }
-    .header-row-1 { padding: 12px 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; }
-    .org-name h3 { font-size: 0.85rem; font-weight: 700; color: #111111; }
-    .org-name p { font-size: 0.65rem; color: #71717a; }
-    .header-actions { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-    .session-indicator { display: flex; align-items: center; gap: 6px; background: #f4f4f5; padding: 6px 12px; border-radius: 20px; font-size: 0.65rem; }
-    .status-dot { width: 6px; height: 6px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
-    .status-dot.offline { background: #ef4444; animation: none; }
-    @keyframes pulse { 0%,100%{box-shadow:0 0 3px #10b981} 50%{box-shadow:0 0 8px #10b981} }
-    .header-btn { background: #ffffff; border: 1px solid var(--border-medium); color: #18181b; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.65rem; font-weight: 600; }
-    .header-btn:hover { background: #f4f4f5; }
-    .header-btn.danger { border-color: #fecaca; color: #ef4444; background: #fef2f2; }
-    .nav-bar { padding: 8px 16px; background: #fafafa; display: flex; gap: 6px; font-size: 0.65rem; overflow-x: auto; border-bottom: 1px solid var(--border-light); }
-    .nav-item { white-space: nowrap; padding: 6px 14px; border-radius: 16px; cursor: pointer; transition: 0.2s; font-weight: 500; color: #52525b; }
-    .nav-item:hover { background: #f4f4f5; color: #111111; }
-    .nav-item.active { background: #111111; color: #ffffff; font-weight: 600; }
-    .main-layout { display: flex; flex: 1; overflow: hidden; }
-    .sidebar { width: 220px; background: #fafafa; border-right: 1px solid var(--border-light); padding: 16px 10px; overflow-y: auto; flex-shrink: 0; }
-    .sidebar-title { font-size: 0.6rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #71717a; margin: 16px 0 8px 8px; }
-    .sidebar-item { padding: 8px 12px; border-radius: 8px; font-size: 0.75rem; color: #3f3f46; cursor: pointer; display: flex; align-items: center; gap: 6px; margin-bottom: 2px; }
-    .sidebar-item:hover { background: #f4f4f5; }
-    .sidebar-item.active { background: #e4e4e7; color: #111111; font-weight: 600; }
-    .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; background: #ffffff; }
-    .section-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-    .section-panel.active { display: flex; }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
 
-    .assistant-container { flex: 1; overflow-y: auto; padding: 24px; display: flex; flex-direction: column; gap: 12px; }
-    .date-divider { text-align: center; font-size: 0.65rem; font-weight: 600; color: #94a3b8; padding: 12px 0; margin: 10px 0; border-bottom: 1px solid var(--border-light); }
-    .message-bubble { max-width: 72%; padding: 10px 14px; border-radius: 8px; background: var(--ai-bubble-bg); color: var(--ai-bubble-text); font-size: 0.8rem; line-height: 1.5; align-self: flex-start; border: 1px solid var(--ai-bubble-border); animation: msgIn 0.2s ease-out; word-wrap: break-word; }
-    .message-bubble .msg-label { font-size: 0.55rem; font-weight: 700; display: block; margin-bottom: 6px; padding-bottom: 4px; border-bottom: 1px solid var(--ai-bubble-border); color: #64748b; }
-    .message-bubble.own { align-self: flex-end; background: var(--scholar-bubble-bg); color: var(--scholar-bubble-text); border: 1px solid var(--scholar-bubble-border); }
-    .message-bubble.own .msg-label { color: #0284c7; border-bottom-color: var(--scholar-bubble-border); }
-    .message-bubble img { max-width: 250px; max-height: 250px; border-radius: 6px; cursor: pointer; margin-top: 6px; display: block; }
-    @keyframes msgIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
-    .message-meta { display: flex; justify-content: flex-end; align-items: center; gap: 6px; margin-top: 6px; font-size: 0.55rem; color: #94a3b8; }
-    .seen-tick { color: #10b981; font-size: 0.65rem; }
-    .seen-tick.single { color: #94a3b8; }
-    
-    .typing-indicator { padding: 8px 14px; font-size: 0.7rem; color: #475569; display: none; align-items: center; gap: 8px; background: #fafafa; border: 1px solid var(--border-medium); border-radius: 8px; align-self: flex-start; margin: 4px 0; }
-    .typing-indicator.show { display: flex; }
-    .typing-dots { display: flex; gap: 3px; } 
-    .typing-dots span { width: 4px; height: 4px; background: #2563eb; border-radius: 50%; animation: bounce 1.2s infinite; }
-    .typing-dots span:nth-child(2) { animation-delay: 0.2s; } .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
-    
-    .workspace-footer { padding: 12px 20px; background: #ffffff; border-top: 1px solid var(--border-light); display: flex; gap: 8px; align-items: center; }
-    .query-input { flex: 1; padding: 10px 16px; border-radius: 6px; border: 1px solid var(--border-medium); font-size: 0.8rem; outline: none; background: #fafafa; }
-    .query-input:focus { border-color: #111111; background: #ffffff; }
-    .attach-btn, .send-btn { width: 36px; height: 36px; border-radius: 6px; cursor: pointer; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .attach-btn { background: #f4f4f5; border: 1px solid var(--border-medium); color: #52525b; }
-    .send-btn { background: #111111; border: none; color: #fff; }
-    #fileInput, #cameraInput { display: none; }
+        .main-container {
+            width: 100%;
+            max-width: 900px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
 
-    .mocktest-container, .pyq-container, .video-container, .progress-container, .notes-container { flex: 1; overflow-y: auto; padding: 24px; background: #fafafa; }
-    h3 { color: #111111; margin-bottom: 20px; font-size: 1.2rem; }
-    .question-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 20px; margin-bottom: 16px; }
-    .options { display: flex; flex-direction: column; gap: 8px; }
-    .option { padding: 10px 14px; border: 1px solid var(--border-medium); border-radius: 6px; cursor: pointer; font-size: 0.85rem; }
-    .option.selected { border-color: #111111; background: #111111; color: #ffffff; }
-    .option.correct { border-color: #10b981; background: #f0fdf4; color: #065f46; }
-    .option.wrong { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
-    .explanation { margin-top: 16px; padding: 12px; background: #f4f4f5; border-left: 4px solid #111111; border-radius: 4px; font-size: 0.8rem; display: none; }
-    .explanation.show { display: block; }
-    .submit-test-btn { background: #111111; color: #fff; padding: 10px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; margin-top: 16px; }
-    .score-display { font-weight: 700; color: #111111; font-size: 1.1rem; margin-top: 16px; }
-    .pyq-card { background: #fff; border-left: 4px solid #111111; border-radius: 6px; padding: 16px; margin-bottom: 12px; cursor: pointer; }
-    .pyq-answer { margin-top: 12px; font-size: 0.8rem; color: #111111; font-weight: 600; display: none; padding-top: 10px; border-top: 1px dashed var(--border-medium); }
-    .pyq-answer.show { display: block; }
-    .video-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 12px; margin-bottom: 12px; display: flex; align-items: center; gap: 16px; cursor: pointer; }
-    .video-thumb { width: 70px; height: 44px; background: #111111; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px,1fr)); gap: 16px; margin-bottom: 24px; }
-    .stat-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 20px; text-align: center; }
-    .stat-val { font-size: 1.8rem; font-weight: 800; color: #111111; }
-    .stat-label { font-size: 0.75rem; color: #71717a; margin-top: 6px; }
-    .note-card { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 16px; margin-bottom: 16px; font-size: 0.85rem; }
-    .note-title { font-weight: 700; color: #111111; margin-bottom: 8px; }
-    .flashcard { background: #111111; color: #ffffff; border-radius: 8px; padding: 16px; margin-bottom: 12px; cursor: pointer; text-align: center; }
+        /* Header */
+        .header {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            padding: 30px;
+            text-align: center;
+            color: white;
+        }
 
-    /* Admin Panel Styles */
-    .admin-panel { padding: 20px; overflow-y: auto; }
-    .admin-section { background: #fff; border: 1px solid var(--border-light); border-radius: 8px; padding: 20px; margin-bottom: 20px; }
-    .admin-section h4 { font-size: 0.9rem; margin-bottom: 15px; color: #111; }
-    .user-row { display: flex; align-items: center; justify-content: space-between; padding: 10px; border-bottom: 1px solid #f0f0f0; gap: 10px; flex-wrap: wrap; }
-    .user-row:last-child { border-bottom: none; }
-    .user-info { flex: 1; min-width: 150px; }
-    .user-email { font-size: 0.8rem; font-weight: 600; color: #111; }
-    .user-role { font-size: 0.65rem; color: #71717a; }
-    .user-status { font-size: 0.6rem; padding: 3px 8px; border-radius: 10px; font-weight: 600; }
-    .status-approved { background: #f0fdf4; color: #065f46; }
-    .status-pending { background: #fef3c7; color: #92400e; }
-    .status-rejected { background: #fef2f2; color: #991b1b; }
-    .admin-btn { padding: 5px 12px; border-radius: 4px; border: 1px solid var(--border-medium); cursor: pointer; font-size: 0.65rem; font-weight: 600; background: #fff; }
-    .admin-btn.approve { background: #10b981; color: #fff; border: none; }
-    .admin-btn.reject { background: #ef4444; color: #fff; border: none; }
-    .admin-btn.assign { background: #2563eb; color: #fff; border: none; }
-    select.partner-select { padding: 4px 8px; border-radius: 4px; border: 1px solid var(--border-medium); font-size: 0.7rem; }
+        .header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 5px;
+        }
 
-    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: #111111; color: #fff; padding: 10px 20px; border-radius: 6px; font-size: 0.8rem; z-index: 9999; transition: 0.3s; }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 9998; align-items: center; justify-content: center; }
-    .modal-overlay.active { display: flex; }
-    .modal { background: #fff; border-radius: 12px; padding: 32px; max-width: 400px; width: 90%; text-align: center; }
-    .modal-btn { padding: 10px 24px; border-radius: 6px; border: none; font-weight: 600; font-size: 0.85rem; cursor: pointer; margin: 8px 6px 0; }
-    .modal-btn.cancel { background: #f4f4f5; color: #18181b; border: 1px solid var(--border-medium); }
-    .modal-btn.confirm { background: #ef4444; color: #fff; }
-    .delete-progress { font-size: 0.75rem; color: #71717a; margin: 12px 0; display: none; }
-    .delete-progress.show { display: block; }
-    .fullscreen-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 10000; align-items: center; justify-content: center; cursor: pointer; }
-    .fullscreen-overlay.active { display: flex; }
-    .fullscreen-overlay img { max-width: 90%; max-height: 90%; border-radius: 8px; }
-    .video-modal-content { padding: 16px; max-width: 800px; width: 95%; background: #fff; border-radius: 12px; }
-    .video-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .video-close-btn { background: #f4f4f5; border: 1px solid var(--border-medium); border-radius: 6px; padding: 4px 12px; cursor: pointer; }
-    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background: #000; }
-    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+        .header p {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
 
-    @media (max-width: 768px) {
-      body { padding: 0; background: #ffffff; }
-      .app-container { height: 100dvh; max-height: 100dvh; border-radius: 0; border: none; }
-      .sidebar { display: none; }
-      .message-bubble { max-width: 90%; }
-      .message-bubble img { max-width: 200px; max-height: 200px; }
-    }
-  </style>
+        /* Tabs */
+        .tabs {
+            display: flex;
+            border-bottom: 2px solid #e5e7eb;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            color: #6b7280;
+            transition: all 0.3s;
+            background: #f9fafb;
+            border: none;
+            font-size: 0.95rem;
+        }
+
+        .tab.active {
+            color: #667eea;
+            background: white;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .tab:hover {
+            background: #f3f4f6;
+        }
+
+        /* Content Area */
+        .content-area {
+            padding: 30px;
+            min-height: 400px;
+        }
+
+        .panel {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Form Styles */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            font-weight: 600;
+            color: #374151;
+            margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+
+        .form-group input,
+        .form-group select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 10px;
+            font-size: 0.95rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, #10b981, #059669);
+            color: white;
+        }
+
+        .btn-success:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
+        }
+
+        .btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .error-msg {
+            color: #ef4444;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            text-align: center;
+            min-height: 20px;
+        }
+
+        .success-msg {
+            color: #10b981;
+            font-size: 0.85rem;
+            margin-top: 10px;
+            text-align: center;
+        }
+
+        /* Course Grid */
+        .course-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .course-card {
+            padding: 20px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s;
+            background: white;
+        }
+
+        .course-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+        }
+
+        .course-card.selected {
+            border-color: #667eea;
+            background: #eef2ff;
+            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
+        }
+
+        .course-icon {
+            font-size: 2.5rem;
+            margin-bottom: 8px;
+        }
+
+        .course-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #1f2937;
+        }
+
+        /* Payment Section */
+        .payment-box {
+            background: #f9fafb;
+            border: 2px solid #e5e7eb;
+            border-radius: 15px;
+            padding: 25px;
+            margin-top: 20px;
+        }
+
+        .price-display {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .original-price {
+            font-size: 1.1rem;
+            color: #6b7280;
+            text-decoration: line-through;
+            margin-bottom: 5px;
+        }
+
+        .discounted-price {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #10b981;
+        }
+
+        .coupon-section {
+            background: #fef3c7;
+            border: 2px dashed #f59e0b;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+            text-align: center;
+        }
+
+        .coupon-section input {
+            padding: 10px;
+            border: 2px solid #e5e7eb;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            text-align: center;
+            margin-right: 10px;
+            width: 150px;
+        }
+
+        .coupon-btn {
+            padding: 10px 20px;
+            background: #f59e0b;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .coupon-applied {
+            color: #10b981;
+            font-weight: 700;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .coupon-applied.show {
+            display: block;
+        }
+
+        .upi-info {
+            background: #e0f2fe;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            margin: 15px 0;
+        }
+
+        .upi-id {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0369a1;
+            letter-spacing: 1px;
+        }
+
+        .transaction-input {
+            margin-top: 15px;
+        }
+
+        /* Success Screen */
+        .success-screen {
+            text-align: center;
+            padding: 40px 20px;
+            display: none;
+        }
+
+        .success-screen.show {
+            display: block;
+        }
+
+        .success-icon {
+            font-size: 5rem;
+            animation: bounce 1s infinite;
+        }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-20px); }
+        }
+
+        .redirect-btn {
+            display: inline-block;
+            padding: 15px 40px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            text-decoration: none;
+            border-radius: 10px;
+            font-weight: 700;
+            margin-top: 20px;
+            transition: all 0.3s;
+        }
+
+        .redirect-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .user-info {
+            background: #eef2ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-btn {
+            padding: 8px 16px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 0.85rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-container {
+                border-radius: 0;
+            }
+            .course-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            .content-area {
+                padding: 20px;
+            }
+        }
+    </style>
 </head>
 <body>
-<div class="app-container" id="appContainer">
-  <!-- Auth Screen -->
-  <div id="authScreen" class="auth-screen">
-    <div class="auth-wrapper">
-      <div class="auth-card">
-        <h2>CSIR NET Ecology Hub</h2>
-        <p class="subtitle">Multi-User Research Platform • Admin Controlled Pairing</p>
-        <div class="input-group"><label>Email ID</label><input type="email" id="emailInput" class="auth-input" placeholder="scholar@email.com" autocomplete="email"></div>
-        <div class="input-group"><label>Password</label><input type="password" id="passwordInput" class="auth-input" placeholder="••••••••" autocomplete="current-password"></div>
-        <button id="authActionBtn" class="auth-btn">Access Portal</button>
-        <div class="error-message" id="authError"></div>
-        <button id="toggleAuthBtn" class="auth-toggle">New Scholar? Register Here</button>
-      </div>
-      <div class="security-notice">🔒 Secure Multi-User System • Firebase Auth</div>
-    </div>
-  </div>
-
-  <!-- Main Workspace -->
-  <div id="appWorkspace" class="app-workspace" style="display:none">
-    <div class="top-govt-bar">
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span>🇮🇳 STUDYMINE ECOLOGY</span>
-        <span id="userRoleBadge" style="background:#333;padding:2px 10px;border-radius:10px;font-size:0.5rem;"></span>
-      </div>
-      <div style="display:flex;align-items:center;gap:10px;">
-        <span id="govtLiveTime">--:--:--</span>
-        <button id="adminPanelBtn" class="header-btn" style="background:#8b5cf6;color:#fff;border:none;display:none;" onclick="toggleAdminPanel()">⚙ Admin</button>
-        <button id="logoutButton" class="header-btn">⏻ Logout</button>
-      </div>
-    </div>
-    
-    <div class="main-header">
-      <div class="header-row-1">
-        <div class="org-name">
-          <h3>CSIR-UGC NET Ecology Unit</h3>
-          <p id="partnerInfo" style="font-size:0.65rem;color:#71717a;">Connecting to partner...</p>
-        </div>
-        <div class="header-actions">
-          <div class="session-indicator"><span id="statusDot" class="status-dot offline"></span><span id="partnerDisplayName">Partner Offline</span></div>
-          <button id="clearChatBtn" class="header-btn danger">🗑 Reset</button>
-        </div>
-      </div>
-      <div class="nav-bar" id="navBar">
-        <span class="nav-item active" data-section="ai-assistant">💡 Chat</span>
-        <span class="nav-item" data-section="mocktest">📝 Test</span>
-        <span class="nav-item" data-section="pyq">📖 PYQ</span>
-        <span class="nav-item" data-section="videos">🎥 Lectures</span>
-        <span class="nav-item" data-section="notes">📚 Notes</span>
-        <span class="nav-item" data-section="progress">📊 Stats</span>
-      </div>
-    </div>
-    
-    <div class="main-layout">
-      <div class="sidebar" id="sidebar">
-        <div class="sidebar-title">🌍 Ecosystem</div>
-        <div class="sidebar-item active" data-section="ai-assistant">Energy Flow</div>
-        <div class="sidebar-item" data-section="ai-assistant">Nutrient Cycling</div>
-        <div class="sidebar-title">🌱 Population</div>
-        <div class="sidebar-item" data-section="ai-assistant">Growth Models</div>
-        <div class="sidebar-item" data-section="ai-assistant">r & K Selection</div>
-        <div class="sidebar-title">🦋 Community</div>
-        <div class="sidebar-item" data-section="ai-assistant">Interactions</div>
-        <div class="sidebar-item" data-section="ai-assistant">Succession</div>
-      </div>
-      
-      <div class="content-area">
-        <!-- Admin Panel Section -->
-        <div class="section-panel" id="section-admin">
-          <div class="admin-panel" id="adminPanelContent">
-            <h3>⚙️ Admin Dashboard - StudyMine</h3>
-            <div class="admin-section">
-              <h4>📋 Pending Approvals</h4>
-              <div id="pendingUsersList"><p style="color:#71717a;">Loading...</p></div>
-            </div>
-            <div class="admin-section">
-              <h4>👥 All Users & Partner Assignment</h4>
-              <div id="allUsersList"><p style="color:#71717a;">Loading...</p></div>
-            </div>
-            <div class="admin-section">
-              <h4>💬 Active Chat Rooms</h4>
-              <div id="chatRoomsList"><p style="color:#71717a;">Loading...</p></div>
-            </div>
-          </div>
+    <div class="main-container">
+        <div class="header">
+            <h1>📚 StudyMine</h1>
+            <p>Your Ultimate Learning Platform</p>
         </div>
 
-        <!-- Chat Section -->
-        <div class="section-panel active" id="section-ai-assistant">
-          <div class="assistant-container" id="messagesContainer">
-            <div style="text-align:center;color:#94a3b8;padding:40px;">
-              <h3>💬 Welcome to StudyMine Chat</h3>
-              <p style="font-size:0.8rem;">Your private chat room. No message blending.</p>
-            </div>
-          </div>
-          <div id="typingIndicator" class="typing-indicator"><span>✨ Partner is typing...</span><div class="typing-dots"><span></span><span></span><span></span></div></div>
-          <div class="workspace-footer">
-            <input type="file" id="cameraInput" accept="image/*" capture="environment">
-            <button id="cameraButton" class="attach-btn" title="Take Photo">📷</button>
-            <input type="file" id="fileInput" accept="image/*">
-            <button id="attachButton" class="attach-btn" title="Upload Image">📎</button>
-            <input type="text" id="messageInput" class="query-input" placeholder="Type your message here..." autocomplete="off">
-            <button id="sendButton" class="send-btn" title="Send">▶</button>
-          </div>
+        <div class="tabs" id="tabs">
+            <button class="tab active" onclick="showPanel('login')">🔑 Login</button>
+            <button class="tab" onclick="showPanel('register')">📝 Register</button>
         </div>
 
-        <!-- Other Sections -->
-        <div class="section-panel" id="section-mocktest"><div class="mocktest-container" id="mocktestContainer"></div></div>
-        <div class="section-panel" id="section-pyq"><div class="pyq-container" id="pyqContainer"></div></div>
-        <div class="section-panel" id="section-videos"><div class="video-container" id="videoContainer"></div></div>
-        <div class="section-panel" id="section-notes"><div class="notes-container" id="notesContainer"></div></div>
-        <div class="section-panel" id="section-progress"><div class="progress-container" id="progressContainer"></div></div>
-      </div>
+        <div class="content-area">
+            <!-- Login Panel -->
+            <div class="panel active" id="login-panel">
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label>📧 Email Address</label>
+                        <input type="email" id="loginEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>🔒 Password</label>
+                        <input type="password" id="loginPassword" placeholder="Enter your password">
+                    </div>
+                    <button class="btn btn-primary" onclick="handleLogin()">Login to Portal</button>
+                    <div class="error-msg" id="loginError"></div>
+                    <p style="text-align:center;margin-top:15px;color:#6b7280;">
+                        Don't have account? <a href="#" onclick="showPanel('register')" style="color:#667eea;">Register here</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Register Panel -->
+            <div class="panel" id="register-panel">
+                <div id="registerForm">
+                    <div class="form-group">
+                        <label>📧 Email Address</label>
+                        <input type="email" id="registerEmail" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label>🔒 Password (min 6 characters)</label>
+                        <input type="password" id="registerPassword" placeholder="Create password">
+                    </div>
+                    <div class="form-group">
+                        <label>👤 Full Name</label>
+                        <input type="text" id="registerName" placeholder="Enter your full name">
+                    </div>
+                    <button class="btn btn-primary" onclick="handleRegister()">Create Account</button>
+                    <div class="error-msg" id="registerError"></div>
+                    <p style="text-align:center;margin-top:15px;color:#6b7280;">
+                        Already registered? <a href="#" onclick="showPanel('login')" style="color:#667eea;">Login here</a>
+                    </p>
+                </div>
+            </div>
+
+            <!-- Course & Payment Panel (shown after login) -->
+            <div class="panel" id="course-panel">
+                <div class="user-info">
+                    <div>
+                        <strong>👤 Welcome, <span id="userNameDisplay"></span></strong>
+                        <div style="font-size:0.85rem;color:#6b7280;" id="userEmailDisplay"></div>
+                    </div>
+                    <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+                </div>
+
+                <!-- Step 1: Course Selection -->
+                <div id="step1">
+                    <h3 style="margin-bottom:15px;color:#1f2937;">🎯 Select Your Course</h3>
+                    <p style="color:#6b7280;margin-bottom:20px;">Choose the course you want to study</p>
+                    
+                    <div class="course-grid" id="courseGrid">
+                        <div class="course-card" data-course="class9" onclick="selectCourse('class9', this)">
+                            <div class="course-icon">📘</div>
+                            <div class="course-name">Class 9th</div>
+                        </div>
+                        <div class="course-card" data-course="class10" onclick="selectCourse('class10', this)">
+                            <div class="course-icon">📙</div>
+                            <div class="course-name">Class 10th</div>
+                        </div>
+                        <div class="course-card" data-course="class11" onclick="selectCourse('class11', this)">
+                            <div class="course-icon">📗</div>
+                            <div class="course-name">Class 11th</div>
+                        </div>
+                        <div class="course-card" data-course="class12" onclick="selectCourse('class12', this)">
+                            <div class="course-icon">📕</div>
+                            <div class="course-name">Class 12th</div>
+                        </div>
+                        <div class="course-card" data-course="neet" onclick="selectCourse('neet', this)">
+                            <div class="course-icon">🩺</div>
+                            <div class="course-name">NEET UG</div>
+                        </div>
+                        <div class="course-card" data-course="iitjee" onclick="selectCourse('iitjee', this)">
+                            <div class="course-icon">⚙️</div>
+                            <div class="course-name">IIT JEE</div>
+                        </div>
+                        <div class="course-card" data-course="ssc" onclick="selectCourse('ssc', this)">
+                            <div class="course-icon">🏛️</div>
+                            <div class="course-name">SSC Exams</div>
+                        </div>
+                        <div class="course-card" data-course="banking" onclick="selectCourse('banking', this)">
+                            <div class="course-icon">🏦</div>
+                            <div class="course-name">Banking</div>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary" id="continueToPayment" disabled onclick="showPayment()">
+                        Continue to Payment ➡️
+                    </button>
+                </div>
+
+                <!-- Step 2: Payment -->
+                <div id="step2" style="display:none;">
+                    <h3 style="margin-bottom:15px;color:#1f2937;">💳 Complete Payment</h3>
+                    <p style="color:#6b7280;">Course: <strong id="selectedCourseName"></strong></p>
+
+                    <div class="payment-box">
+                        <div class="price-display">
+                            <div class="original-price">Original Price: ₹500</div>
+                            <div class="discounted-price" id="finalPrice">₹500</div>
+                        </div>
+
+                        <!-- Coupon Section -->
+                        <div class="coupon-section">
+                            <h4>🎟️ Have a Coupon Code?</h4>
+                            <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap;">
+                                <input type="text" id="couponCode" placeholder="Enter code (e.g., THP123)">
+                                <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
+                            </div>
+                            <div class="coupon-applied" id="couponAppliedMsg">
+                                ✅ Coupon Applied! You save ₹400
+                            </div>
+                            <div class="error-msg" id="couponError"></div>
+                        </div>
+
+                        <!-- UPI Payment Info -->
+                        <div class="upi-info">
+                            <h4>📱 Pay via UPI</h4>
+                            <p>Scan or pay to UPI ID:</p>
+                            <div class="upi-id" id="upiId">studymine@upi</div>
+                            <p style="font-size:0.85rem;color:#6b7280;margin-top:8px;">
+                                Amount: <strong id="paymentAmount">₹500</strong>
+                            </p>
+                        </div>
+
+                        <!-- Transaction ID Input -->
+                        <div class="form-group transaction-input">
+                            <label>🔢 Enter UPI Transaction ID</label>
+                            <input type="text" id="transactionId" placeholder="Enter 12-digit UPI reference number">
+                            <p style="font-size:0.75rem;color:#6b7280;margin-top:5px;">
+                                After payment, enter the transaction ID for verification
+                            </p>
+                        </div>
+
+                        <button class="btn btn-success" onclick="verifyPayment()">
+                            ✅ Verify & Access Course
+                        </button>
+                        <div class="error-msg" id="paymentError"></div>
+                    </div>
+
+                    <button class="btn" style="background:#e5e7eb;color:#374151;margin-top:10px;" onclick="goBackToCourses()">
+                        ← Back to Course Selection
+                    </button>
+                </div>
+
+                <!-- Step 3: Success -->
+                <div class="success-screen" id="step3">
+                    <div class="success-icon">🎉</div>
+                    <h2 style="color:#10b981;margin:15px 0;">Payment Successful!</h2>
+                    <p style="color:#6b7280;margin-bottom:20px;">
+                        Your transaction has been verified. You now have access to the course.
+                    </p>
+                    <a href="#" class="redirect-btn" id="redirectLink">
+                        🚀 Access Course Now
+                    </a>
+                    <p style="color:#6b7280;margin-top:15px;font-size:0.85rem;">
+                        Transaction ID: <strong id="successTxnId"></strong>
+                    </p>
+                </div>
+            </div>
+        </div>
     </div>
-  </div>
-</div>
 
-<!-- Modals -->
-<div id="deleteModal" class="modal-overlay">
-  <div class="modal">
-    <h4>⚠️ Reset Chat Room?</h4>
-    <p style="font-size:0.85rem;color:#71717a;">All messages in your private room will be cleared.</p>
-    <div class="delete-progress" id="deleteProgress">Clearing messages...</div>
-    <div style="margin-top:20px">
-      <button id="cancelDeleteBtn" class="modal-btn cancel">Cancel</button>
-      <button id="confirmDeleteBtn" class="modal-btn confirm">Reset Room</button>
-    </div>
-  </div>
-</div>
-
-<div id="fullscreenOverlay" class="fullscreen-overlay" onclick="this.classList.remove('active')">
-  <img id="fullscreenImage" src="" alt="Fullscreen Image">
-</div>
-
-<div id="videoModal" class="modal-overlay" onclick="if(event.target===this)closeVideoModal()">
-  <div class="video-modal-content">
-    <div class="video-header">
-      <h4 id="videoModalTitle">Video Lecture</h4>
-      <button class="video-close-btn" onclick="closeVideoModal()">✕ Close</button>
-    </div>
-    <div class="video-wrapper"><iframe id="videoIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe></div>
-  </div>
-</div>
-
-<div id="toast" class="toast"></div>
-
-<script>
-(function() {
-  // ============ FIREBASE CONFIG - studymine-fa92d ============
-  const firebaseConfig = {
-    apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
-    authDomain: "studymine-fa92d.firebaseapp.com",
-    projectId: "studymine-fa92d",
-    storageBucket: "studymine-fa92d.firebasestorage.app",
-    messagingSenderId: "460797718327",
-    appId: "1:460797718327:web:66316f16930b304b2e34b2",
-    measurementId: "G-ZBJ6GLM3L8"
-  };
-  
-  const IMGBB_API_KEY = "53fb01955a45c5462724b8f7d238500a";
-  
-  // ============ ADMIN CONFIG ============
-  // Add admin emails here - these users will have admin privileges
-  const ADMIN_EMAILS = ["mgbhaukali@gmail.com", "manshi@gmail.com"];
-  
-  try { firebase.initializeApp(firebaseConfig); } catch(e) {}
-  const auth = firebase.auth(), db = firebase.firestore();
-
-  // ============ GLOBAL STATE ============
-  let currentUser = null;
-  let isLoginMode = true;
-  let currentRoomId = null;
-  let currentPartnerId = null;
-  let unsubscribeMessages = null;
-  let unsubscribeTyping = null;
-  let unsubscribePresence = null;
-  let typingTimeoutRef = null;
-  let mockTestSubmitted = false;
-  let currentSection = 'ai-assistant';
-  let isAdmin = false;
-
-  // ============ DOM ELEMENTS ============
-  const $ = id => document.getElementById(id);
-  const authScreen = $('authScreen'), appWorkspace = $('appWorkspace');
-  const emailInput = $('emailInput'), passwordInput = $('passwordInput');
-  const authActionBtn = $('authActionBtn'), toggleAuthBtn = $('toggleAuthBtn'), authError = $('authError');
-  const messagesContainer = $('messagesContainer'), messageInput = $('messageInput'), sendButton = $('sendButton');
-  const attachButton = $('attachButton'), fileInput = $('fileInput');
-  const cameraButton = $('cameraButton'), cameraInput = $('cameraInput');
-  const logoutButton = $('logoutButton'), clearChatBtn = $('clearChatBtn'), typingIndicator = $('typingIndicator');
-  const statusDot = $('statusDot'), partnerDisplayName = $('partnerDisplayName'), partnerInfo = $('partnerInfo');
-  const deleteModal = $('deleteModal'), cancelDeleteBtn = $('cancelDeleteBtn'), confirmDeleteBtn = $('confirmDeleteBtn'), deleteProgress = $('deleteProgress');
-  const toast = $('toast'), govtLiveTime = $('govtLiveTime'), navBar = $('navBar'), sidebar = $('sidebar');
-  const fullscreenOverlay = $('fullscreenOverlay'), fullscreenImage = $('fullscreenImage');
-  const adminPanelBtn = $('adminPanelBtn'), userRoleBadge = $('userRoleBadge');
-
-  // Clock update
-  setInterval(() => { 
-    if(govtLiveTime) govtLiveTime.textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' IST'; 
-  }, 1000);
-
-  // ============ UTILITY FUNCTIONS ============
-  function showToast(msg, type='') { 
-    toast.textContent=msg; 
-    toast.className='toast '+type+' show'; 
-    clearTimeout(toast._t); 
-    toast._t=setTimeout(()=>toast.classList.remove('show'),3000); 
-  }
-
-  function scrollBottom() { 
-    if(messagesContainer) messagesContainer.scrollTo({ top: messagesContainer.scrollHeight, behavior: 'smooth' }); 
-  }
-
-  // ============ SECTION SWITCHING ============
-  window._switchSection = function(sectionId) {
-    currentSection = sectionId;
-    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
-    const panel = document.getElementById('section-'+sectionId);
-    if(panel) panel.classList.add('active');
-    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-    document.querySelector(`.nav-item[data-section="${sectionId}"]`)?.classList.add('active');
-    
-    if(sectionId==='mocktest') loadMockTest();
-    if(sectionId==='pyq') loadPYQs();
-    if(sectionId==='videos') loadVideos();
-    if(sectionId==='notes') loadNotes();
-    if(sectionId==='progress') loadProgress();
-    if(sectionId==='admin') loadAdminPanel();
-  };
-
-  navBar.addEventListener('click', e => { if(e.target.classList.contains('nav-item')) window._switchSection(e.target.dataset.section); });
-  sidebar.addEventListener('click', e => { if(e.target.dataset.section) window._switchSection(e.target.dataset.section); });
-
-  // ============ ADMIN PANEL FUNCTIONS ============
-  function toggleAdminPanel() {
-    if (!isAdmin) return;
-    const adminSection = document.getElementById('section-admin');
-    if (adminSection.classList.contains('active')) {
-      window._switchSection('ai-assistant');
-    } else {
-      if (!document.querySelector('.nav-item[data-section="admin"]')) {
-        const adminNav = document.createElement('span');
-        adminNav.className = 'nav-item';
-        adminNav.dataset.section = 'admin';
-        adminNav.textContent = '⚙ Admin';
-        navBar.appendChild(adminNav);
-      }
-      window._switchSection('admin');
-      loadAdminPanel();
-    }
-  }
-
-  async function loadAdminPanel() {
-    if (!isAdmin) return;
-    
-    // Pending users
-    const pendingSnap = await db.collection('users').where('status', '==', 'pending').get();
-    let pendingHtml = '';
-    pendingSnap.forEach(doc => {
-      const u = doc.data();
-      pendingHtml += `
-        <div class="user-row">
-          <div class="user-info">
-            <div class="user-email">${u.email}</div>
-            <div class="user-role">Role: ${u.role || 'scholar'}</div>
-          </div>
-          <div>
-            <button class="admin-btn approve" onclick="approveUser('${doc.id}')">✅ Approve</button>
-            <button class="admin-btn reject" onclick="rejectUser('${doc.id}')">❌ Reject</button>
-          </div>
-        </div>`;
-    });
-    $('pendingUsersList').innerHTML = pendingHtml || '<p style="color:#71717a;">No pending users</p>';
-
-    // All approved users
-    const allSnap = await db.collection('users').where('status', '==', 'approved').get();
-    const users = [];
-    allSnap.forEach(doc => users.push({ id: doc.id, ...doc.data() }));
-    
-    let allHtml = '';
-    users.forEach(u => {
-      const partnerEmail = u.partnerId ? (users.find(x => x.id === u.partnerId)?.email || 'Unknown') : 'Unassigned';
-      allHtml += `
-        <div class="user-row">
-          <div class="user-info">
-            <div class="user-email">${u.email} ${ADMIN_EMAILS.includes(u.email) ? '👑' : ''}</div>
-            <div class="user-role">Partner: ${partnerEmail}</div>
-          </div>
-          <div>
-            <select class="partner-select" id="partnerSelect_${u.id}" onchange="assignPartner('${u.id}', this.value)">
-              <option value="">-- Assign Partner --</option>
-              ${users.filter(x => x.id !== u.id).map(x => `<option value="${x.id}" ${u.partnerId===x.id?'selected':''}>${x.email}</option>`).join('')}
-            </select>
-          </div>
-        </div>`;
-    });
-    $('allUsersList').innerHTML = allHtml || '<p style="color:#71717a;">No approved users</p>';
-
-    // Chat rooms
-    const roomsSnap = await db.collection('chatrooms').get();
-    let roomsHtml = '';
-    roomsSnap.forEach(doc => {
-      const r = doc.data();
-      const participantEmails = (r.participants || []).map(p => users.find(u => u.id === p)?.email || 'Unknown').join(' ↔ ');
-      roomsHtml += `<div class="user-row"><div class="user-info"><div class="user-email">${participantEmails}</div></div><span class="user-status status-approved">Active</span></div>`;
-    });
-    $('chatRoomsList').innerHTML = roomsHtml || '<p style="color:#71717a;">No active rooms</p>';
-  }
-
-  // Global admin functions
-  window.approveUser = async function(uid) {
-    await db.collection('users').doc(uid).update({ status: 'approved' });
-    showToast('✅ User approved!', 'success');
-    loadAdminPanel();
-  };
-  
-  window.rejectUser = async function(uid) {
-    await db.collection('users').doc(uid).update({ status: 'rejected' });
-    showToast('❌ User rejected', 'error');
-    loadAdminPanel();
-  };
-  
-  window.assignPartner = async function(uid, partnerId) {
-    if (!partnerId) {
-      await db.collection('users').doc(uid).update({ partnerId: null });
-      showToast('Partner removed');
-      return;
-    }
-    
-    const roomId = [uid, partnerId].sort().join('_');
-    await db.collection('chatrooms').doc(roomId).set({
-      participants: [uid, partnerId],
-      createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-      createdBy: currentUser.uid
-    }, { merge: true });
-    
-    await db.collection('users').doc(uid).update({ partnerId });
-    await db.collection('users').doc(partnerId).update({ partnerId: uid });
-    
-    showToast('✅ Partner assigned! Room created.', 'success');
-    loadAdminPanel();
-  };
-
-  // ============ IMAGE UPLOAD ============
-  async function uploadImageToImgBB(file) {
-    const fd = new FormData(); fd.append('image', file); fd.append('key', IMGBB_API_KEY);
-    try {
-      const res = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: fd });
-      const data = await res.json();
-      if(data.success) return { url: data.data.url, deleteUrl: data.data.delete_url };
-      return null;
-    } catch(e) { return null; }
-  }
-
-  function compressImage(file, maxW=800) {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.onload = (e) => {
-        const img = new Image();
-        img.onload = () => {
-          const canvas = document.createElement('canvas');
-          let w=img.width, h=img.height;
-          if(w>maxW){ h*=maxW/w; w=maxW; }
-          canvas.width=w; canvas.height=h;
-          canvas.getContext('2d').drawImage(img,0,0,w,h);
-          canvas.toBlob(blob => { if(blob) resolve(new File([blob],file.name,{type:'image/jpeg'})); else reject(); }, 'image/jpeg', 0.7);
+    <script>
+        // ============ FIREBASE CONFIG ============
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
+            authDomain: "studymine-fa92d.firebaseapp.com",
+            projectId: "studymine-fa92d",
+            storageBucket: "studymine-fa92d.firebasestorage.app",
+            messagingSenderId: "460797718327",
+            appId: "1:460797718327:web:66316f16930b304b2e34b2",
+            measurementId: "G-ZBJ6GLM3L8"
         };
-        img.src=e.target.result;
-      };
-      reader.readAsDataURL(file);
-    });
-  }
 
-  async function handleImageUpload(e) {
-    const file = e.target.files[0]; 
-    if(!file||!currentUser||!currentRoomId) { e.target.value=''; return; }
-    if(!file.type.startsWith('image/')) { showToast('Only images allowed','error'); e.target.value=''; return; }
-    if(file.size>10*1024*1024) { showToast('Max 10MB size','error'); e.target.value=''; return; }
-    
-    const tempDiv = document.createElement('div'); 
-    tempDiv.className='message-bubble own'; 
-    tempDiv.innerHTML='<span class="msg-label">📤 Uploading image...</span>';
-    messagesContainer.appendChild(tempDiv); 
-    scrollBottom();
-    
-    try {
-      const compressed = await compressImage(file);
-      const result = await uploadImageToImgBB(compressed);
-      if(!result) throw new Error('Upload failed');
-      tempDiv.remove();
-      await db.collection('messages').add({ 
-        type:'image', imageUrl:result.url, deleteUrl:result.deleteUrl, text:'', 
-        roomId: currentRoomId, senderId:currentUser.uid, 
-        timestamp:firebase.firestore.FieldValue.serverTimestamp(), seen:false 
-      });
-    } catch(err) { 
-      tempDiv.innerHTML='<span style="color:#ef4444;">❌ Upload failed</span>'; 
-      setTimeout(()=>tempDiv.remove(),2500); 
-    }
-    e.target.value='';
-  }
+        try { firebase.initializeApp(firebaseConfig); } catch(e) {}
+        const auth = firebase.auth();
+        const db = firebase.firestore();
 
-  attachButton.addEventListener('click', () => fileInput.click());
-  cameraButton.addEventListener('click', () => cameraInput.click());
-  fileInput.addEventListener('change', handleImageUpload);
-  cameraInput.addEventListener('change', handleImageUpload);
+        // ============ GLOBAL STATE ============
+        let currentUser = null;
+        let selectedCourse = null;
+        let couponApplied = false;
+        let finalAmount = 500;
 
-  // ============ STUDY DATA ============
-  const mockQuestions = [
-    { id:1, q:"Logistic growth equation?", options:["dN/dt=rN","dN/dt=rN(1-N/K)","dN/dt=K-N","dN/dt=rK"], correct:1, exp:"dN/dt=rN(1-N/K) - sigmoid growth." },
-    { id:2, q:"Aquatic biomass pyramid is:", options:["Upright","Inverted","Spindle","None"], correct:1, exp:"Inverted due to rapid phytoplankton turnover." },
-    { id:3, q:"Who coined 'ecology'?", options:["Darwin","Haeckel","Tansley","Odum"], correct:1, exp:"Ernst Haeckel (1866)." },
-    { id:4, q:"Keystone species?", options:["Elephant","Sea otter","Grasshopper","Rabbit"], correct:1, exp:"Sea otter controls urchin population." },
-    { id:5, q:"10% law given by?", options:["Elton","Lindeman","Hutchinson","MacArthur"], correct:1, exp:"Raymond Lindeman (1942)." }
-  ];
-
-  const pyqData = [
-    { year:"2024", q:"Define ecological niche and explain its types.", ans:"Fundamental niche: full potential range. Realized niche: actual range due to competition." },
-    { year:"2024", q:"Difference between primary and secondary succession?", ans:"Primary: barren land. Secondary: after disturbance, soil remains." },
-    { year:"2023", q:"Describe 10% law of energy flow.", ans:"10% energy transfers per trophic level." }
-  ];
-
-  const videoData = [
-    { title:"Ecology Introduction", duration:"45 min", author:"Shomu's Biology", id:"16E1HyetqjY" },
-    { title:"Population Ecology", duration:"52 min", author:"IFAS", id:"ml4hN3FaNfY" },
-    { title:"Species Interactions", duration:"48 min", author:"CSIR Academy", id:"OR7Ms5JYP0c" }
-  ];
-
-  const notesData = [
-    { title:"🌍 Ecosystem", content:"Biotic+Abiotic. Energy flow: unidirectional." },
-    { title:"📈 Population", content:"Exponential: dN/dt=rN. Logistic: dN/dt=rN(1-N/K)." }
-  ];
-
-  function loadMockTest() {
-    let html='<h3>📝 Mock Test</h3>';
-    mockQuestions.forEach((q,i)=>{
-      html+=`<div class="question-card"><div><b>Q${i+1}.</b> ${q.q}</div><div class="options">${q.options.map((o,oi)=>`<div class="option" data-q="${q.id}" data-o="${oi}" onclick="window._sel(this,${q.id},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div><div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div></div>`;
-    });
-    html+='<button class="submit-test-btn" onclick="window._sub()">Submit Test</button><div class="score-display" id="scoreDisplay"></div>';
-    $('mocktestContainer').innerHTML=html; mockTestSubmitted=false;
-  }
-  window._sel=function(el,qId,oIdx){
-    if(mockTestSubmitted)return;
-    el.parentElement.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));
-    el.classList.add('selected');
-  };
-  window._sub=function(){
-    mockTestSubmitted=true; let score=0;
-    mockQuestions.forEach(q=>{
-      const sel=document.querySelector(`.option.selected[data-q="${q.id}"]`);
-      document.querySelectorAll(`.option[data-q="${q.id}"]`).forEach(o=>{
-        const oi=parseInt(o.dataset.o);
-        if(oi===q.correct) o.classList.add('correct');
-        if(sel&&parseInt(sel.dataset.selected)===oi&&oi!==q.correct) o.classList.add('wrong');
-      });
-      const exp=$('exp-'+q.id); if(exp)exp.classList.add('show');
-      if(sel&&parseInt(sel.dataset.selected)===q.correct) score++;
-    });
-    $('scoreDisplay').textContent=`✅ Score: ${score}/${mockQuestions.length}`;
-  };
-
-  function loadPYQs(){ 
-    let html='<h3>📖 Previous Year Questions</h3>'; 
-    pyqData.forEach((p,i)=>html+=`<div class="pyq-card" onclick="this.querySelector('.pyq-answer').classList.toggle('show')"><b>Q${i+1}. [${p.year}]</b><div style="margin-top:6px">${p.q}</div><div class="pyq-answer">✅ ${p.ans}</div></div>`); 
-    $('pyqContainer').innerHTML=html; 
-  }
-  
-  function loadVideos(){ 
-    let html='<h3>🎥 Video Lectures</h3>'; 
-    videoData.forEach(v=>html+=`<div class="video-card" onclick="openVideo('${v.id}', '${v.title}')"><div class="video-thumb">▶</div><div class="video-info"><h4>${v.title}</h4><p>${v.duration} • ${v.author}</p></div></div>`); 
-    $('videoContainer').innerHTML=html; 
-  }
-  
-  window.openVideo = function(id, title) {
-    $('videoModalTitle').textContent = title;
-    $('videoIframe').src = `https://www.youtube.com/embed/${id}?autoplay=1`;
-    $('videoModal').classList.add('active');
-  };
-  window.closeVideoModal = function() {
-    $('videoIframe').src = '';
-    $('videoModal').classList.remove('active');
-  };
-
-  function loadNotes(){ 
-    let html='<h3>📚 Study Notes</h3>'; 
-    notesData.forEach(n=>html+=`<div class="note-card"><div class="note-title">${n.title}</div><p>${n.content}</p></div>`); 
-    $('notesContainer').innerHTML=html; 
-  }
-  
-  function loadProgress(){ 
-    $('progressContainer').innerHTML=`<h3>📊 Statistics</h3><div class="stat-grid">${['Tests','PYQs','Lectures','Notes'].map(t=>`<div class="stat-card"><div class="stat-val">${t==='Tests'?mockQuestions.length:t==='PYQs'?pyqData.length:t==='Lectures'?videoData.length:notesData.length}</div><div class="stat-label">${t}</div></div>`).join('')}</div>`; 
-  }
-
-  // ============ CHAT FUNCTIONS ============
-  async function getOrCreateRoom() {
-    if (!currentUser || !currentPartnerId) return null;
-    const roomId = [currentUser.uid, currentPartnerId].sort().join('_');
-    await db.collection('chatrooms').doc(roomId).set({
-      participants: [currentUser.uid, currentPartnerId],
-      updatedAt: firebase.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-    return roomId;
-  }
-
-  function setupMessages(roomId) {
-    if (unsubscribeMessages) unsubscribeMessages();
-    if (!roomId) return;
-    
-    unsubscribeMessages = db.collection('messages')
-      .where('roomId', '==', roomId)
-      .orderBy('timestamp', 'asc')
-      .onSnapshot(snap => {
-        messagesContainer.innerHTML = '';
-        
-        if (snap.empty) {
-          messagesContainer.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:40px;"><h3>💬 No messages yet</h3><p>Start the conversation with your partner!</p></div>';
-          return;
-        }
-        
-        let lastDate = '';
-        snap.forEach(d => {
-          const m = d.data();
-          if (m.timestamp?.toDate) {
-            const md = m.timestamp.toDate().toLocaleDateString('en-IN', {weekday:'long',day:'numeric',month:'short'});
-            if (md !== lastDate) {
-              lastDate = md;
-              const dd = document.createElement('div');
-              dd.className = 'date-divider';
-              dd.textContent = md;
-              messagesContainer.appendChild(dd);
+        // ============ PANEL SWITCHING ============
+        function showPanel(panelName) {
+            // Hide all panels
+            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+            
+            // Show selected panel
+            if (panelName === 'login') {
+                document.getElementById('login-panel').classList.add('active');
+                updateTabs(0);
+            } else if (panelName === 'register') {
+                document.getElementById('register-panel').classList.add('active');
+                updateTabs(1);
+            } else if (panelName === 'course') {
+                document.getElementById('course-panel').classList.add('active');
+                document.getElementById('tabs').style.display = 'none';
             }
-          }
-          
-          const div = document.createElement('div');
-          const isOwn = m.senderId === currentUser?.uid;
-          div.className = `message-bubble ${isOwn ? 'own' : ''}`;
-          const label = isOwn ? '🧑‍🔬 You' : '🤖 Partner';
-          
-          let contentHtml = '';
-          if (m.type === 'image' && m.imageUrl) {
-            contentHtml = `<img src="${m.imageUrl}" onclick="event.stopPropagation();$('fullscreenOverlay').classList.add('active');$('fullscreenImage').src='${m.imageUrl}';" loading="lazy" alt="Shared image">`;
-          } else {
-            contentHtml = String(m.text || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-          }
-          
-          const time = m.timestamp?.toDate?.().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'}) || '';
-          const metaHtml = `<span>${time}</span>${isOwn && m.seen ? '<span class="seen-tick">✓✓</span>' : (isOwn ? '<span class="seen-tick single">✓</span>' : '')}`;
-          
-          div.innerHTML = `<span class="msg-label">${label}</span>${contentHtml}<div class="message-meta">${metaHtml}</div>`;
-          messagesContainer.appendChild(div);
+        }
+
+        function updateTabs(activeIndex) {
+            document.getElementById('tabs').style.display = 'flex';
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach((tab, i) => {
+                tab.classList.toggle('active', i === activeIndex);
+            });
+        }
+
+        // ============ AUTHENTICATION ============
+        async function handleLogin() {
+            const email = document.getElementById('loginEmail').value.trim();
+            const password = document.getElementById('loginPassword').value;
+            const errorEl = document.getElementById('loginError');
+
+            errorEl.textContent = '';
+
+            if (!email || !password) {
+                errorEl.textContent = 'Please fill all fields';
+                return;
+            }
+
+            try {
+                await auth.signInWithEmailAndPassword(email, password);
+            } catch (error) {
+                errorEl.textContent = getErrorMessage(error.code);
+            }
+        }
+
+        async function handleRegister() {
+            const email = document.getElementById('registerEmail').value.trim();
+            const password = document.getElementById('registerPassword').value;
+            const name = document.getElementById('registerName').value.trim();
+            const errorEl = document.getElementById('registerError');
+
+            errorEl.textContent = '';
+
+            if (!email || !password || !name) {
+                errorEl.textContent = 'Please fill all fields';
+                return;
+            }
+
+            if (password.length < 6) {
+                errorEl.textContent = 'Password must be at least 6 characters';
+                return;
+            }
+
+            try {
+                const cred = await auth.createUserWithEmailAndPassword(email, password);
+                
+                // Save user data
+                await db.collection('users').doc(cred.user.uid).set({
+                    email: email,
+                    name: name,
+                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    courses: []
+                });
+
+                alert('Registration successful! Please login.');
+                showPanel('login');
+            } catch (error) {
+                errorEl.textContent = getErrorMessage(error.code);
+            }
+        }
+
+        function getErrorMessage(code) {
+            const errors = {
+                'auth/user-not-found': 'No account found with this email',
+                'auth/wrong-password': 'Incorrect password',
+                'auth/email-already-in-use': 'Email already registered',
+                'auth/weak-password': 'Password too weak',
+                'auth/invalid-email': 'Invalid email format',
+                'auth/invalid-credential': 'Invalid email or password'
+            };
+            return errors[code] || 'An error occurred. Please try again.';
+        }
+
+        function handleLogout() {
+            auth.signOut();
+        }
+
+        // ============ AUTH STATE LISTENER ============
+        auth.onAuthStateChanged(async (user) => {
+            if (user) {
+                currentUser = user;
+                
+                // Get user data
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                
+                document.getElementById('userNameDisplay').textContent = userData?.name || 'User';
+                document.getElementById('userEmailDisplay').textContent = user.email;
+                
+                showPanel('course');
+                resetPayment();
+            } else {
+                currentUser = null;
+                showPanel('login');
+                document.getElementById('tabs').style.display = 'flex';
+                updateTabs(0);
+            }
         });
-        
-        scrollBottom();
-      });
-  }
 
-  function listenTyping(partnerId) {
-    if (unsubscribeTyping) unsubscribeTyping();
-    if (!partnerId) { typingIndicator.classList.remove('show'); return; }
-    
-    unsubscribeTyping = db.collection('typing').doc(partnerId).onSnapshot(d => {
-      if (d.exists && d.data().isTyping) {
-        typingIndicator.classList.add('show');
-        scrollBottom();
-      } else {
-        typingIndicator.classList.remove('show');
-      }
-    });
-  }
+        // ============ COURSE SELECTION ============
+        function selectCourse(courseId, element) {
+            // Remove selection from all cards
+            document.querySelectorAll('.course-card').forEach(c => c.classList.remove('selected'));
+            
+            // Add selection to clicked card
+            element.classList.add('selected');
+            selectedCourse = courseId;
+            
+            // Enable continue button
+            document.getElementById('continueToPayment').disabled = false;
+            
+            // Reset payment
+            resetPayment();
+        }
 
-  function listenPartnerPresence(partnerId) {
-    if (unsubscribePresence) unsubscribePresence();
-    if (!partnerId) {
-      statusDot.className = 'status-dot offline';
-      partnerDisplayName.textContent = 'No Partner';
-      return;
-    }
-    
-    unsubscribePresence = db.collection('presence').doc(partnerId).onSnapshot(d => {
-      const online = d.exists && d.data().online === true;
-      statusDot.className = online ? 'status-dot' : 'status-dot offline';
-      partnerDisplayName.textContent = online ? 'Partner Online' : 'Partner Offline';
-    });
-  }
+        function showPayment() {
+            if (!selectedCourse) return;
+            
+            const courseNames = {
+                'class9': 'Class 9th',
+                'class10': 'Class 10th',
+                'class11': 'Class 11th',
+                'class12': 'Class 12th',
+                'neet': 'NEET UG',
+                'iitjee': 'IIT JEE',
+                'ssc': 'SSC Exams',
+                'banking': 'Banking Exams'
+            };
+            
+            document.getElementById('selectedCourseName').textContent = courseNames[selectedCourse];
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'block';
+            document.getElementById('step3').style.display = 'none';
+            updatePaymentDisplay();
+        }
 
-  async function sendMsg() {
-    const text = messageInput.value.trim();
-    if (!text || !currentUser || !currentRoomId) return;
-    messageInput.value = '';
-    
-    if (typingTimeoutRef) clearTimeout(typingTimeoutRef);
-    try {
-      await db.collection('typing').doc(currentUser.uid).set({
-        isTyping: false,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    } catch(e) {}
-    
-    try {
-      await db.collection('messages').add({
-        type: 'text',
-        text,
-        roomId: currentRoomId,
-        senderId: currentUser.uid,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-        seen: false
-      });
-    } catch(e) {
-      showToast('Failed to send message', 'error');
-    }
-  }
+        function goBackToCourses() {
+            document.getElementById('step1').style.display = 'block';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'none';
+            resetPayment();
+        }
 
-  sendButton.addEventListener('click', sendMsg);
-  messageInput.addEventListener('keypress', e => {
-    if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendMsg(); }
-  });
-  
-  messageInput.addEventListener('input', () => {
-    if (!currentUser) return;
-    try {
-      db.collection('typing').doc(currentUser.uid).set({
-        isTyping: true,
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      });
-    } catch(e) {}
-    
-    if (typingTimeoutRef) clearTimeout(typingTimeoutRef);
-    typingTimeoutRef = setTimeout(async () => {
-      try {
-        await db.collection('typing').doc(currentUser.uid).set({
-          isTyping: false,
-          timestamp: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch(e) {}
-    }, 2500);
-  });
+        function resetPayment() {
+            couponApplied = false;
+            finalAmount = 500;
+            document.getElementById('couponCode').value = '';
+            document.getElementById('couponAppliedMsg').classList.remove('show');
+            document.getElementById('couponError').textContent = '';
+            document.getElementById('transactionId').value = '';
+            document.getElementById('paymentError').textContent = '';
+            updatePaymentDisplay();
+        }
 
-  // ============ CLEAR CHAT ============
-  clearChatBtn.addEventListener('click', () => {
-    deleteModal.classList.add('active');
-    deleteProgress.classList.remove('show');
-    confirmDeleteBtn.disabled = false;
-  });
-  
-  cancelDeleteBtn.addEventListener('click', () => deleteModal.classList.remove('active'));
-  
-  confirmDeleteBtn.addEventListener('click', async () => {
-    if (!currentUser || !currentRoomId) return;
-    confirmDeleteBtn.disabled = true;
-    deleteProgress.classList.add('show');
-    try {
-      const snap = await db.collection('messages').where('roomId', '==', currentRoomId).get();
-      const batch = db.batch();
-      snap.forEach(d => batch.delete(d.ref));
-      await batch.commit();
-      showToast('✅ Chat room cleared', 'success');
-    } catch(e) {
-      showToast('Error clearing messages', 'error');
-    }
-    deleteModal.classList.remove('active');
-    deleteProgress.classList.remove('show');
-    confirmDeleteBtn.disabled = false;
-  });
+        // ============ COUPON SYSTEM ============
+        function applyCoupon() {
+            const code = document.getElementById('couponCode').value.trim().toUpperCase();
+            const errorEl = document.getElementById('couponError');
+            
+            errorEl.textContent = '';
+            document.getElementById('couponAppliedMsg').classList.remove('show');
+            
+            if (code === 'THP123') {
+                couponApplied = true;
+                finalAmount = 100;
+                document.getElementById('couponAppliedMsg').classList.add('show');
+                updatePaymentDisplay();
+            } else {
+                couponApplied = false;
+                finalAmount = 500;
+                errorEl.textContent = 'Invalid coupon code';
+                updatePaymentDisplay();
+            }
+        }
 
-  // ============ AUTHENTICATION ============
-  const doAuth = async () => {
-    const email = emailInput.value.trim().toLowerCase();
-    const pw = passwordInput.value.trim();
-    authError.textContent = '';
-    
-    if (!email || !pw) {
-      authError.textContent = 'Please fill all fields';
-      return;
-    }
-    
-    if (pw.length < 6) {
-      authError.textContent = 'Password must be at least 6 characters';
-      return;
-    }
-    
-    authActionBtn.disabled = true;
-    try {
-      if (isLoginMode) {
-        await auth.signInWithEmailAndPassword(email, pw);
-      } else {
-        const cred = await auth.createUserWithEmailAndPassword(email, pw);
-        await db.collection('users').doc(cred.user.uid).set({
-          email: email,
-          role: ADMIN_EMAILS.includes(email) ? 'admin' : 'scholar',
-          status: ADMIN_EMAILS.includes(email) ? 'approved' : 'pending',
-          partnerId: null,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      }
-    } catch(e) {
-      const errorMap = {
-        'auth/user-not-found': 'Account not found. Please register.',
-        'auth/wrong-password': 'Incorrect password',
-        'auth/email-already-in-use': 'Email already registered',
-        'auth/weak-password': 'Password too weak (min 6 chars)',
-        'auth/invalid-email': 'Invalid email format'
-      };
-      authError.textContent = errorMap[e.code] || 'Authentication error. Try again.';
-    }
-    authActionBtn.disabled = false;
-  };
+        function updatePaymentDisplay() {
+            document.getElementById('finalPrice').textContent = '₹' + finalAmount;
+            document.getElementById('paymentAmount').textContent = '₹' + finalAmount;
+        }
 
-  authActionBtn.addEventListener('click', doAuth);
-  passwordInput.addEventListener('keypress', e => { if (e.key === 'Enter') doAuth(); });
-  
-  toggleAuthBtn.addEventListener('click', () => {
-    isLoginMode = !isLoginMode;
-    authActionBtn.textContent = isLoginMode ? 'Access Portal' : 'Register Account';
-    toggleAuthBtn.textContent = isLoginMode ? 'New Scholar? Register Here' : 'Already registered? Login';
-    authError.textContent = '';
-  });
-  
-  logoutButton.addEventListener('click', async () => {
-    if (currentUser) {
-      try {
-        await db.collection('presence').doc(currentUser.uid).set({
-          online: false,
-          lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-        });
-      } catch(e) {}
-      await auth.signOut();
-    }
-  });
+        // ============ PAYMENT VERIFICATION ============
+        async function verifyPayment() {
+            const transactionId = document.getElementById('transactionId').value.trim();
+            const errorEl = document.getElementById('paymentError');
+            
+            errorEl.textContent = '';
+            
+            if (!transactionId) {
+                errorEl.textContent = 'Please enter the transaction ID';
+                return;
+            }
+            
+            if (transactionId.length < 6) {
+                errorEl.textContent = 'Please enter a valid transaction ID';
+                return;
+            }
+            
+            // Save payment to database
+            try {
+                await db.collection('payments').add({
+                    userId: currentUser.uid,
+                    userEmail: currentUser.email,
+                    course: selectedCourse,
+                    amount: finalAmount,
+                    couponApplied: couponApplied,
+                    transactionId: transactionId,
+                    status: 'verified',
+                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
+                });
+                
+                // Update user's courses
+                await db.collection('users').doc(currentUser.uid).update({
+                    courses: firebase.firestore.FieldValue.arrayUnion(selectedCourse)
+                });
+                
+                // Show success
+                showSuccessScreen(transactionId);
+                
+            } catch (error) {
+                errorEl.textContent = 'Payment verification failed. Please try again.';
+                console.error(error);
+            }
+        }
 
-  // ============ AUTH STATE LISTENER ============
-  auth.onAuthStateChanged(async user => {
-    if (unsubscribeMessages) { unsubscribeMessages(); unsubscribeMessages = null; }
-    if (unsubscribeTyping) { unsubscribeTyping(); unsubscribeTyping = null; }
-    if (unsubscribePresence) { unsubscribePresence(); unsubscribePresence = null; }
-    
-    if (user) {
-      currentUser = user;
-      
-      const userDoc = await db.collection('users').doc(user.uid).get();
-      let userData = userDoc.data();
-      
-      if (!userData) {
-        await db.collection('users').doc(user.uid).set({
-          email: user.email,
-          role: ADMIN_EMAILS.includes(user.email) ? 'admin' : 'scholar',
-          status: ADMIN_EMAILS.includes(user.email) ? 'approved' : 'pending',
-          partnerId: null,
-          createdAt: firebase.firestore.FieldValue.serverTimestamp()
-        });
-        userData = { status: ADMIN_EMAILS.includes(user.email) ? 'approved' : 'pending', role: ADMIN_EMAILS.includes(user.email) ? 'admin' : 'scholar', partnerId: null };
-      }
-      
-      isAdmin = ADMIN_EMAILS.includes(user.email) || userData.role === 'admin';
-      adminPanelBtn.style.display = isAdmin ? 'inline-block' : 'none';
-      userRoleBadge.textContent = isAdmin ? 'ADMIN' : (userData.role || 'SCHOLAR');
-      
-      if (userData.status !== 'approved' && !isAdmin) {
-        showToast('⏳ Your account is pending admin approval.', 'error');
-        await auth.signOut();
-        return;
-      }
-      
-      showWorkspace();
-      
-      await db.collection('presence').doc(user.uid).set({
-        online: true,
-        email: user.email,
-        lastSeen: firebase.firestore.FieldValue.serverTimestamp()
-      });
-      
-      currentPartnerId = userData.partnerId || null;
-      
-      if (currentPartnerId) {
-        const partnerDoc = await db.collection('users').doc(currentPartnerId).get();
-        const partnerData = partnerDoc.data();
-        partnerInfo.textContent = `Connected to: ${partnerData?.email || 'Unknown Partner'}`;
-        currentRoomId = await getOrCreateRoom();
-        setupMessages(currentRoomId);
-        listenTyping(currentPartnerId);
-        listenPartnerPresence(currentPartnerId);
-      } else {
-        partnerInfo.textContent = 'No partner assigned yet. Contact admin.';
-        partnerDisplayName.textContent = 'Waiting for partner';
-        statusDot.className = 'status-dot offline';
-        messagesContainer.innerHTML = '<div style="text-align:center;color:#94a3b8;padding:40px;"><h3>👋 Welcome!</h3><p>You will be paired with a partner soon.</p></div>';
-      }
-      
-      showToast('✅ Welcome to StudyMine!', 'success');
-    } else {
-      currentUser = null;
-      currentRoomId = null;
-      currentPartnerId = null;
-      isAdmin = false;
-      showAuth();
-      emailInput.value = '';
-      passwordInput.value = '';
-    }
-  });
-
-  function showAuth() { 
-    authScreen.style.display = 'flex'; 
-    appWorkspace.style.display = 'none'; 
-    adminPanelBtn.style.display = 'none';
-  }
-  
-  function showWorkspace() { 
-    authScreen.style.display = 'none'; 
-    appWorkspace.style.display = 'flex'; 
-    setTimeout(scrollBottom, 200);
-  }
-
-  showAuth();
-  console.log('🚀 StudyMine Multi-User System Ready');
-  console.log('📋 Admin emails:', ADMIN_EMAILS);
-  console.log('🔥 Firebase Project:', firebaseConfig.projectId);
-})();
-</script>
+        function showSuccessScreen(transactionId) {
+            document.getElementById('step1').style.display = 'none';
+            document.getElementById('step2').style.display = 'none';
+            document.getElementById('step3').style.display = 'block';
+            document.getElementById('successTxnId').textContent = transactionId;
+            
+            // Set redirect link based on course
+            const courseLinks = {
+                'class9': 'Class9.html',
+                'class10': 'Class10.html',
+                'class11': 'Class11.html',
+                'class12': 'Class12.html',
+                'neet': 'NEET.html',
+                'iitjee': 'IITJEE.html',
+                'ssc': 'SSC.html',
+                'banking': 'Banking.html'
+            };
+            
+            const link = courseLinks[selectedCourse] || 'dashboard.html';
+            document.getElementById('redirectLink').href = link;
+            
+            // Auto redirect after 3 seconds
+            setTimeout(() => {
+                window.location.href = link;
+            }, 3000);
+        }
+    </script>
 </body>
 </html>

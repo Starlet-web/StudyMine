@@ -187,7 +187,6 @@
 </head>
 <body>
 <div class="app-container" id="appContainer">
-  <!-- Auth Screen -->
   <div id="authScreen" class="auth-screen">
     <div class="auth-wrapper">
       <div style="text-align:center;">
@@ -196,7 +195,7 @@
       </div>
       <div class="auth-card">
         <div style="text-align:center;margin-bottom:6px"><span class="tag">NEET-UG BIOLOGY</span></div>
-        <h2>NEET Biology Hub</h2>
+        <h2>StudyMine NEET Hub</h2>
         <p class="subtitle">Botany • Zoology • Human Physiology • Genetics</p>
         <div class="input-group"><label>Email ID</label><input type="email" id="emailInput" class="auth-input" placeholder="neetaspirant@email.com"></div>
         <div class="input-group"><label>Password</label><input type="password" id="passwordInput" class="auth-input" placeholder="••••••••"></div>
@@ -204,11 +203,10 @@
         <div class="error-message" id="authError"></div>
         <button id="toggleAuthBtn" class="auth-toggle">New Aspirant? Register</button>
       </div>
-      <div class="security-notice">🔒 NTA Secured • SSL Encrypted • Academic Integrity</div>
+      <div class="security-notice">🔒 NTA Secured • StudyMine Firebase • Academic Integrity</div>
     </div>
   </div>
 
-  <!-- Panic Overlay -->
   <div id="panicOverlay" class="panic-overlay">
     <div style="background:#1a73e8;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
       <h2 style="margin:0;font-size:1.1rem;">📚 NCERT Biology Textbook</h2>
@@ -216,41 +214,27 @@
     </div>
     <div style="padding:20px;flex:1;overflow-y:auto;background:#f8f9fa;">
       <div style="max-width:700px;margin:0 auto;">
-        <div style="background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-          <h3 style="color:#1a73e8;">📖 Chapter 1: The Living World</h3>
-          <p style="color:#5f6368;">Taxonomy, Systematics, Binomial Nomenclature</p>
-        </div>
-        <div style="background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-          <h3 style="color:#1a73e8;">📖 Chapter 2: Biological Classification</h3>
-          <p style="color:#5f6368;">Five Kingdom System, Monera, Protista, Fungi</p>
-        </div>
-        <div style="background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.1);">
-          <h3 style="color:#1a73e8;">📊 Practice Test Scores</h3>
-          <table style="width:100%;border-collapse:collapse;">
-            <tr style="border-bottom:1px solid #e0e0e0;"><td style="padding:8px;">Mock Test 1</td><td style="text-align:right;color:#10b981;">320/360</td></tr>
-            <tr><td style="padding:8px;">Chapter Test</td><td style="text-align:right;color:#10b981;">85/90</td></tr>
-          </table>
-        </div>
+        <div style="background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1);"><h3 style="color:#1a73e8;">📖 Ch 1: The Living World</h3><p style="color:#5f6368;">Taxonomy, Binomial Nomenclature</p></div>
+        <div style="background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;box-shadow:0 1px 3px rgba(0,0,0,0.1);"><h3 style="color:#1a73e8;">📖 Ch 2: Biological Classification</h3><p style="color:#5f6368;">Five Kingdom System</p></div>
+        <div style="background:#fff;border-radius:8px;padding:16px;box-shadow:0 1px 3px rgba(0,0,0,0.1);"><h3 style="color:#1a73e8;">📊 Practice Scores</h3><table style="width:100%;border-collapse:collapse;"><tr style="border-bottom:1px solid #e0e0e0;"><td style="padding:8px;">Mock Test 1</td><td style="text-align:right;color:#10b981;">320/360</td></tr><tr><td style="padding:8px;">Chapter Test</td><td style="text-align:right;color:#10b981;">85/90</td></tr></table></div>
       </div>
     </div>
   </div>
 
-  <!-- Main App -->
   <div id="appWorkspace" class="app-workspace">
     <div class="top-bar">
-      <div><span>🧬 NEET BIOLOGY RESEARCH</span></div>
+      <div><span>🧬 StudyMine NEET BIOLOGY</span></div>
       <div style="display:flex;align-items:center;gap:6px;">
         <span id="studyStreakDisplay" class="study-streak">🔥 0 Days</span>
         <span id="govtLiveTime">--:--:--</span>
         <button id="notificationBellBtn" class="btn" style="background:#f59e0b;color:#1a3a5c;border:none;">🔔 <span id="notificationBadge" style="display:none;">0</span></button>
       </div>
     </div>
-    
     <div class="main-header">
       <div class="header-row">
         <div class="org-brand">
           <div class="nta-badge">NTA<br><span style="font-size:0.35rem;color:#f8fafc;">NEET</span></div>
-          <div><h3>NEET-UG Biology Unit</h3><p>Advanced Learning & Practice Platform</p></div>
+          <div><h3>NEET-UG Biology Unit</h3><p>StudyMine Advanced Learning Platform</p></div>
         </div>
         <div class="header-actions">
           <div class="session-dot"><span id="statusDot" class="status-dot"></span><span id="partnerDisplayName">AI Mentor</span></div>
@@ -269,7 +253,6 @@
         <span class="nav-item" data-section="progress">📊 Stats</span>
       </div>
     </div>
-    
     <div class="main-layout">
       <div class="sidebar" id="sidebar">
         <div class="sidebar-title">🌿 Botany</div>
@@ -282,7 +265,6 @@
         <div class="sidebar-item" data-section="chat">Mendelian Genetics</div>
         <div class="sidebar-item" data-section="chat">Molecular Basis</div>
       </div>
-      
       <div class="content-area">
         <div class="section-panel active" id="section-chat">
           <div class="chat-container" id="messagesContainer"><div class="empty-state" id="emptyState"><div class="icon">🧬</div><h3>NEET AI Mentor</h3><p>Ask NCERT questions, clear doubts...</p></div></div>
@@ -310,22 +292,24 @@
   </div>
 </div>
 
-<!-- Modals -->
-<div id="deleteModal" class="modal-overlay"><div class="modal"><h4>⚠️ Delete All Data?</h4><p style="font-size:0.7rem;">Permanently clear chat history.</p><div id="deleteProgress">Deleting...</div><div><button id="cancelDeleteBtn" class="modal-btn cancel">Cancel</button><button id="confirmDeleteBtn" class="modal-btn confirm">Delete</button></div></div></div>
+<div id="deleteModal" class="modal-overlay"><div class="modal"><h4>⚠️ Delete All Data?</h4><p style="font-size:0.7rem;">Permanently clear chat history.</p><div><button id="cancelDeleteBtn" class="modal-btn cancel">Cancel</button><button id="confirmDeleteBtn" class="modal-btn confirm">Delete</button></div></div></div>
 <div id="fullscreenOverlay" class="fullscreen-overlay" onclick="this.classList.remove('active')"><img id="fullscreenImage" src="" alt="Fullscreen"></div>
 <div id="videoModal" class="modal-overlay" onclick="if(event.target===this)closeVideoModal()"><div class="video-modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="videoModalTitle">Lecture</h4><button onclick="closeVideoModal()" style="cursor:pointer;font-weight:600;">✕ Close</button></div><div class="video-wrapper"><iframe id="videoIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe></div></div></div>
 <div id="toast" class="toast"></div>
 
 <script>
 (function() {
+  // ============ StudyMine Firebase Config ============
   const firebaseConfig = {
-    apiKey: "AIzaSyDS0rzCKglHblF2dlFEKE-ouV0yOu0z5UM",
-    authDomain: "mine-a1e68.firebaseapp.com",
-    projectId: "mine-a1e68",
-    storageBucket: "mine-a1e68.firebasestorage.app",
-    messagingSenderId: "48499757892",
-    appId: "1:48499757892:web:d0fd281ab0df945e893d11"
+    apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
+    authDomain: "studymine-fa92d.firebaseapp.com",
+    projectId: "studymine-fa92d",
+    storageBucket: "studymine-fa92d.firebasestorage.app",
+    messagingSenderId: "460797718327",
+    appId: "1:460797718327:web:66316f16930b304b2e34b2",
+    measurementId: "G-ZBJ6GLM3L8"
   };
+  
   const IMGBB_API_KEY = "53fb01955a45c5462724b8f7d238500a";
   const ALLOWED_EMAILS = ["mgbhaukali@gmail.com", "manshi@gmail.com"];
   
@@ -463,7 +447,6 @@
   fileInput.addEventListener('change', handleImageUpload);
   cameraInput.addEventListener('change', (e) => { fileInput.files = e.target.files; fileInput.dispatchEvent(new Event('change')); });
 
-  // ============ NEET DATA ============
   const neetTopics = ['Botany', 'Zoology', 'Human Physiology', 'Genetics', 'Ecology', 'Cell Biology', 'Biotechnology'];
   const years = ['2024','2023','2022','2021','2020','2019','2018','2017'];
   
@@ -705,7 +688,7 @@
       currentUser=user;showApp();await setOnline(user.uid,user.email);
       lastReadTimestamp=firebase.firestore.Timestamp.now();unreadCount=0;
       setupMessages();const pid=await getPartnerUid();listenPartnerPresence(pid);listenTyping(pid);
-      updateStreakDisplay();showToast('🧬 NEET Portal Ready!');
+      updateStreakDisplay();showToast('🧬 StudyMine NEET Ready!');
     }else{currentUser=null;showAuth();emailInput.value='';passwordInput.value='';}
   });
   showAuth();

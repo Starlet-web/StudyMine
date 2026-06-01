@@ -6,13 +6,19 @@
     <title>StudyMine</title>
     <style>
         :root {
-            --bg: #0a0a0f;
-            --card: #13131f;
+            --bg: #f8fafc;
+            --card: #ffffff;
+            --border: #e2e8f0;
             --purple: #7c3aed;
-            --cyan: #06b6d4;
-            --green: #10b981;
-            --red: #ef4444;
-            --yellow: #f59e0b;
+            --purple-light: #ede9fe;
+            --cyan: #0891b2;
+            --green: #059669;
+            --text: #0f172a;
+            --muted: #64748b;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow: 0 4px 6px -1px rgba(0,0,0,0.07), 0 2px 4px -2px rgba(0,0,0,0.05);
+            --shadow-lg: 0 20px 40px -8px rgba(0,0,0,0.1), 0 0 0 1px rgba(0,0,0,0.03);
+            --shadow-glow: 0 0 0 3px rgba(124,58,237,0.1), 0 20px 40px -8px rgba(124,58,237,0.15);
         }
 
         * {
@@ -27,98 +33,143 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: system-ui, -apple-system, sans-serif;
-            overflow: hidden;
+            font-family: 'Inter', system-ui, -apple-system, sans-serif;
+            padding: 16px;
             position: relative;
         }
 
-        /* Quantum mesh background */
+        /* Subtle dot pattern */
         body::before {
             content: '';
             position: fixed;
             inset: 0;
-            background: 
-                radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.15) 0%, transparent 50%),
-                radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.1) 0%, transparent 50%),
-                radial-gradient(ellipse at 50% 80%, rgba(16,185,129,0.1) 0%, transparent 50%);
-            animation: fieldRotate 30s linear infinite;
+            background-image: radial-gradient(rgba(124,58,237,0.06) 1px, transparent 1px);
+            background-size: 24px 24px;
+            pointer-events: none;
+            z-index: 0;
         }
 
-        @keyframes fieldRotate {
-            to { transform: rotate(360deg); }
-        }
-
-        /* Grid lines */
-        body::after {
-            content: '';
+        /* Ambient glow orbs */
+        .ambient {
             position: fixed;
-            inset: 0;
-            background-image: 
-                linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
-                linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
-            background-size: 50px 50px;
-            animation: gridShift 10s linear infinite;
+            border-radius: 50%;
+            filter: blur(80px);
+            pointer-events: none;
+            z-index: 0;
+            opacity: 0.5;
+        }
+        .ambient-1 {
+            width: 300px;
+            height: 300px;
+            background: rgba(124,58,237,0.12);
+            top: -50px;
+            left: -80px;
+            animation: driftA 12s ease-in-out infinite;
+        }
+        .ambient-2 {
+            width: 250px;
+            height: 250px;
+            background: rgba(8,145,178,0.1);
+            bottom: -60px;
+            right: -60px;
+            animation: driftB 14s ease-in-out infinite;
+        }
+        .ambient-3 {
+            width: 200px;
+            height: 200px;
+            background: rgba(5,150,105,0.08);
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation: driftC 16s ease-in-out infinite;
         }
 
-        @keyframes gridShift {
-            to { background-position: 50px 50px; }
+        @keyframes driftA {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(40px, 30px); }
+            66% { transform: translate(-20px, -20px); }
+        }
+        @keyframes driftB {
+            0%, 100% { transform: translate(0, 0); }
+            33% { transform: translate(-30px, -40px); }
+            66% { transform: translate(25px, 20px); }
+        }
+        @keyframes driftC {
+            0%, 100% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.3); }
         }
 
         .container {
-            width: min(700px, 95vw);
-            background: rgba(19,19,31,0.8);
-            backdrop-filter: blur(40px);
-            border-radius: 28px;
-            padding: 40px 30px;
-            border: 1px solid rgba(124,58,237,0.2);
-            box-shadow: 
-                0 0 60px rgba(124,58,237,0.1),
-                inset 0 0 60px rgba(124,58,237,0.05);
+            width: min(660px, 100%);
+            background: rgba(255,255,255,0.85);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-radius: 24px;
+            padding: 36px 28px;
+            border: 1px solid var(--border);
+            box-shadow: var(--shadow-lg);
             position: relative;
             z-index: 1;
-            animation: containerFloat 6s ease-in-out infinite;
-        }
-
-        @keyframes containerFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-8px); }
         }
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 32px;
         }
 
         .logo {
-            font-size: 2.2rem;
-            font-weight: 900;
+            font-size: 2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            color: var(--text);
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .logo span {
             background: linear-gradient(135deg, var(--purple), var(--cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
-            letter-spacing: -1px;
-            filter: drop-shadow(0 0 20px rgba(124,58,237,0.5));
         }
 
+        .badge-row {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
         .badge {
             display: inline-flex;
             align-items: center;
-            gap: 6px;
-            background: rgba(16,185,129,0.1);
-            border: 1px solid rgba(16,185,129,0.3);
-            color: var(--green);
-            padding: 6px 16px;
-            border-radius: 20px;
+            gap: 5px;
             font-size: 0.7rem;
             font-weight: 600;
-            letter-spacing: 2px;
-            margin-top: 12px;
-            animation: badgePulse 2s ease-in-out infinite;
+            padding: 5px 12px;
+            border-radius: 20px;
+            letter-spacing: 0.3px;
         }
-
-        @keyframes badgePulse {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
-            50% { box-shadow: 0 0 20px 5px rgba(16,185,129,0.1); }
+        .badge-secure {
+            background: var(--purple-light);
+            color: var(--purple);
+            border: 1px solid rgba(124,58,237,0.2);
+        }
+        .badge-live {
+            background: #d1fae5;
+            color: var(--green);
+            border: 1px solid rgba(5,150,105,0.2);
+        }
+        .badge-live .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: dotPulse 2s ease-in-out infinite;
+        }
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
         .grid {
@@ -128,119 +179,88 @@
         }
 
         .card {
-            background: rgba(19,19,31,0.9);
-            border: 1px solid rgba(255,255,255,0.06);
+            background: var(--card);
+            border: 1px solid var(--border);
             border-radius: 16px;
-            padding: 24px 14px;
+            padding: 22px 12px;
             text-align: center;
             text-decoration: none;
-            color: #e2e8f0;
-            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            color: var(--text);
+            transition: all 0.35s cubic-bezier(0.23, 1, 0.32, 1);
             position: relative;
-            overflow: hidden;
             cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+            outline: none;
         }
-
-        .card::before {
-            content: '';
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124,58,237,0.15), transparent 40%);
-            opacity: 0;
-            transition: opacity 0.4s;
-        }
-
-        .card:hover::before {
-            opacity: 1;
-        }
-
-        .card::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 10%;
-            width: 80%;
-            height: 1px;
-            background: linear-gradient(90deg, transparent, var(--purple), transparent);
-            transform: scaleX(0);
-            transition: transform 0.4s;
-        }
-
-        .card:hover::after {
-            transform: scaleX(1);
-        }
-
         .card:hover {
-            transform: translateY(-6px);
-            border-color: rgba(124,58,237,0.4);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(124,58,237,0.1);
+            transform: translateY(-4px);
+            border-color: rgba(124,58,237,0.35);
+            box-shadow: var(--shadow-glow);
+        }
+        .card:active {
+            transform: scale(0.97);
+            transition: transform 0.1s;
+        }
+        .card:focus-visible {
+            box-shadow: 0 0 0 3px rgba(124,58,237,0.3);
         }
 
-        .icon {
-            font-size: 2.4rem;
-            transition: transform 0.4s;
-            filter: drop-shadow(0 0 8px rgba(124,58,237,0.3));
+        .icon-wrap {
+            width: 48px;
+            height: 48px;
+            border-radius: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.6rem;
+            transition: transform 0.35s;
+            position: relative;
         }
-
-        .card:hover .icon {
-            transform: scale(1.15) rotate(5deg);
+        .card:hover .icon-wrap {
+            transform: scale(1.1);
         }
+        /* Unique subtle icon backgrounds */
+        .card:nth-child(1) .icon-wrap { background: #fef2f2; }
+        .card:nth-child(2) .icon-wrap { background: #fefce8; }
+        .card:nth-child(3) .icon-wrap { background: #eff6ff; }
+        .card:nth-child(4) .icon-wrap { background: #f0fdf4; }
+        .card:nth-child(5) .icon-wrap { background: #fdf4ff; }
+        .card:nth-child(6) .icon-wrap { background: #ecfeff; }
+        .card:nth-child(7) .icon-wrap { background: #fff7ed; }
 
         .name {
             font-weight: 700;
-            font-size: 0.85rem;
-            line-height: 1.2;
+            font-size: 0.82rem;
+            line-height: 1.25;
+            color: var(--text);
+        }
+        .hint {
+            font-size: 0.65rem;
+            color: var(--muted);
+            letter-spacing: 0.3px;
         }
 
-        /* Special card styling */
-        .card:nth-child(1) .icon { animation: floatA 3s ease-in-out infinite; }
-        .card:nth-child(2) .icon { animation: floatB 3.2s ease-in-out infinite; }
-        .card:nth-child(3) .icon { animation: floatA 3.4s ease-in-out infinite 0.3s; }
-        .card:nth-child(4) .icon { animation: floatB 3.1s ease-in-out infinite 0.5s; }
-        .card:nth-child(5) .icon { animation: floatA 3.3s ease-in-out infinite 0.2s; }
-        .card:nth-child(6) .icon { animation: floatB 3.5s ease-in-out infinite 0.4s; }
-        .card:nth-child(7) .icon { animation: floatA 3.6s ease-in-out infinite 0.6s; }
-
-        @keyframes floatA {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-4px); }
-        }
-        @keyframes floatB {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-3px); }
-        }
-
-        /* Last row centering */
+        /* Position cards 5 & 7 for perfect centering in 4-col grid */
         .grid > .card:nth-child(5) { grid-column: 2; }
         .grid > .card:nth-child(7) { grid-column: 3; }
 
         .footer {
             text-align: center;
-            margin-top: 30px;
+            margin-top: 24px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 8px;
             font-size: 0.7rem;
-            color: rgba(255,255,255,0.3);
-            font-family: 'Courier New', monospace;
+            color: var(--muted);
+            font-family: 'SF Mono', 'Cascadia Code', 'Consolas', monospace;
         }
-
-        .dot {
-            width: 6px;
-            height: 6px;
-            background: var(--green);
-            border-radius: 50%;
-            animation: dotPulse 2s ease-in-out infinite;
-        }
-
-        @keyframes dotPulse {
-            0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--green); }
-            50% { opacity: 0.3; box-shadow: 0 0 8px var(--green); }
+        .footer .sep {
+            color: var(--border);
         }
 
         @media (max-width: 600px) {
@@ -253,214 +273,187 @@
                 grid-column: auto;
             }
             .container {
-                padding: 30px 18px;
+                padding: 24px 16px;
             }
             .logo {
-                font-size: 1.8rem;
+                font-size: 1.6rem;
             }
             .card {
-                padding: 20px 10px;
+                padding: 18px 8px;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Ambient light orbs -->
+    <div class="ambient ambient-1"></div>
+    <div class="ambient ambient-2"></div>
+    <div class="ambient ambient-3"></div>
+
     <div class="container" id="container">
         <div class="header">
-            <div class="logo">📚 StudyMine</div>
-            <div class="badge">🔐 AES-256-GCM</div>
+            <div class="logo">
+                📚 <span>StudyMine</span>
+            </div>
+            <div class="badge-row">
+                <div class="badge badge-secure">🔐 AES-256-GCM</div>
+                <div class="badge badge-live">
+                    <span class="dot"></span> LIVE
+                </div>
+            </div>
         </div>
 
         <div class="grid">
             <a href="NEET.html" class="card">
-                <span class="icon">🩺</span>
+                <div class="icon-wrap">🩺</div>
                 <span class="name">NEET UG</span>
+                <span class="hint">Medical</span>
             </a>
             <a href="Commerce.html" class="card">
-                <span class="icon">💼</span>
+                <div class="icon-wrap">💼</div>
                 <span class="name">11-12 Commerce</span>
+                <span class="hint">Business</span>
             </a>
             <a href="Class9.html" class="card">
-                <span class="icon">📘</span>
+                <div class="icon-wrap">📘</div>
                 <span class="name">Class 9th</span>
+                <span class="hint">Foundation</span>
             </a>
             <a href="Class10.html" class="card">
-                <span class="icon">📙</span>
+                <div class="icon-wrap">📙</div>
                 <span class="name">Class 10th</span>
+                <span class="hint">Boards</span>
             </a>
             <a href="PCB.html" class="card">
-                <span class="icon">🧬</span>
+                <div class="icon-wrap">🧬</div>
                 <span class="name">11-12 PCB</span>
+                <span class="hint">Biology</span>
             </a>
             <a href="PCM.html" class="card">
-                <span class="icon">🔬</span>
+                <div class="icon-wrap">🔬</div>
                 <span class="name">11-12 PCM</span>
+                <span class="hint">Science</span>
             </a>
             <a href="IIT.html" class="card">
-                <span class="icon">⚙️</span>
+                <div class="icon-wrap">⚙️</div>
                 <span class="name">IIT / JEE</span>
+                <span class="hint">Engineering</span>
             </a>
         </div>
 
         <div class="footer">
-            <span class="dot"></span>
             <span id="sessionId">SESS-0x</span>
-            <span>·</span>
-            <span>SECURE</span>
+            <span class="sep">·</span>
+            <span>SECURE CHANNEL</span>
+            <span class="sep">·</span>
+            <span id="timeDisplay">--:--:--</span>
         </div>
     </div>
 
     <script>
-        // ═══════════════════════════════════════════
-        // QUANTUM-ENTANGLED SECURITY MODULE v4.2.1
-        // ═══════════════════════════════════════════
         (() => {
-            // --- Obfuscated Core ---
-            const _$ = (s) => document.querySelector(s);
-            const _$$ = (s) => document.querySelectorAll(s);
-            
-            // --- Entropy Collector ---
-            const entropy = {
-                mouse: [],
-                timing: performance.now(),
-                keys: '',
-                clicks: 0
-            };
-            
-            // --- Generate unique session fingerprint ---
-            const fp = ((d) => {
-                const screen = `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`;
-                const nav = `${navigator.hardwareConcurrency||0},${navigator.deviceMemory||0},${navigator.language}`;
-                const time = new Date().getTimezoneOffset();
-                const raw = screen + nav + time + d;
-                let hash = 0x811c9dc5;
+            // ──────────────────────────────────────
+            //  StudyMine Core · White Edition v5.0
+            // ──────────────────────────────────────
+
+            const $ = (s, p = document) => p.querySelector(s);
+            const $$ = (s, p = document) => p.querySelectorAll(s);
+
+            // ── Unique session fingerprint ──
+            const fp = (() => {
+                const raw = [
+                    screen.width, screen.height, screen.colorDepth,
+                    navigator.hardwareConcurrency || 1,
+                    navigator.deviceMemory || 0,
+                    navigator.language,
+                    new Date().getTimezoneOffset(),
+                    performance.now().toString(36)
+                ].join('|');
+                // Simple FNV-1a 32-bit
+                let h = 0x811c9dc5;
                 for (let i = 0; i < raw.length; i++) {
-                    hash ^= raw.charCodeAt(i);
-                    hash = Math.imul(hash, 0x01000193);
+                    h ^= raw.charCodeAt(i);
+                    h = Math.imul(h, 0x01000193);
                 }
-                return (hash >>> 0).toString(16).padStart(8, '0').slice(0, 8);
-            })(performance.now().toString(36));
-            
-            _$('#sessionId').textContent = `SESS-0x${fp}`;
-            
-            // --- Mouse tracking for card effects ---
-            const container = _$('#container');
-            
-            container.addEventListener('mousemove', (e) => {
-                const rect = container.getBoundingClientRect();
-                const x = ((e.clientX - rect.left) / rect.width) * 100;
-                const y = ((e.clientY - rect.top) / rect.height) * 100;
-                
-                _$$('.card').forEach(card => {
-                    card.style.setProperty('--mouse-x', `${x}%`);
-                    card.style.setProperty('--mouse-y', `${y}%`);
-                });
-                
-                entropy.mouse.push(e.clientX, e.clientY);
-                if (entropy.mouse.length > 100) entropy.mouse.splice(0, 2);
-            });
-            
-            // --- Keystroke entropy ---
-            document.addEventListener('keydown', (e) => {
-                entropy.keys += e.key;
-                entropy.clicks++;
-            });
-            
-            // --- Click tracking with encrypted logging ---
-            _$$('.card').forEach((card, i) => {
+                return (h >>> 0).toString(16).padStart(8, '0').slice(0, 8);
+            })();
+
+            $('#sessionId').textContent = `SESS-0x${fp}`;
+
+            // ── Live clock ──
+            const tick = () => {
+                const now = new Date();
+                $('#timeDisplay').textContent =
+                    now.toLocaleTimeString('en-IN', { hour12: false, hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            };
+            tick();
+            setInterval(tick, 1000);
+
+            // ── Ripple effect on card click ──
+            $$('.card').forEach(card => {
                 card.addEventListener('click', function(e) {
-                    const target = this.getAttribute('href');
-                    const t = Date.now();
-                    const payload = `${target}|${t}|${fp}|${i}`;
-                    
-                    // Simple XOR obfuscation for logging
-                    const obfuscated = Array.from(payload)
-                        .map((c, j) => String.fromCharCode(c.charCodeAt(0) ^ ((t >> (j%8)) & 0xFF)))
-                        .join('');
-                    
-                    console.debug(`%c◈ %cROUTE%c ${target}`,
-                        'color:#7c3aed',
-                        'color:#10b981;font-weight:bold',
-                        'color:#e2e8f0'
-                    );
-                    
-                    // Store in session
-                    sessionStorage.setItem('_sm_route', btoa(obfuscated));
-                    sessionStorage.setItem('_sm_ts', t);
+                    const ripple = document.createElement('span');
+                    ripple.style.cssText = `
+                        position: absolute;
+                        border-radius: 50%;
+                        background: rgba(124,58,237,0.2);
+                        width: 20px;
+                        height: 20px;
+                        left: ${e.clientX - this.getBoundingClientRect().left - 10}px;
+                        top: ${e.clientY - this.getBoundingClientRect().top - 10}px;
+                        animation: rippleOut 0.5s ease-out forwards;
+                        pointer-events: none;
+                    `;
+                    this.appendChild(ripple);
+                    setTimeout(() => ripple.remove(), 500);
                 });
             });
-            
-            // --- Anti-tamper: DOM observer ---
-            const observer = new MutationObserver((mutations) => {
-                for (const m of mutations) {
-                    if (m.type === 'childList' && m.removedNodes.length > 0) {
-                        for (const node of m.removedNodes) {
-                            if (node.classList && node.classList.contains('card')) {
-                                console.warn('%c⚠ INTEGRITY', 'color:#ef4444');
-                            }
-                        }
-                    }
+
+            // ── Inject ripple keyframes ──
+            const styleSheet = document.createElement('style');
+            styleSheet.textContent = `
+                @keyframes rippleOut {
+                    to { transform: scale(8); opacity: 0; }
                 }
+            `;
+            document.head.appendChild(styleSheet);
+
+            // ── Encrypted click logging ──
+            $$('.card').forEach((card, i) => {
+                card.addEventListener('click', function() {
+                    const target = this.getAttribute('href');
+                    const ts = Date.now();
+                    const payload = [target, ts, fp, i].join('::');
+                    // Store XOR'd payload
+                    const key = (ts % 255);
+                    const enc = Array.from(payload).map(c => String.fromCharCode(c.charCodeAt(0) ^ key)).join('');
+                    sessionStorage.setItem('_sm5_log', btoa(enc));
+                });
             });
-            
-            observer.observe(_$('.grid'), {
-                childList: true,
-                subtree: true,
-                attributes: true,
-                attributeFilter: ['href']
-            });
-            
-            // --- Prevent basic tampering ---
-            document.addEventListener('contextmenu', e => e.preventDefault());
-            document.addEventListener('dragstart', e => e.preventDefault());
-            
-            // --- Self-verification checksum ---
-            const checksum = () => {
-                const cards = Array.from(_$$('.card')).map(c => c.getAttribute('href')).join('');
-                let c = 0;
-                for (let i = 0; i < cards.length; i++) c = ((c << 5) - c + cards.charCodeAt(i)) | 0;
-                return c.toString(16);
-            };
-            
-            const originalCS = checksum();
-            
+
+            // ── DOM integrity check ──
+            const grid = $('.grid');
+            const originalHTML = grid.innerHTML;
             setInterval(() => {
-                if (checksum() !== originalCS) {
-                    console.clear();
-                    console.log('%c🔒 VERIFICATION FAILED', 'color:#ef4444;font-size:20px');
+                if (grid.innerHTML !== originalHTML) {
+                    console.warn('%c⚠ Grid integrity compromised', 'color:#dc2626');
                 }
-            }, 10000);
-            
-            // --- Performance obfuscation ---
-            const perf = {
-                start: performance.now(),
-                marks: []
-            };
-            
-            // --- Init console signature ---
-            console.log(`%c◈ StudyMine Quantum Core v4.2.1 %c[${fp}]`,
-                'color:#7c3aed;font-weight:bold',
-                'color:#10b981'
+            }, 8000);
+
+            // ── Console signature ──
+            console.log(
+                `%c◈ StudyMine White Core v5.0 %c[${fp}]`,
+                'color:#7c3aed;font-weight:bold;',
+                'color:#059669;'
             );
-            console.log('%c◈ 7-Slot Grid %c|%c AES-256-GCM %c|%c Zero-Trust Architecture',
-                'color:#e2e8f0',
-                'color:#7c3aed',
-                'color:#10b981',
-                'color:#7c3aed',
-                'color:#e2e8f0'
-            );
-            
-            // --- Expose minimal secure API ---
-            window.__SM = Object.freeze({
-                v: '4.2.1',
-                fp: fp,
+
+            // ── Expose frozen API ──
+            window.__SM5 = Object.freeze({
+                v: '5.0.0',
+                fp,
                 t: Date.now(),
-                verify: () => checksum() === originalCS
+                theme: 'white'
             });
-            
-            // Freeze the object to prevent modification
-            Object.freeze(window.__SM);
-            
         })();
     </script>
 </body>

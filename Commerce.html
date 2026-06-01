@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
+  <title>Commerce 11-12 | StudyMine Advanced Learning Hub</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --commerce-blue: #1e3a5f; --commerce-teal: #0d9488; --commerce-gold: #d97706;
+      --bg-main: #f8fafc; --bg-card: #ffffff; --text-primary: #1e293b; --text-secondary: #64748b;
+      --border: #e2e8f0; --success: #10b981; --danger: #ef4444; --warning: #f59e0b;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.05); --shadow: 0 4px 6px rgba(0,0,0,0.07);
+      --shadow-lg: 0 10px 15px rgba(0,0,0,0.1); --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+      --radius: 8px; --radius-lg: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f0fdf4 0%, #f8fafc 50%, #fef7ed 100%);
+      min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px;
+    }
+    .app-container {
+      width: 100%; max-width: 1300px; height: 96vh; max-height: 950px; background: var(--bg-card);
+      border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); display: flex; flex-direction: column;
+      overflow: hidden; border: 1px solid var(--border); position: relative;
+    }
+    .auth-screen { display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(170deg, #f0fdf4 0%, #fef7ed 30%, #ffffff 60%, #eff6ff 100%); }
+    .auth-wrapper { width: 100%; max-width: 460px; padding: 20px; }
+    .commerce-logo { width: 50px; height: 50px; background: linear-gradient(135deg, #1e3a5f, #0d9488); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1.3rem; font-weight: 900; margin: 0 auto 8px; }
+    .auth-card { background: #fff; border-radius: 20px; padding: 32px 28px; box-shadow: 0 25px 35px rgba(0,0,0,0.1); border: 1px solid #e2e8f0; border-top: 4px solid #0d9488; }
+    .auth-card .tag { display: inline-block; background: #1e3a5f; color: #fbbf24; font-size: 0.55rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 1.5px; }
+    .auth-card h2 { font-weight: 800; font-size: 1.3rem; color: #1e3a5f; text-align: center; margin: 10px 0 2px; font-family: 'Playfair Display', serif; }
+    .auth-card .subtitle { text-align: center; color: #64748b; font-size: 0.75rem; margin-bottom: 24px; }
+    .input-group { margin-bottom: 14px; }
+    .input-group label { display: block; font-size: 0.68rem; font-weight: 600; color: #334155; margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .auth-input { width: 100%; padding: 12px 16px; border: 2px solid #e2e8f0; border-radius: 10px; background: #f8fafc; font-size: 0.88rem; outline: none; }
+    .auth-input:focus { border-color: #0d9488; background: #fff; }
+    .auth-btn { width: 100%; padding: 13px; border: none; border-radius: 10px; background: linear-gradient(135deg, #1e3a5f, #0d9488); color: #fff; font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-top: 4px; }
+    .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(13,148,136,0.3); }
+    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .auth-toggle { display: block; width: 100%; margin-top: 16px; background: none; border: none; color: #475569; font-size: 0.78rem; cursor: pointer; text-align: center; }
+    .error-message { color: #ef4444; font-size: 0.7rem; min-height: 20px; margin-top: 8px; text-align: center; }
+    .security-notice { text-align: center; margin-top: 16px; font-size: 0.6rem; color: #94a3b8; }
+
+    .app-workspace { display: none; flex-direction: column; height: 100%; background: #f8fafc; }
+    .top-bar { background: #1e3a5f; color: #f8fafc; padding: 4px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.48rem; font-weight: 500; flex-wrap: wrap; gap: 4px; }
+    .study-streak { background: linear-gradient(135deg, #1e3a5f, #0d9488); color: #f8fafc; padding: 3px 10px; border-radius: 20px; font-size: 0.5rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    
+    .main-header { background: #fff; border-bottom: 2px solid #0d9488; }
+    .header-row { padding: 6px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; }
+    .org-brand { display: flex; align-items: center; gap: 8px; }
+    .cbse-badge { background: #1e3a5f; color: #fbbf24; padding: 3px 8px; border-radius: 5px; font-weight: 900; font-size: 0.5rem; text-align: center; line-height: 1.1; }
+    .org-name h3 { font-size: 0.7rem; font-weight: 700; color: #1e3a5f; }
+    .org-name p { font-size: 0.5rem; color: #64748b; }
+    .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
+    .session-dot { display: flex; align-items: center; gap: 4px; background: #f1f5f9; padding: 3px 10px; border-radius: 20px; font-size: 0.55rem; }
+    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: #10b981; animation: pulse 2s infinite; }
+    .status-dot.offline { background: #94a3b8; animation: none; }
+    @keyframes pulse { 0%,100%{box-shadow:0 0 3px #10b981} 50%{box-shadow:0 0 10px #10b981} }
+    .btn { background: #fff; border: 1px solid #cbd5e1; color: #334155; padding: 4px 10px; border-radius: 5px; cursor: pointer; font-size: 0.55rem; font-weight: 500; white-space: nowrap; }
+    .btn:hover { background: #f1f5f9; }
+    .btn-danger { border-color: #fecaca; color: #ef4444; background: #fef2f2; }
+    .btn-panic { background: #ef4444; color: #fff; border: none; animation: panicPulse 2s infinite; }
+    @keyframes panicPulse { 0%,100%{box-shadow:0 0 5px rgba(239,68,68,0.5)} 50%{box-shadow:0 0 15px rgba(239,68,68,0.8)} }
+    
+    .nav-bar { padding: 3px 12px; background: #f8fafc; display: flex; gap: 3px; font-size: 0.55rem; overflow-x: auto; border-bottom: 1px solid #e2e8f0; scrollbar-width: none; }
+    .nav-bar::-webkit-scrollbar { display: none; }
+    .nav-item { white-space: nowrap; padding: 4px 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; color: #64748b; }
+    .nav-item:hover { background: #e2e8f0; color: #1e293b; }
+    .nav-item.active { background: #0d9488; color: #fff; font-weight: 600; }
+
+    .main-layout { display: flex; flex: 1; overflow: hidden; }
+    .sidebar { width: 180px; background: #fff; border-right: 1px solid #e2e8f0; padding: 10px 6px; overflow-y: auto; flex-shrink: 0; }
+    .sidebar-title { font-size: 0.45rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #94a3b8; margin: 10px 0 4px 4px; }
+    .sidebar-item { padding: 5px 8px; border-radius: 5px; font-size: 0.6rem; color: #334155; cursor: pointer; display: flex; align-items: center; gap: 4px; margin-bottom: 1px; }
+    .sidebar-item:hover { background: #f1f5f9; }
+    .sidebar-item.active { background: #f0fdf4; color: #0f766e; font-weight: 600; }
+    
+    .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+    .section-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
+    .section-panel.active { display: flex; }
+
+    .chat-container { flex: 1; overflow-y: auto; padding: 10px 8px; display: flex; flex-direction: column; gap: 5px; }
+    .date-divider { text-align: center; font-size: 0.5rem; font-weight: 600; color: #94a3b8; padding: 4px 0; }
+    .message-bubble { max-width: 72%; padding: 7px 10px; border-radius: 12px 12px 12px 2px; background: #fff; color: #334155; font-size: 0.72rem; line-height: 1.4; align-self: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.03); border: 1px solid #f1f5f9; animation: msgIn 0.2s ease-out; word-wrap: break-word; }
+    .message-bubble .msg-label { font-size: 0.45rem; font-weight: 700; letter-spacing: 0.3px; display: block; margin-bottom: 3px; padding-bottom: 2px; border-bottom: 1px solid #e8ecf1; color: #1e3a5f; opacity: 0.7; }
+    .message-bubble.own { align-self: flex-end; background: linear-gradient(145deg, #f0fdf4, #ccfbf1); border-radius: 12px 12px 2px 12px; border: 1px solid #99f6e4; }
+    .message-bubble.own .msg-label { color: #0f766e; }
+    .message-bubble img { max-width: 180px; max-height: 180px; border-radius: 6px; cursor: pointer; margin-top: 3px; display: block; }
+    .self-destruct { border-left: 3px solid #ef4444 !important; }
+    @keyframes msgIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
+    .message-meta { display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin-top: 2px; font-size: 0.45rem; color: #94a3b8; font-family: 'JetBrains Mono', monospace; }
+    .seen-tick { color: #0d9488; font-size: 0.6rem; }
+    .seen-tick.single { color: #94a3b8; }
+    
+    .typing-indicator { padding: 5px 12px; font-size: 0.6rem; color: #475569; display: none; align-items: center; gap: 5px; background: #fff; border-radius: 8px; align-self: flex-start; margin: 2px 0; }
+    .typing-indicator.show { display: flex; }
+    .typing-dots { display: flex; gap: 2px; } .typing-dots span { width: 3px; height: 3px; background: #0d9488; border-radius: 50%; animation: bounce 1.2s infinite; }
+    .typing-dots span:nth-child(2) { animation-delay: 0.2s; } .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
+    @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
+    
+    .chat-footer { padding: 6px 12px; background: #fff; border-top: 1px solid #e2e8f0; display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
+    .query-input { flex: 1; padding: 8px 12px; border-radius: 18px; border: 2px solid #e2e8f0; font-size: 0.72rem; outline: none; background: #f8fafc; min-width: 120px; }
+    .query-input:focus { border-color: #0d9488; background: #fff; }
+    .icon-btn { width: 32px; height: 32px; border-radius: 50%; border: 2px solid #e2e8f0; background: #f1f5f9; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
+    .icon-btn:hover { background: #e2e8f0; }
+    .send-btn { background: #0d9488; border: none; width: 32px; height: 32px; border-radius: 50%; color: #fff; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; }
+    .voice-btn.recording { background: #ef4444; color: #fff; border-color: #ef4444; animation: pulse 1s infinite; }
+    .self-destruct-btn.active { background: #ef4444; color: #fff; border-color: #ef4444; }
+    #fileInput, #cameraInput { display: none; }
+
+    .panel-container { flex: 1; overflow-y: auto; padding: 16px; }
+    h3 { color: #1e3a5f; margin-bottom: 12px; font-size: 0.9rem; font-family: 'Playfair Display', serif; }
+    .q-card { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px; margin-bottom: 12px; }
+    .q-num { font-weight: 700; color: #0d9488; font-size: 0.75rem; margin-bottom: 6px; }
+    .options { display: flex; flex-direction: column; gap: 4px; }
+    .option { padding: 8px 14px; border: 2px solid #e2e8f0; border-radius: 6px; cursor: pointer; font-size: 0.72rem; background: #f8fafc; }
+    .option:hover { border-color: #94a3b8; }
+    .option.selected { border-color: #0d9488; background: #f0fdf4; color: #0f766e; }
+    .option.correct { border-color: #10b981; background: #f0fdf4; color: #065f46; }
+    .option.wrong { border-color: #ef4444; background: #fef2f2; color: #991b1b; }
+    .explanation { margin-top: 10px; padding: 8px; background: #fffbeb; border-radius: 6px; font-size: 0.65rem; color: #92400e; display: none; }
+    .explanation.show { display: block; }
+    .submit-btn { background: #0d9488; color: #fff; padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; margin-top: 10px; }
+    .score { font-weight: 700; color: #1e3a5f; font-size: 0.9rem; margin-top: 8px; }
+    .timer { background: #1e3a5f; color: #f8fafc; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
+
+    .pyq-item { background: #fff; border-left: 3px solid #0d9488; border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 0.7rem; }
+    .pyq-answer { margin-top: 6px; font-size: 0.65rem; color: #10b981; font-weight: 600; display: none; }
+    .pyq-answer.show { display: block; }
+    .filter-bar { display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap; }
+    .filter-select { padding: 4px 10px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 0.65rem; background: #fff; }
+    
+    .video-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
+    .video-thumb { width: 60px; height: 38px; background: linear-gradient(135deg, #1e3a5f, #0d9488); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+    
+    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); gap: 10px; margin-bottom: 16px; }
+    .stat-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px; text-align: center; }
+    .stat-val { font-size: 1.3rem; font-weight: 800; color: #0d9488; }
+    .stat-label { font-size: 0.6rem; color: #64748b; margin-top: 2px; }
+    
+    .note-item { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
+    .note-title { font-weight: 700; color: #0d9488; margin-bottom: 4px; }
+    .flashcard { background: #fef7ed; border: 1px solid #d97706; border-radius: 8px; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 0.68rem; }
+    
+    .formula-item { background: #fff; border: 2px solid #d97706; border-radius: 8px; padding: 12px; margin-bottom: 10px; }
+    .formula-title { font-weight: 800; color: #b45309; font-size: 0.75rem; margin-bottom: 4px; }
+    .formula-content { font-family: 'JetBrains Mono', monospace; font-size: 1rem; color: #1e293b; padding: 6px; background: #fafcfa; border-radius: 4px; text-align: center; }
+
+    .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(100px); background: #1e3a5f; color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 0.65rem; z-index: 9999; transition: 0.3s; }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 9998; align-items: center; justify-content: center; }
+    .modal-overlay.active { display: flex; }
+    .modal { background: #fff; border-radius: 14px; padding: 20px; max-width: 350px; width: 90%; text-align: center; }
+    .modal-btn { padding: 7px 16px; border-radius: 6px; border: none; font-weight: 600; font-size: 0.65rem; cursor: pointer; margin: 3px; }
+    .modal-btn.cancel { background: #f1f5f9; color: #334155; }
+    .modal-btn.confirm { background: #ef4444; color: #fff; }
+    
+    .fullscreen-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; cursor: pointer; }
+    .fullscreen-overlay.active { display: flex; }
+    .fullscreen-overlay img { max-width: 95%; max-height: 95%; border-radius: 8px; }
+    
+    .panic-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 99999; flex-direction: column; }
+    .panic-overlay.active { display: flex; }
+    
+    .video-modal-content { padding: 16px; max-width: 800px; width: 95%; background: #fff; border-radius: 12px; }
+    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background: #000; }
+    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+
+    @media (max-width: 768px) {
+      .sidebar { display: none; }
+      .app-container { height: 100vh; max-height: 100vh; border-radius: 0; }
+      .message-bubble { max-width: 85%; }
+    }
+  </style>
+</head>
+<body>
+<div class="app-container" id="appContainer">
+  <div id="authScreen" class="auth-screen">
+    <div class="auth-wrapper">
+      <div class="commerce-logo">📊</div>
+      <div class="auth-card">
+        <div style="text-align:center;margin-bottom:6px"><span class="tag">CBSE CLASS 11-12</span></div>
+        <h2>Commerce Learning Hub</h2>
+        <p class="subtitle">Accountancy • Business Studies • Economics • Mathematics</p>
+        <div class="input-group"><label>Email ID</label><input type="email" id="emailInput" class="auth-input" placeholder="student@email.com"></div>
+        <div class="input-group"><label>Password</label><input type="password" id="passwordInput" class="auth-input" placeholder="••••••••"></div>
+        <button id="authActionBtn" class="auth-btn">📊 Access Commerce Portal</button>
+        <div class="error-message" id="authError"></div>
+        <button id="toggleAuthBtn" class="auth-toggle">New Student? Register</button>
+      </div>
+      <div class="security-notice">🔒 StudyMine Secured • Academic Integrity</div>
+    </div>
+  </div>
+
+  <div id="panicOverlay" class="panic-overlay">
+    <div style="background:#1a73e8;color:#fff;padding:14px 20px;display:flex;justify-content:space-between;align-items:center;">
+      <h2>📚 NCERT Business Studies</h2>
+      <button onclick="deactivatePanic()" style="background:rgba(255,255,255,0.2);color:#fff;border:none;padding:8px 14px;border-radius:6px;cursor:pointer;font-weight:600;">Exit</button>
+    </div>
+    <div style="padding:20px;flex:1;overflow-y:auto;background:#f8f9fa;">
+      <div style="max-width:700px;margin:0 auto;">
+        <div style="background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;"><h3 style="color:#1a73e8;">📖 Ch 1: Nature & Significance of Management</h3></div>
+        <div style="background:#fff;border-radius:8px;padding:16px;margin-bottom:12px;"><h3 style="color:#1a73e8;">📖 Ch 2: Principles of Management</h3></div>
+        <div style="background:#fff;border-radius:8px;padding:16px;"><h3 style="color:#1a73e8;">📊 Recent Scores</h3><table><tr><td>Mock Test</td><td style="color:#10b981;">85/100</td></tr></table></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="appWorkspace" class="app-workspace">
+    <div class="top-bar">
+      <div><span>📊 StudyMine COMMERCE 11-12</span></div>
+      <div style="display:flex;align-items:center;gap:6px;">
+        <span id="studyStreakDisplay" class="study-streak">🔥 0 Days</span>
+        <span id="govtLiveTime">--:--:--</span>
+        <button id="notificationBellBtn" class="btn" style="background:#d97706;color:#fff;border:none;">🔔</button>
+      </div>
+    </div>
+    <div class="main-header">
+      <div class="header-row">
+        <div class="org-brand">
+          <div class="cbse-badge">CBSE<br><span style="font-size:0.35rem;">11-12</span></div>
+          <div><h3>Commerce Advanced Learning</h3><p>Accountancy • BST • Economics • Maths</p></div>
+        </div>
+        <div class="header-actions">
+          <div class="session-dot"><span id="statusDot" class="status-dot"></span><span id="partnerDisplayName">AI Mentor</span></div>
+          <button id="panicBtn" class="btn btn-panic">📖 Panic</button>
+          <button id="clearChatBtn" class="btn btn-danger">🗑 Reset</button>
+          <button id="logoutButton" class="btn">⏻ Logout</button>
+        </div>
+      </div>
+      <div class="nav-bar" id="navBar">
+        <span class="nav-item active" data-section="chat">💬 Chat</span>
+        <span class="nav-item" data-section="mocktest">📝 Test</span>
+        <span class="nav-item" data-section="pyq">📖 PYQ</span>
+        <span class="nav-item" data-section="videos">🎥 Lectures</span>
+        <span class="nav-item" data-section="notes">📚 Notes</span>
+        <span class="nav-item" data-section="formula">📐 Formulas</span>
+        <span class="nav-item" data-section="progress">📊 Stats</span>
+      </div>
+    </div>
+    <div class="main-layout">
+      <div class="sidebar" id="sidebar">
+        <div class="sidebar-title">📊 Accountancy</div>
+        <div class="sidebar-item" data-section="chat">Journal Entries</div>
+        <div class="sidebar-item" data-section="chat">Ledger & Trial Balance</div>
+        <div class="sidebar-item" data-section="chat">Financial Statements</div>
+        <div class="sidebar-title">🏢 Business Studies</div>
+        <div class="sidebar-item" data-section="chat">Principles of Management</div>
+        <div class="sidebar-item" data-section="chat">Marketing Management</div>
+        <div class="sidebar-title">📈 Economics</div>
+        <div class="sidebar-item" data-section="chat">Microeconomics</div>
+        <div class="sidebar-item" data-section="chat">Macroeconomics</div>
+      </div>
+      <div class="content-area">
+        <div class="section-panel active" id="section-chat">
+          <div class="chat-container" id="messagesContainer"><div class="empty-state" id="emptyState"><div class="icon">📊</div><h3>Commerce AI Mentor</h3><p>Ask Accountancy, BST, Economics doubts...</p></div></div>
+          <div id="typingIndicator" class="typing-indicator"><span>📊 Analyzing query...</span><div class="typing-dots"><span></span><span></span><span></span></div></div>
+          <div class="chat-footer">
+            <button id="panicBtn2" class="icon-btn" style="background:#fef2f2;border-color:#fecaca;color:#ef4444;">📖</button>
+            <input type="file" id="cameraInput" accept="image/*" capture="environment">
+            <button id="cameraButton" class="icon-btn">📷</button>
+            <input type="file" id="fileInput" accept="image/*">
+            <button id="attachButton" class="icon-btn">📎</button>
+            <button id="voiceBtn" class="icon-btn">🎤</button>
+            <button id="selfDestructToggle" class="icon-btn" style="border-color:#fecaca;color:#ef4444;">⏱️</button>
+            <input type="text" id="messageInput" class="query-input" placeholder="Ask commerce doubts..." autocomplete="off">
+            <button id="sendButton" class="send-btn">▶</button>
+          </div>
+        </div>
+        <div class="section-panel" id="section-mocktest"><div class="panel-container" id="mocktestContainer"></div></div>
+        <div class="section-panel" id="section-pyq"><div class="panel-container" id="pyqContainer"></div></div>
+        <div class="section-panel" id="section-videos"><div class="panel-container" id="videoContainer"></div></div>
+        <div class="section-panel" id="section-notes"><div class="panel-container" id="notesContainer"></div></div>
+        <div class="section-panel" id="section-formula"><div class="panel-container" id="formulaContainer"></div></div>
+        <div class="section-panel" id="section-progress"><div class="panel-container" id="progressContainer"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="deleteModal" class="modal-overlay"><div class="modal"><h4>⚠️ Delete All Data?</h4><p style="font-size:0.7rem;">Clear chat history.</p><div><button id="cancelDeleteBtn" class="modal-btn cancel">Cancel</button><button id="confirmDeleteBtn" class="modal-btn confirm">Delete</button></div></div></div>
+<div id="fullscreenOverlay" class="fullscreen-overlay" onclick="this.classList.remove('active')"><img id="fullscreenImage" src="" alt="Fullscreen"></div>
+<div id="videoModal" class="modal-overlay" onclick="if(event.target===this)closeVideoModal()"><div class="video-modal-content"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><h4 id="videoModalTitle">Lecture</h4><button onclick="closeVideoModal()" style="cursor:pointer;font-weight:600;">✕ Close</button></div><div class="video-wrapper"><iframe id="videoIframe" allow="autoplay; encrypted-media" allowfullscreen></iframe></div></div></div>
+<div id="toast" class="toast"></div>
+
+<script>
+(function() {
+  const firebaseConfig = {
+    apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
+    authDomain: "studymine-fa92d.firebaseapp.com",
+    projectId: "studymine-fa92d",
+    storageBucket: "studymine-fa92d.firebasestorage.app",
+    messagingSenderId: "460797718327",
+    appId: "1:460797718327:web:66316f16930b304b2e34b2",
+    measurementId: "G-ZBJ6GLM3L8"
+  };
+  const IMGBB_API_KEY = "53fb01955a45c5462724b8f7d238500a";
+  const ALLOWED_EMAILS = ["mgbhaukali@gmail.com", "manshi@gmail.com"];
+  
+  try { firebase.initializeApp(firebaseConfig); } catch(e) {}
+  const auth = firebase.auth(), db = firebase.firestore();
+
+  let currentUser = null, isLoginMode = true, unsubscribeMessages = null, unsubscribeTyping = null, unsubscribePresence = null, typingTimeoutRef = null, mockTestSubmitted = false;
+  let unreadCount = 0, lastReadTimestamp = firebase.firestore.Timestamp.now(), currentSection = 'chat';
+  let selfDestructMode = false, isRecording = false, mediaRecorder = null, audioChunks = [];
+  let quizTimer = null, quizTimeLeft = 0;
+  let studyXP = parseInt(localStorage.getItem('commerceXP') || '0');
+  let studyStreak = parseInt(localStorage.getItem('commerceStreak') || '0');
+  let lastStudyDate = localStorage.getItem('commerceLastDate');
+
+  const $ = id => document.getElementById(id);
+  const authScreen = $('authScreen'), appWorkspace = $('appWorkspace');
+  const emailInput = $('emailInput'), passwordInput = $('passwordInput');
+  const authActionBtn = $('authActionBtn'), toggleAuthBtn = $('toggleAuthBtn'), authError = $('authError');
+  const messagesContainer = $('messagesContainer'), emptyState = $('emptyState');
+  const messageInput = $('messageInput'), sendButton = $('sendButton');
+  const attachButton = $('attachButton'), fileInput = $('fileInput');
+  const cameraButton = $('cameraButton'), cameraInput = $('cameraInput');
+  const voiceBtn = $('voiceBtn'), selfDestructToggle = $('selfDestructToggle');
+  const logoutButton = $('logoutButton'), clearChatBtn = $('clearChatBtn');
+  const toast = $('toast'), govtLiveTime = $('govtLiveTime');
+  const navBar = $('navBar'), sidebar = $('sidebar');
+  const fullscreenOverlay = $('fullscreenOverlay'), fullscreenImage = $('fullscreenImage');
+
+  setInterval(() => { if(govtLiveTime) govtLiveTime.textContent = new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit',second:'2-digit',hour12:false})+' IST'; }, 1000);
+
+  function showToast(msg) { toast.textContent=msg; toast.className='toast show'; clearTimeout(toast._t); toast._t=setTimeout(()=>toast.classList.remove('show'),3000); }
+  function updateStreakDisplay() { $('studyStreakDisplay').textContent = `🔥 ${studyStreak} Days | ${studyXP} XP`; }
+  
+  function addXP(points) {
+    studyXP += points; localStorage.setItem('commerceXP', studyXP);
+    const today = new Date().toDateString();
+    if (lastStudyDate !== today) {
+      const yesterday = new Date(Date.now() - 86400000).toDateString();
+      studyStreak = (lastStudyDate === yesterday) ? studyStreak + 1 : 1;
+      lastStudyDate = today;
+      localStorage.setItem('commerceStreak', studyStreak);
+      localStorage.setItem('commerceLastDate', today);
+    }
+    updateStreakDisplay();
+    if (studyStreak === 7) showToast('🏅 7-Day Streak!');
+    if (studyStreak === 30) showToast('👑 Monthly Warrior!');
+  }
+
+  function activatePanic() { $('panicOverlay').classList.add('active'); }
+  function deactivatePanic() { $('panicOverlay').classList.remove('active'); }
+  $('panicBtn')?.addEventListener('click', activatePanic);
+  $('panicBtn2')?.addEventListener('click', activatePanic);
+
+  selfDestructToggle?.addEventListener('click', () => {
+    selfDestructMode = !selfDestructMode;
+    selfDestructToggle.classList.toggle('active', selfDestructMode);
+    showToast(selfDestructMode ? '⏱️ Self-destruct ON (5 min)' : '⏱️ Self-destruct OFF');
+  });
+
+  async function toggleVoiceRecording() {
+    if (isRecording) { mediaRecorder.stop(); voiceBtn.classList.remove('recording'); voiceBtn.textContent='🎤'; isRecording=false; return; }
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+      mediaRecorder = new MediaRecorder(stream); audioChunks = [];
+      mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+      mediaRecorder.onstop = () => {
+        const audioUrl = URL.createObjectURL(new Blob(audioChunks, { type: 'audio/webm' }));
+        const div = document.createElement('div'); div.className='message-bubble own';
+        div.innerHTML = `<span class="msg-label">🎤 Voice Note</span><audio controls src="${audioUrl}" style="width:100%;height:30px;"></audio><div class="message-meta"><span>${new Date().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})}</span></div>`;
+        messagesContainer.appendChild(div); scrollBottom();
+        stream.getTracks().forEach(t => t.stop());
+      };
+      mediaRecorder.start(); voiceBtn.classList.add('recording'); voiceBtn.textContent='⏹️'; isRecording=true;
+      setTimeout(() => { if(isRecording){ mediaRecorder.stop(); voiceBtn.classList.remove('recording'); voiceBtn.textContent='🎤'; isRecording=false; } }, 60000);
+    } catch(e) { showToast('Mic denied'); }
+  }
+  voiceBtn?.addEventListener('click', toggleVoiceRecording);
+
+  window._switchSection = function(sectionId) {
+    currentSection = sectionId;
+    document.querySelectorAll('.section-panel').forEach(p => p.classList.remove('active'));
+    document.getElementById('section-'+sectionId)?.classList.add('active');
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.querySelector(`.nav-item[data-section="${sectionId}"]`)?.classList.add('active');
+    if(sectionId==='mocktest') loadMockTest();
+    if(sectionId==='pyq') loadPYQs();
+    if(sectionId==='videos') loadVideos();
+    if(sectionId==='notes') loadNotes();
+    if(sectionId==='formula') loadFormulas();
+    if(sectionId==='progress') loadProgress();
+  };
+
+  function switchSection(sid) { window._switchSection(sid); }
+  navBar.addEventListener('click', e => { if(e.target.classList.contains('nav-item')) switchSection(e.target.dataset.section); });
+  sidebar.addEventListener('click', e => { if(e.target.dataset.section) switchSection(e.target.dataset.section); });
+
+  function showAuth() { authScreen.style.display='flex'; appWorkspace.style.display='none'; }
+  function showApp() { authScreen.style.display='none'; appWorkspace.style.display='flex'; updateStreakDisplay(); }
+  function scrollBottom() { if(messagesContainer) messagesContainer.scrollTop=messagesContainer.scrollHeight; }
+
+  async function uploadImage(file) {
+    const fd = new FormData(); fd.append('image', file); fd.append('key', IMGBB_API_KEY);
+    try { const r = await fetch('https://api.imgbb.com/1/upload', { method: 'POST', body: fd }); const d = await r.json(); return d.success ? { url: d.data.url, deleteUrl: d.data.delete_url } : null; } catch(e) { return null; }
+  }
+
+  function compressImage(file, maxW=800) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = (e) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); let w=img.width, h=img.height; if(w>maxW){ h*=maxW/w; w=maxW; } canvas.width=w; canvas.height=h; canvas.getContext('2d').drawImage(img,0,0,w,h); canvas.toBlob(b => b ? resolve(new File([b],file.name,{type:'image/jpeg'})) : reject(), 'image/jpeg', 0.7); }; img.src=e.target.result; };
+      reader.readAsDataURL(file);
+    });
+  }
+
+  async function handleImageUpload(e) {
+    const file = e.target.files[0]; if(!file||!currentUser) { e.target.value=''; return; }
+    if(!file.type.startsWith('image/')) { showToast('Only images'); e.target.value=''; return; }
+    const temp = document.createElement('div'); temp.className='message-bubble own'; temp.innerHTML='<span class="msg-label">📤 Uploading...</span>';
+    messagesContainer.appendChild(temp); if(emptyState) emptyState.style.display='none'; scrollBottom();
+    try {
+      const compressed = await compressImage(file);
+      const result = await uploadImage(compressed);
+      if(!result) throw new Error('Failed');
+      temp.remove();
+      await db.collection('messages').add({ type:'image', imageUrl:result.url, deleteUrl:result.deleteUrl, text:'', senderId:currentUser.uid, senderEmail:currentUser.email, timestamp:firebase.firestore.FieldValue.serverTimestamp(), seen:false });
+      addXP(20);
+    } catch(e) { temp.innerHTML='<span style="color:red;">❌ Failed</span>'; setTimeout(()=>temp.remove(),2500); }
+    e.target.value='';
+  }
+
+  attachButton.addEventListener('click', () => fileInput.click());
+  cameraButton.addEventListener('click', () => cameraInput.click());
+  fileInput.addEventListener('change', handleImageUpload);
+  cameraInput.addEventListener('change', (e) => { fileInput.files = e.target.files; fileInput.dispatchEvent(new Event('change')); });
+
+  // ============ COMMERCE DATA ============
+  const commerceTopics = ['Accountancy', 'Business Studies', 'Economics', 'Mathematics'];
+  const years = ['2024','2023','2022','2021','2020','2019'];
+  
+  const pyqTemplates = [
+    { q:"What is the accounting equation?", ans:"Assets = Liabilities + Capital. Fundamental basis of double-entry system.", topic:"Accountancy" },
+    { q:"Define depreciation and its methods.", ans:"Diminishing value of assets. SLM & WDV methods.", topic:"Accountancy" },
+    { q:"What is a Trial Balance?", ans:"Statement showing debit & credit balances to check arithmetic accuracy.", topic:"Accountancy" },
+    { q:"Define Management and its features.", ans:"Getting things done through others. Goal-oriented, continuous, pervasive.", topic:"Business Studies" },
+    { q:"Henri Fayol's 14 Principles of Management?", ans:"Division of work, Authority, Discipline, Unity of command, etc.", topic:"Business Studies" },
+    { q:"What is Marketing Mix?", ans:"Product, Price, Place, Promotion - 4 Ps of marketing.", topic:"Business Studies" },
+    { q:"Define Demand and Law of Demand.", ans:"Inverse relationship between price & quantity demanded, ceteris paribus.", topic:"Economics" },
+    { q:"What is Elasticity of Demand?", ans:"% change in quantity demanded / % change in price.", topic:"Economics" },
+    { q:"GDP vs GNP difference?", ans:"GDP: within country. GNP: by nationals, includes net factor income from abroad.", topic:"Economics" },
+    { q:"Define Inflation and its types.", ans:"General rise in price level. Demand-pull, Cost-push inflation.", topic:"Economics" },
+    { q:"What is Central Tendency?", ans:"Mean, Median, Mode - measures of central value.", topic:"Mathematics" },
+    { q:"Correlation coefficient range?", ans:"-1 to +1. r = 0 means no correlation.", topic:"Mathematics" },
+    { q:"Journal entry for goods purchased on credit?", ans:"Purchases A/c Dr. To Creditor A/c", topic:"Accountancy" },
+    { q:"Cash Book is which type of account?", ans:"Both Journal & Ledger. Subsidiary book.", topic:"Accountancy" },
+    { q:"Delegation vs Decentralization?", ans:"Delegation: individual. Decentralization: organization-wide.", topic:"Business Studies" }
+  ];
+
+  const pyqData = [];
+  pyqTemplates.forEach(t => { years.forEach(y => pyqData.push({...t, year:y, id:pyqData.length+1})); });
+  while(pyqData.length < 200) { const t = pyqTemplates[pyqData.length % pyqTemplates.length]; pyqData.push({...t, year:years[pyqData.length%years.length], id:pyqData.length+1}); }
+
+  const videoData = [
+    { title:"Basic Accounting Terms", duration:"45 min", author:"Rajat Arora", id:"oN2yG7FhL9k" },
+    { title:"Journal Entries Class 11", duration:"1hr", author:"Sunil Panda", id:"4Bx8VfQ2mJk" },
+    { title:"Ledger Posting", duration:"40 min", author:"Accounts Adda", id:"pL3nK8wR6tY" },
+    { title:"Trial Balance", duration:"35 min", author:"Rajat Arora", id:"aB5cD2eF8gH" },
+    { title:"Principles of Management", duration:"55 min", author:"Sunil Panda", id:"uV7wX3yZ1aB" },
+    { title:"Marketing Management", duration:"50 min", author:"Business Adda", id:"cD4eF6gH8iJ" },
+    { title:"Demand & Law of Demand", duration:"1hr", author:"Rajat Arora", id:"kL2mN4oP6qR" },
+    { title:"Elasticity of Demand", duration:"45 min", author:"Economics Adda", id:"sT8uV0wX2yZ" },
+    { title:"GDP & National Income", duration:"55 min", author:"Sunil Panda", id:"aB3cD5eF7gH" },
+    { title:"Inflation Explained", duration:"40 min", author:"Rajat Arora", id:"iJ9kL1mN3oP" },
+    { title:"Mean Median Mode", duration:"50 min", author:"Maths Adda", id:"qR5sT7uV9wX" },
+    { title:"Correlation Analysis", duration:"45 min", author:"Commerce Guru", id:"yZ1aB3cD5eF" }
+  ];
+
+  const mockQuestions = [
+    { id:1, q:"Accounting equation is?", options:["A=L+C","A=L-C","A+L=C","A=C-L"], correct:0, exp:"Assets = Liabilities + Capital." },
+    { id:2, q:"Depreciation method not based on time?", options:["SLM","WDV","Annuity","Depletion"], correct:3, exp:"Depletion method based on usage." },
+    { id:3, q:"Trial Balance is prepared to check?", options:["Profit","Arithmetic accuracy","Assets","Liabilities"], correct:1, exp:"Checks arithmetic accuracy of ledger." },
+    { id:4, q:"Fayol's principle: One boss for one employee?", options:["Division of work","Unity of command","Discipline","Authority"], correct:1, exp:"Unity of Command - one superior." },
+    { id:5, q:"4 Ps of marketing?", options:["Product,Price,Place,Promotion","Plan,Price,People,Process","Product,Plan,Place,People","None"], correct:0, exp:"Product, Price, Place, Promotion." },
+    { id:6, q:"Law of demand shows relationship between?", options:["Price & Supply","Price & Demand","Income & Demand","None"], correct:1, exp:"Inverse relationship price & demand." },
+    { id:7, q:"GDP is calculated by?", options:["Income method","Expenditure method","Both","None"], correct:2, exp:"Income, Expenditure & Product methods." },
+    { id:8, q:"Mean of 2,4,6,8,10 is?", options:["5","6","7","8"], correct:1, exp:"(2+4+6+8+10)/5 = 30/5 = 6." },
+    { id:9, q:"Correlation coefficient = 0 means?", options:["Perfect +ve","Perfect -ve","No correlation","High correlation"], correct:2, exp:"r=0 means no linear correlation." },
+    { id:10, q:"Cash discount is recorded in?", options:["Journal","Cash Book","Ledger","Trial Balance"], correct:1, exp:"Cash discount in Cash Book." },
+    { id:11, q:"Goodwill is which type of asset?", options:["Tangible","Intangible","Current","Fictitious"], correct:1, exp:"Intangible asset." },
+    { id:12, q:"Central bank of India?", options:["SBI","RBI","PNB","BOB"], correct:1, exp:"Reserve Bank of India (RBI)." }
+  ];
+
+  const notesData = [
+    { title:"📊 Accountancy", content:"<b>Golden Rules:</b> Personal: Dr Receiver, Cr Giver. Real: Dr What comes in, Cr What goes out. Nominal: Dr Expenses/Losses, Cr Incomes/Gains.<br><b>Journal:</b> Date, Particulars, LF, Dr Amount, Cr Amount." },
+    { title:"🏢 Business Studies", content:"<b>Fayol's 14 Principles:</b> Division of work, Authority & Responsibility, Discipline, Unity of Command, Unity of Direction, Subordination, Remuneration, Centralization, Scalar Chain, Order, Equity, Stability, Initiative, Esprit de Corps.<br><b>Management Functions:</b> POSDCORB - Planning, Organizing, Staffing, Directing, Controlling, Reporting, Budgeting." },
+    { title:"📈 Economics", content:"<b>Micro:</b> Demand & Supply, Elasticity, Consumer Equilibrium, Production, Cost, Revenue, Market forms.<br><b>Macro:</b> National Income, GDP, Inflation, Money & Banking, Government Budget, Balance of Payments." }
+  ];
+
+  const formulaData = [
+    { title:"Accounting Equation", formula:"Assets = Liabilities + Capital" },
+    { title:"Depreciation (SLM)", formula:"D = (Cost - Salvage) / Useful Life" },
+    { title:"GDP Formula", formula:"GDP = C + I + G + (X - M)" },
+    { title:"Elasticity of Demand", formula:"Ed = %ΔQd / %ΔP" },
+    { title:"Mean Formula", formula:"x̄ = Σx / n" },
+    { title:"Correlation (Pearson)", formula:"r = Σ(xy) / √(Σx² × Σy²)" },
+    { title:"Current Ratio", formula:"Current Assets / Current Liabilities" },
+    { title:"Debt-Equity Ratio", formula:"Total Debt / Shareholders' Equity" }
+  ];
+
+  function loadMockTest() {
+    let html='<h3>📝 Commerce Mock Test (12 Qs)</h3><div class="timer" id="quizTimer">⏱️ 12:00</div>';
+    mockQuestions.forEach((q,i)=>{
+      html+=`<div class="q-card"><div class="q-num">Q${i+1}. ${q.q}</div><div class="options">${q.options.map((o,oi)=>`<div class="option" data-q="${q.id}" data-o="${oi}" onclick="window._sel(this,${q.id},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div><div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div></div>`;
+    });
+    html+='<button class="submit-btn" onclick="window._sub()">Submit Test</button><div class="score" id="scoreDisplay"></div>';
+    $('mocktestContainer').innerHTML=html; mockTestSubmitted=false; startQuizTimer(720);
+  }
+
+  function startQuizTimer(sec) {
+    quizTimeLeft=sec; if(quizTimer) clearInterval(quizTimer);
+    quizTimer=setInterval(()=>{ quizTimeLeft--; const m=Math.floor(quizTimeLeft/60), s=quizTimeLeft%60; const el=$('quizTimer'); if(el) el.textContent=`⏱️ ${m}:${s.toString().padStart(2,'0')}`; if(quizTimeLeft<=0){ clearInterval(quizTimer); window._sub(); } },1000);
+  }
+
+  window._sel=function(el,qId,oIdx){if(mockTestSubmitted)return;el.parentElement.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');};
+  window._sub=function(){
+    mockTestSubmitted=true; if(quizTimer) clearInterval(quizTimer); let score=0;
+    mockQuestions.forEach(q=>{
+      const sel=document.querySelector(`.option.selected[data-q="${q.id}"]`);
+      const exp=$('exp-'+q.id); if(exp)exp.classList.add('show');
+      document.querySelectorAll(`.option[data-q="${q.id}"]`).forEach(o=>{const oi=parseInt(o.dataset.o);if(oi===q.correct)o.classList.add('correct');if(sel&&parseInt(sel.dataset.selected)===oi&&oi!==q.correct)o.classList.add('wrong');});
+      if(sel&&parseInt(sel.dataset.selected)===q.correct)score++;
+    });
+    $('scoreDisplay').textContent=`✅ ${score}/${mockQuestions.length} (${Math.round(score/mockQuestions.length*100)}%)`;
+    addXP(score*10);
+  };
+
+  function loadPYQs(){
+    let html='<h3>📖 200+ Commerce PYQs</h3><div class="filter-bar"><select class="filter-select" id="topicFilter" onchange="filterPYQs()"><option value="all">All</option>'+commerceTopics.map(t=>`<option value="${t}">${t}</option>`).join('')+'</select><select class="filter-select" id="yearFilter" onchange="filterPYQs()"><option value="all">All Years</option>'+years.map(y=>`<option value="${y}">${y}</option>`).join('')+'</select></div><div id="pyqList"></div>';
+    $('pyqContainer').innerHTML=html; filterPYQs();
+  }
+
+  function filterPYQs() {
+    const topic=$('topicFilter')?.value||'all', year=$('yearFilter')?.value||'all';
+    const filtered=pyqData.filter(q=>(topic==='all'||q.topic===topic)&&(year==='all'||q.year===year));
+    let html=''; filtered.forEach((p,i)=>html+=`<div class="pyq-item" onclick="this.querySelector('.pyq-answer').classList.toggle('show')"><b>Q${i+1}. ${p.year} - ${p.topic}</b><div>${p.q}</div><div class="pyq-answer">✅ ${p.ans}</div></div>`);
+    document.getElementById('pyqList').innerHTML=html||'<p>No questions</p>';
+  }
+
+  function loadVideos(){ let html='<h3>🎥 12 Commerce Lectures</h3>'; videoData.forEach(v=>html+=`<div class="video-item" onclick="openVideo('${v.id}','${v.title}')"><div class="video-thumb">▶</div><div><h4 style="font-size:0.7rem;">${v.title}</h4><p style="font-size:0.55rem;color:#64748b;">${v.duration} • ${v.author}</p></div></div>`); $('videoContainer').innerHTML=html; }
+  function loadNotes(){ let html='<h3>📚 Commerce Notes</h3>'; notesData.forEach(n=>html+=`<div class="note-item"><div class="note-title">${n.title}</div><p>${n.content}</p></div>`); html+='<div class="flashcard" onclick="this.querySelector(\'span\').style.display=\'block\'"><b>🧮 Accounting Equation?</b><span style="display:none;color:#0f766e;">Assets = Liabilities + Capital</span></div>'; $('notesContainer').innerHTML=html; }
+  function loadFormulas(){ let html='<h3>📐 Commerce Formulas</h3>'; formulaData.forEach(f=>html+=`<div class="formula-item"><div class="formula-title">${f.title}</div><div class="formula-content">${f.formula}</div></div>`); $('formulaContainer').innerHTML=html; }
+  
+  function loadProgress(){
+    let html='<h3>📊 My Commerce Analytics</h3><div class="stat-grid">';
+    html+=`<div class="stat-item"><div class="stat-val">${studyXP}</div><div class="stat-label">Total XP</div></div>`;
+    html+=`<div class="stat-item"><div class="stat-val">🔥 ${studyStreak}</div><div class="stat-label">Day Streak</div></div>`;
+    html+=`<div class="stat-item"><div class="stat-val">${pyqData.length}</div><div class="stat-label">PYQs</div></div>`;
+    html+=`<div class="stat-item"><div class="stat-val">${videoData.length}</div><div class="stat-label">Lectures</div></div>`;
+    html+='</div><h4>📈 Score Trend</h4><canvas id="perfChart" style="max-height:180px;"></canvas>';
+    $('progressContainer').innerHTML=html;
+    setTimeout(()=>{const ctx=document.getElementById('perfChart');if(ctx) new Chart(ctx,{type:'line',data:{labels:['W1','W2','W3','W4'],datasets:[{label:'Score %',data:[65,72,78,85],borderColor:'#0d9488',backgroundColor:'rgba(13,148,136,0.1)',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false}});},500);
+  }
+
+  window.openVideo = function(id, title) { $('videoModalTitle').textContent=title; $('videoIframe').src=`https://www.youtube.com/embed/${id}?autoplay=1`; $('videoModal').classList.add('active'); };
+  window.closeVideoModal = function() { $('videoIframe').src=''; $('videoModal').classList.remove('active'); };
+
+  clearChatBtn.addEventListener('click',()=>{$('deleteModal').classList.add('active');});
+  $('cancelDeleteBtn').addEventListener('click',()=>$('deleteModal').classList.remove('active'));
+  $('confirmDeleteBtn').addEventListener('click',async()=>{if(!currentUser)return;try{const snap=await db.collection('messages').get();if(!snap.empty){const b=db.batch();snap.forEach(d=>b.delete(d.ref));await b.commit();}showToast('✅ Cleared');}catch(e){showToast('Error');}$('deleteModal').classList.remove('active');});
+
+  const doAuth = async () => {
+    const email=emailInput.value.trim().toLowerCase(),pw=passwordInput.value.trim();authError.textContent='';
+    if(!email||!pw){authError.textContent='Fill all';return;}
+    if(!isLoginMode&&!ALLOWED_EMAILS.includes(email)){authError.textContent='Restricted';return;}
+    authActionBtn.disabled=true;
+    try{if(isLoginMode)await auth.signInWithEmailAndPassword(email,pw);else await auth.createUserWithEmailAndPassword(email,pw);}
+    catch(e){authError.textContent='Error';}
+    finally{authActionBtn.disabled=false;}
+  };
+
+  authActionBtn.addEventListener('click',doAuth);
+  passwordInput.addEventListener('keypress',e=>{if(e.key==='Enter')doAuth();});
+  toggleAuthBtn.addEventListener('click',()=>{isLoginMode=!isLoginMode;authActionBtn.textContent=isLoginMode?'📊 Access Commerce Portal':'📝 Register';toggleAuthBtn.textContent=isLoginMode?'New? Register':'Login';});
+  logoutButton.addEventListener('click',async()=>{if(currentUser)try{await db.collection('presence').doc(currentUser.uid).set({online:false,lastSeen:firebase.firestore.FieldValue.serverTimestamp()},{merge:true});}catch(e){}await auth.signOut();});
+
+  async function setOnline(uid,email){try{await db.collection('presence').doc(uid).set({online:true,email,lastSeen:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}}
+  function getPartnerEmail(){return currentUser?ALLOWED_EMAILS.find(e=>e!==currentUser.email)||null:null;}
+  async function getPartnerUid(){const pe=getPartnerEmail();if(!pe)return null;try{const s=await db.collection('presence').where('email','==',pe).limit(1).get();return s.empty?null:s.docs[0].id;}catch(e){return null;}}
+  
+  function listenPartnerPresence(pid){
+    if(unsubscribePresence)unsubscribePresence();
+    if(!pid){$('statusDot').className='status-dot offline';$('partnerDisplayName').textContent='Offline';return;}
+    unsubscribePresence=db.collection('presence').doc(pid).onSnapshot(d=>{const on=d.exists&&d.data().online===true;$('statusDot').className=on?'status-dot':'status-dot offline';$('partnerDisplayName').textContent=on?'AI Active':'Offline';});
+  }
+
+  function setupMessages(){
+    if(unsubscribeMessages)unsubscribeMessages();
+    unsubscribeMessages=db.collection('messages').orderBy('timestamp','asc').onSnapshot(snap=>{
+      [...messagesContainer.children].filter(c=>c.id!=='emptyState'&&!c.classList.contains('typing-indicator')).forEach(c=>c.remove());
+      if(snap.empty){if(emptyState)emptyState.style.display='flex';return;}
+      if(emptyState)emptyState.style.display='none';
+      let ld='';
+      snap.forEach(d=>{
+        const m=d.data();
+        if(m.timestamp?.toDate){const md=m.timestamp.toDate().toLocaleDateString('en-IN',{weekday:'long',day:'numeric',month:'short'});if(md!==ld){ld=md;const dd=document.createElement('div');dd.className='date-divider';dd.textContent=md;messagesContainer.appendChild(dd);}}
+        const div=document.createElement('div');const isOwn=m.senderId===currentUser?.uid;
+        div.className=`message-bubble ${isOwn?'own':''} ${m.selfDestruct?'self-destruct':''}`;
+        let contentHtml='';
+        if(m.type==='image'&&m.imageUrl){contentHtml=`<img src="${m.imageUrl}" onclick="event.stopPropagation();$('fullscreenOverlay').classList.add('active');$('fullscreenImage').src='${m.imageUrl}';" loading="lazy">`;}
+        else if(m.type==='voice'&&m.audioUrl){contentHtml=`<audio controls src="${m.audioUrl}" style="width:100%;height:30px;"></audio>`;}
+        else{contentHtml=String(m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+        let metaHtml=`<span>${m.timestamp?.toDate?.().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</span>`;
+        if(isOwn&&m.seen)metaHtml+='<span class="seen-tick">✓✓</span>';else if(isOwn)metaHtml+='<span class="seen-tick single">✓</span>';
+        if(m.selfDestruct)metaHtml+=' <span style="color:#ef4444;">⏱️</span>';
+        div.innerHTML=`<span class="msg-label">${isOwn?'👨‍🎓 Student':'🤖 AI Mentor'}</span>${contentHtml}<div class="message-meta">${metaHtml}</div>`;
+        messagesContainer.appendChild(div);
+      });
+      scrollBottom();
+    });
+  }
+
+  async function sendMsg(){
+    const text=messageInput.value.trim();if(!text||!currentUser)return;messageInput.value='';
+    if(typingTimeoutRef)clearTimeout(typingTimeoutRef);
+    try{await db.collection('typing').doc(currentUser.uid).set({isTyping:false,timestamp:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}
+    if(selfDestructMode){
+      const expiresAt=firebase.firestore.Timestamp.fromDate(new Date(Date.now()+300000));
+      try{await db.collection('messages').add({type:'text',text,senderId:currentUser.uid,senderEmail:currentUser.email,timestamp:firebase.firestore.FieldValue.serverTimestamp(),seen:false,selfDestruct:true,expiresAt});showToast('⏱️ Self-destruct (5 min)');}catch(e){showToast('Failed');}
+    }else{try{await db.collection('messages').add({type:'text',text,senderId:currentUser.uid,senderEmail:currentUser.email,timestamp:firebase.firestore.FieldValue.serverTimestamp(),seen:false});}catch(e){showToast('Failed');}}
+    addXP(10);
+  }
+
+  sendButton.addEventListener('click',sendMsg);
+  messageInput.addEventListener('keypress',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();sendMsg();}});
+  messageInput.addEventListener('input',()=>{if(!currentUser)return;try{db.collection('typing').doc(currentUser.uid).set({isTyping:true,timestamp:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}if(typingTimeoutRef)clearTimeout(typingTimeoutRef);typingTimeoutRef=setTimeout(async()=>{try{await db.collection('typing').doc(currentUser.uid).set({isTyping:false,timestamp:firebase.firestore.FieldValue.serverTimestamp()});}catch(e){}},2500);});
+  function listenTyping(pid){if(unsubscribeTyping)unsubscribeTyping();if(!pid){$('typingIndicator').classList.remove('show');return;}unsubscribeTyping=db.collection('typing').doc(pid).onSnapshot(d=>{if(d.exists&&d.data().isTyping)$('typingIndicator').classList.add('show');else $('typingIndicator').classList.remove('show');});}
+  setInterval(async()=>{if(!currentUser)return;try{const now=firebase.firestore.Timestamp.now();const expired=await db.collection('messages').where('expiresAt','<=',now).get();const b=db.batch();expired.forEach(d=>b.delete(d.ref));if(!expired.empty)await b.commit();}catch(e){}},60000);
+
+  auth.onAuthStateChanged(async user=>{
+    if(unsubscribeMessages){unsubscribeMessages();unsubscribeMessages=null;}
+    if(unsubscribeTyping){unsubscribeTyping();unsubscribeTyping=null;}
+    if(unsubscribePresence){unsubscribePresence();unsubscribePresence=null;}
+    if(user){
+      if(!ALLOWED_EMAILS.includes(user.email)){await auth.signOut();showAuth();return;}
+      currentUser=user;showApp();await setOnline(user.uid,user.email);
+      lastReadTimestamp=firebase.firestore.Timestamp.now();unreadCount=0;
+      setupMessages();const pid=await getPartnerUid();listenPartnerPresence(pid);listenTyping(pid);
+      updateStreakDisplay();showToast('📊 Commerce Portal Ready!');
+    }else{currentUser=null;showAuth();emailInput.value='';passwordInput.value='';}
+  });
+  showAuth();
+  updateStreakDisplay();
+  window.filterPYQs = filterPYQs;
+})();
+</script>
+</body>
+</html>

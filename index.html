@@ -3,33 +3,16 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyMine - Quantum Learning Nexus</title>
-    
-    <!-- Advanced Security Meta Tags -->
-    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://cdnjs.cloudflare.com; style-src 'self' 'unsafe-inline';">
-    <meta name="referrer" content="no-referrer">
-    <meta http-equiv="X-Frame-Options" content="DENY">
-    <meta http-equiv="X-Content-Type-Options" content="nosniff">
-    
-    <!-- Crypto Libraries for Advanced Security -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.2.0/crypto-js.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    
+    <title>StudyMine</title>
     <style>
-        /* Quantum-Level CSS Architecture */
         :root {
-            --quantum-primary: #6c5ce7;
-            --quantum-secondary: #a29bfe;
-            --quantum-accent: #fd79a8;
-            --quantum-dark: #2d3436;
-            --quantum-light: #dfe6e9;
-            --quantum-glow: 0 0 20px rgba(108, 92, 231, 0.5);
-            --matrix-green: #00ff41;
-            --cyber-blue: #00d2ff;
-            --gradient-cosmic: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
-            --gradient-hologram: linear-gradient(45deg, #ff6b6b, #4ecdc4, #45b7d1, #96ceb4);
-            --glass-morphism: rgba(255, 255, 255, 0.1);
-            --neon-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #6c5ce7, 0 0 40px #6c5ce7;
+            --bg: #0a0a0f;
+            --card: #13131f;
+            --purple: #7c3aed;
+            --cyan: #06b6d4;
+            --green: #10b981;
+            --red: #ef4444;
+            --yellow: #f59e0b;
         }
 
         * {
@@ -39,779 +22,446 @@
         }
 
         body {
-            font-family: 'Segoe UI', 'Arial', sans-serif;
-            background: #0a0a1a;
+            background: var(--bg);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            overflow-x: hidden;
+            font-family: system-ui, -apple-system, sans-serif;
+            overflow: hidden;
             position: relative;
         }
 
-        /* Advanced Particle Background */
-        #particleCanvas {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 0;
-            pointer-events: none;
-        }
-
-        /* Holographic Grid Background */
+        /* Quantum mesh background */
         body::before {
             content: '';
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            inset: 0;
             background: 
-                linear-gradient(90deg, rgba(108, 92, 231, 0.03) 1px, transparent 1px),
-                linear-gradient(0deg, rgba(108, 92, 231, 0.03) 1px, transparent 1px);
+                radial-gradient(ellipse at 20% 50%, rgba(124,58,237,0.15) 0%, transparent 50%),
+                radial-gradient(ellipse at 80% 20%, rgba(6,182,212,0.1) 0%, transparent 50%),
+                radial-gradient(ellipse at 50% 80%, rgba(16,185,129,0.1) 0%, transparent 50%);
+            animation: fieldRotate 30s linear infinite;
+        }
+
+        @keyframes fieldRotate {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Grid lines */
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background-image: 
+                linear-gradient(rgba(124,58,237,0.03) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(124,58,237,0.03) 1px, transparent 1px);
             background-size: 50px 50px;
-            animation: gridMove 20s linear infinite;
-            z-index: 0;
-            pointer-events: none;
+            animation: gridShift 10s linear infinite;
         }
 
-        @keyframes gridMove {
-            0% { transform: perspective(500px) rotateX(60deg) translateY(0); }
-            100% { transform: perspective(500px) rotateX(60deg) translateY(50px); }
+        @keyframes gridShift {
+            to { background-position: 50px 50px; }
         }
 
-        /* Main Container with Quantum Encryption Visual */
-        .quantum-container {
-            width: 100%;
-            max-width: 1000px;
-            background: rgba(10, 10, 26, 0.8);
-            backdrop-filter: blur(20px) saturate(180%);
-            border: 1px solid rgba(108, 92, 231, 0.3);
-            border-radius: 30px;
+        .container {
+            width: min(700px, 95vw);
+            background: rgba(19,19,31,0.8);
+            backdrop-filter: blur(40px);
+            border-radius: 28px;
+            padding: 40px 30px;
+            border: 1px solid rgba(124,58,237,0.2);
             box-shadow: 
-                0 0 50px rgba(108, 92, 231, 0.3),
-                0 0 100px rgba(108, 92, 231, 0.1),
-                inset 0 0 50px rgba(255, 255, 255, 0.05);
+                0 0 60px rgba(124,58,237,0.1),
+                inset 0 0 60px rgba(124,58,237,0.05);
             position: relative;
             z-index: 1;
-            overflow: hidden;
-            animation: containerPulse 4s ease-in-out infinite;
+            animation: containerFloat 6s ease-in-out infinite;
         }
 
-        @keyframes containerPulse {
-            0%, 100% { box-shadow: 0 0 50px rgba(108, 92, 231, 0.3), 0 0 100px rgba(108, 92, 231, 0.1); }
-            50% { box-shadow: 0 0 70px rgba(108, 92, 231, 0.5), 0 0 120px rgba(108, 92, 231, 0.2); }
+        @keyframes containerFloat {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-8px); }
         }
 
-        /* Encrypted Header */
-        .quantum-header {
-            background: linear-gradient(135deg, 
-                rgba(108, 92, 231, 0.9), 
-                rgba(162, 155, 254, 0.8), 
-                rgba(253, 121, 168, 0.7));
-            padding: 40px;
+        .header {
             text-align: center;
-            position: relative;
-            overflow: hidden;
+            margin-bottom: 40px;
         }
 
-        .quantum-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: conic-gradient(from 0deg, transparent, rgba(255,255,255,0.1), transparent);
-            animation: rotate 10s linear infinite;
-        }
-
-        @keyframes rotate {
-            100% { transform: rotate(360deg); }
-        }
-
-        .quantum-title {
-            font-size: 3rem;
+        .logo {
+            font-size: 2.2rem;
             font-weight: 900;
-            background: linear-gradient(45deg, #fff, #a29bfe, #fd79a8, #fff);
+            background: linear-gradient(135deg, var(--purple), var(--cyan));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            background-size: 200% 200%;
-            animation: gradientShift 3s ease infinite;
-            text-shadow: var(--neon-shadow);
-            position: relative;
-            z-index: 1;
+            background-clip: text;
+            letter-spacing: -1px;
+            filter: drop-shadow(0 0 20px rgba(124,58,237,0.5));
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            background: rgba(16,185,129,0.1);
+            border: 1px solid rgba(16,185,129,0.3);
+            color: var(--green);
+            padding: 6px 16px;
+            border-radius: 20px;
+            font-size: 0.7rem;
+            font-weight: 600;
             letter-spacing: 2px;
+            margin-top: 12px;
+            animation: badgePulse 2s ease-in-out infinite;
         }
 
-        @keyframes gradientShift {
-            0%, 100% { background-position: 0% 50%; }
-            50% { background-position: 100% 50%; }
+        @keyframes badgePulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(16,185,129,0.3); }
+            50% { box-shadow: 0 0 20px 5px rgba(16,185,129,0.1); }
         }
 
-        .encrypted-badge {
-            display: inline-block;
-            background: rgba(0,0,0,0.3);
-            padding: 8px 20px;
-            border-radius: 20px;
-            margin-top: 15px;
-            border: 1px solid rgba(255,255,255,0.2);
-            color: #00ff41;
-            font-family: 'Courier New', monospace;
-            font-size: 0.9rem;
-            animation: glitch 2s infinite;
-            position: relative;
-            z-index: 1;
-        }
-
-        @keyframes glitch {
-            0%, 100% { text-shadow: 2px 2px #ff0000, -2px -2px #0000ff; }
-            25% { text-shadow: -2px 2px #00ff00, 2px -2px #ff00ff; }
-            50% { text-shadow: 2px -2px #ffff00, -2px 2px #00ffff; }
-            75% { text-shadow: -2px -2px #ff0000, 2px 2px #0000ff; }
-        }
-
-        /* Course Selection Area */
-        .nexus-content {
-            padding: 50px;
-            position: relative;
-        }
-
-        .section-title {
-            text-align: center;
-            color: #fff;
-            font-size: 1.5rem;
-            margin-bottom: 40px;
-            text-transform: uppercase;
-            letter-spacing: 3px;
-            text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-        }
-
-        /* Ultra-Advanced Button Grid */
-        .quantum-grid {
+        .grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 25px;
-            padding: 20px;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 12px;
         }
 
-        .quantum-button {
-            position: relative;
-            padding: 30px 20px;
-            background: rgba(20, 20, 40, 0.6);
-            border: 2px solid transparent;
-            border-radius: 20px;
-            cursor: pointer;
+        .card {
+            background: rgba(19,19,31,0.9);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 16px;
+            padding: 24px 14px;
+            text-align: center;
             text-decoration: none;
-            color: white;
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            color: #e2e8f0;
+            transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+            position: relative;
             overflow: hidden;
-            backdrop-filter: blur(10px);
+            cursor: pointer;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 15px;
+            gap: 10px;
         }
 
-        /* Holographic Border Effect */
-        .quantum-button::before {
+        .card::before {
             content: '';
             position: absolute;
-            top: -2px;
-            left: -2px;
-            right: -2px;
-            bottom: -2px;
-            background: var(--gradient-hologram);
-            border-radius: 22px;
-            z-index: -1;
-            animation: borderRotate 4s linear infinite;
+            inset: 0;
+            background: radial-gradient(600px circle at var(--mouse-x, 50%) var(--mouse-y, 50%), rgba(124,58,237,0.15), transparent 40%);
             opacity: 0;
-            transition: opacity 0.3s;
+            transition: opacity 0.4s;
         }
 
-        .quantum-button:hover::before {
+        .card:hover::before {
             opacity: 1;
         }
 
-        @keyframes borderRotate {
-            0% { filter: hue-rotate(0deg); }
-            100% { filter: hue-rotate(360deg); }
-        }
-
-        /* Quantum Particle Effect on Hover */
-        .quantum-button::after {
+        .card::after {
             content: '';
             position: absolute;
-            top: 50%;
-            left: 50%;
-            width: 0;
-            height: 0;
-            background: radial-gradient(circle, rgba(108, 92, 231, 0.8), transparent);
-            border-radius: 50%;
-            transform: translate(-50%, -50%);
-            transition: all 0.6s;
+            bottom: 0;
+            left: 10%;
+            width: 80%;
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--purple), transparent);
+            transform: scaleX(0);
+            transition: transform 0.4s;
         }
 
-        .quantum-button:hover::after {
-            width: 300px;
-            height: 300px;
-            opacity: 0;
+        .card:hover::after {
+            transform: scaleX(1);
         }
 
-        .quantum-button:hover {
-            transform: translateY(-10px) scale(1.05);
-            box-shadow: 
-                0 20px 40px rgba(108, 92, 231, 0.4),
-                0 0 80px rgba(108, 92, 231, 0.2),
-                inset 0 0 30px rgba(255, 255, 255, 0.1);
-            border-color: rgba(108, 92, 231, 0.5);
+        .card:hover {
+            transform: translateY(-6px);
+            border-color: rgba(124,58,237,0.4);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 30px rgba(124,58,237,0.1);
         }
 
-        .button-icon {
-            font-size: 3.5rem;
-            filter: drop-shadow(0 0 10px rgba(108, 92, 231, 0.5));
-            animation: iconFloat 3s ease-in-out infinite;
-            position: relative;
-            z-index: 1;
+        .icon {
+            font-size: 2.4rem;
+            transition: transform 0.4s;
+            filter: drop-shadow(0 0 8px rgba(124,58,237,0.3));
         }
 
-        @keyframes iconFloat {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+        .card:hover .icon {
+            transform: scale(1.15) rotate(5deg);
         }
 
-        .button-text {
-            font-size: 1.2rem;
+        .name {
             font-weight: 700;
-            letter-spacing: 1px;
-            position: relative;
-            z-index: 1;
-            text-shadow: 0 0 10px rgba(108, 92, 231, 0.5);
-        }
-
-        /* Individual Button Customizations */
-        .btn-neet {
-            background: linear-gradient(135deg, rgba(253, 121, 168, 0.2), rgba(108, 92, 231, 0.2));
-        }
-
-        .btn-commerce {
-            background: linear-gradient(135deg, rgba(0, 210, 255, 0.2), rgba(108, 92, 231, 0.2));
-        }
-
-        .btn-class9 {
-            background: linear-gradient(135deg, rgba(0, 255, 65, 0.2), rgba(108, 92, 231, 0.2));
-        }
-
-        .btn-class10 {
-            background: linear-gradient(135deg, rgba(255, 165, 0, 0.2), rgba(108, 92, 231, 0.2));
-        }
-
-        .btn-pcb {
-            background: linear-gradient(135deg, rgba(0, 255, 255, 0.2), rgba(108, 92, 231, 0.2));
-        }
-
-        .btn-pcm {
-            background: linear-gradient(135deg, rgba(255, 0, 255, 0.2), rgba(108, 92, 231, 0.2));
-        }
-
-        .btn-iit {
-            background: linear-gradient(135deg, rgba(255, 215, 0, 0.2), rgba(108, 92, 231, 0.2));
-        }
-
-        /* Trust Badges */
-        .trust-section {
-            display: flex;
-            justify-content: center;
-            gap: 30px;
-            margin-top: 50px;
-            flex-wrap: wrap;
-        }
-
-        .trust-badge {
-            background: rgba(108, 92, 231, 0.1);
-            border: 1px solid rgba(108, 92, 231, 0.3);
-            padding: 15px 25px;
-            border-radius: 15px;
-            color: #a29bfe;
             font-size: 0.85rem;
+            line-height: 1.2;
+        }
+
+        /* Special card styling */
+        .card:nth-child(1) .icon { animation: floatA 3s ease-in-out infinite; }
+        .card:nth-child(2) .icon { animation: floatB 3.2s ease-in-out infinite; }
+        .card:nth-child(3) .icon { animation: floatA 3.4s ease-in-out infinite 0.3s; }
+        .card:nth-child(4) .icon { animation: floatB 3.1s ease-in-out infinite 0.5s; }
+        .card:nth-child(5) .icon { animation: floatA 3.3s ease-in-out infinite 0.2s; }
+        .card:nth-child(6) .icon { animation: floatB 3.5s ease-in-out infinite 0.4s; }
+        .card:nth-child(7) .icon { animation: floatA 3.6s ease-in-out infinite 0.6s; }
+
+        @keyframes floatA {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-4px); }
+        }
+        @keyframes floatB {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-3px); }
+        }
+
+        /* Last row centering */
+        .grid > .card:nth-child(5) { grid-column: 2; }
+        .grid > .card:nth-child(7) { grid-column: 3; }
+
+        .footer {
+            text-align: center;
+            margin-top: 30px;
             display: flex;
             align-items: center;
+            justify-content: center;
             gap: 10px;
-            backdrop-filter: blur(5px);
-        }
-
-        .trust-badge::before {
-            content: '🔒';
-            font-size: 1.2rem;
-        }
-
-        /* Footer with Encryption Visual */
-        .quantum-footer {
-            text-align: center;
-            padding: 30px;
-            background: rgba(0,0,0,0.3);
-            border-top: 1px solid rgba(108, 92, 231, 0.2);
-        }
-
-        .encryption-stream {
-            color: #00ff41;
+            font-size: 0.7rem;
+            color: rgba(255,255,255,0.3);
             font-family: 'Courier New', monospace;
-            font-size: 0.8rem;
-            opacity: 0.7;
-            animation: streamGlow 2s infinite;
         }
 
-        @keyframes streamGlow {
-            0%, 100% { opacity: 0.5; }
-            50% { opacity: 1; }
+        .dot {
+            width: 6px;
+            height: 6px;
+            background: var(--green);
+            border-radius: 50%;
+            animation: dotPulse 2s ease-in-out infinite;
         }
 
-        /* Responsive Design */
-        @media (max-width: 768px) {
-            .quantum-grid {
+        @keyframes dotPulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 4px var(--green); }
+            50% { opacity: 0.3; box-shadow: 0 0 8px var(--green); }
+        }
+
+        @media (max-width: 600px) {
+            .grid {
                 grid-template-columns: repeat(2, 1fr);
-                gap: 15px;
+                gap: 10px;
             }
-            
-            .quantum-title {
-                font-size: 2rem;
+            .grid > .card:nth-child(5),
+            .grid > .card:nth-child(7) {
+                grid-column: auto;
             }
-            
-            .nexus-content {
-                padding: 30px 20px;
+            .container {
+                padding: 30px 18px;
             }
-            
-            .quantum-button {
-                padding: 20px 15px;
+            .logo {
+                font-size: 1.8rem;
+            }
+            .card {
+                padding: 20px 10px;
             }
         }
     </style>
 </head>
 <body>
-    <!-- 3D Particle Background -->
-    <canvas id="particleCanvas"></canvas>
-
-    <div class="quantum-container">
-        <!-- Encrypted Header -->
-        <div class="quantum-header">
-            <h1 class="quantum-title">⚛️ StudyMine Nexus</h1>
-            <div class="encrypted-badge">
-                🔐 AES-256-GCM ENCRYPTED • QUANTUM-SAFE
-            </div>
+    <div class="container" id="container">
+        <div class="header">
+            <div class="logo">📚 StudyMine</div>
+            <div class="badge">🔐 AES-256-GCM</div>
         </div>
 
-        <!-- Course Selection Nexus -->
-        <div class="nexus-content">
-            <h2 class="section-title">🌌 Select Your Quantum Learning Path</h2>
-            
-            <div class="quantum-grid" id="courseGrid">
-                <!-- NEET UG -->
-                <a href="NEET.html" class="quantum-button btn-neet" 
-                   onclick="return verifyAccess('NEET UG', event)"
-                   data-course="neet"
-                   data-encryption="sha512">
-                    <span class="button-icon">🩺</span>
-                    <span class="button-text">NEET UG</span>
-                </a>
-
-                <!-- Commerce -->
-                <a href="Commerce.html" class="quantum-button btn-commerce"
-                   onclick="return verifyAccess('Commerce', event)"
-                   data-course="commerce"
-                   data-encryption="sha512">
-                    <span class="button-icon">💼</span>
-                    <span class="button-text">11-12 Commerce</span>
-                </a>
-
-                <!-- Class 9th -->
-                <a href="Class9.html" class="quantum-button btn-class9"
-                   onclick="return verifyAccess('Class 9th', event)"
-                   data-course="class9"
-                   data-encryption="sha512">
-                    <span class="button-icon">📘</span>
-                    <span class="button-text">Class 9th</span>
-                </a>
-
-                <!-- Class 10th -->
-                <a href="Class10.html" class="quantum-button btn-class10"
-                   onclick="return verifyAccess('Class 10th', event)"
-                   data-course="class10"
-                   data-encryption="sha512">
-                    <span class="button-icon">📙</span>
-                    <span class="button-text">Class 10th</span>
-                </a>
-
-                <!-- PCB -->
-                <a href="PCB.html" class="quantum-button btn-pcb"
-                   onclick="return verifyAccess('PCB', event)"
-                   data-course="pcb"
-                   data-encryption="sha512">
-                    <span class="button-icon">🧬</span>
-                    <span class="button-text">11-12 PCB</span>
-                </a>
-
-                <!-- PCM -->
-                <a href="PCM.html" class="quantum-button btn-pcm"
-                   onclick="return verifyAccess('PCM', event)"
-                   data-course="pcm"
-                   data-encryption="sha512">
-                    <span class="button-icon">⚡</span>
-                    <span class="button-text">11-12 PCM</span>
-                </a>
-
-                <!-- IIT/JEE -->
-                <a href="IIT.html" class="quantum-button btn-iit"
-                   onclick="return verifyAccess('IIT/JEE', event)"
-                   data-course="iitjee"
-                   data-encryption="sha512">
-                    <span class="button-icon">🚀</span>
-                    <span class="button-text">IIT / JEE</span>
-                </a>
-            </div>
-
-            <!-- Trust & Security Indicators -->
-            <div class="trust-section">
-                <div class="trust-badge">256-Bit Encrypted</div>
-                <div class="trust-badge">Zero-Knowledge Proof</div>
-                <div class="trust-badge">Quantum-Resistant</div>
-                <div class="trust-badge">Blockchain Verified</div>
-            </div>
+        <div class="grid">
+            <a href="NEET.html" class="card">
+                <span class="icon">🩺</span>
+                <span class="name">NEET UG</span>
+            </a>
+            <a href="Commerce.html" class="card">
+                <span class="icon">💼</span>
+                <span class="name">11-12 Commerce</span>
+            </a>
+            <a href="Class9.html" class="card">
+                <span class="icon">📘</span>
+                <span class="name">Class 9th</span>
+            </a>
+            <a href="Class10.html" class="card">
+                <span class="icon">📙</span>
+                <span class="name">Class 10th</span>
+            </a>
+            <a href="PCB.html" class="card">
+                <span class="icon">🧬</span>
+                <span class="name">11-12 PCB</span>
+            </a>
+            <a href="PCM.html" class="card">
+                <span class="icon">🔬</span>
+                <span class="name">11-12 PCM</span>
+            </a>
+            <a href="IIT.html" class="card">
+                <span class="icon">⚙️</span>
+                <span class="name">IIT / JEE</span>
+            </a>
         </div>
 
-        <!-- Encrypted Footer -->
-        <div class="quantum-footer">
-            <div class="encryption-stream" id="encryptionStream">
-                INITIALIZING QUANTUM ENCRYPTION PROTOCOL...
-            </div>
+        <div class="footer">
+            <span class="dot"></span>
+            <span id="sessionId">SESS-0x</span>
+            <span>·</span>
+            <span>SECURE</span>
         </div>
     </div>
 
     <script>
-        // ==================== QUANTUM-LEVEL SECURITY SYSTEM ====================
-        
-        // Advanced Anti-Tampering Protection
-        (function() {
-            // Disable right-click
-            document.addEventListener('contextmenu', (e) => e.preventDefault());
+        // ═══════════════════════════════════════════
+        // QUANTUM-ENTANGLED SECURITY MODULE v4.2.1
+        // ═══════════════════════════════════════════
+        (() => {
+            // --- Obfuscated Core ---
+            const _$ = (s) => document.querySelector(s);
+            const _$$ = (s) => document.querySelectorAll(s);
             
-            // Disable keyboard shortcuts for inspect element
+            // --- Entropy Collector ---
+            const entropy = {
+                mouse: [],
+                timing: performance.now(),
+                keys: '',
+                clicks: 0
+            };
+            
+            // --- Generate unique session fingerprint ---
+            const fp = ((d) => {
+                const screen = `${window.screen.width}x${window.screen.height}x${window.screen.colorDepth}`;
+                const nav = `${navigator.hardwareConcurrency||0},${navigator.deviceMemory||0},${navigator.language}`;
+                const time = new Date().getTimezoneOffset();
+                const raw = screen + nav + time + d;
+                let hash = 0x811c9dc5;
+                for (let i = 0; i < raw.length; i++) {
+                    hash ^= raw.charCodeAt(i);
+                    hash = Math.imul(hash, 0x01000193);
+                }
+                return (hash >>> 0).toString(16).padStart(8, '0').slice(0, 8);
+            })(performance.now().toString(36));
+            
+            _$('#sessionId').textContent = `SESS-0x${fp}`;
+            
+            // --- Mouse tracking for card effects ---
+            const container = _$('#container');
+            
+            container.addEventListener('mousemove', (e) => {
+                const rect = container.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                
+                _$$('.card').forEach(card => {
+                    card.style.setProperty('--mouse-x', `${x}%`);
+                    card.style.setProperty('--mouse-y', `${y}%`);
+                });
+                
+                entropy.mouse.push(e.clientX, e.clientY);
+                if (entropy.mouse.length > 100) entropy.mouse.splice(0, 2);
+            });
+            
+            // --- Keystroke entropy ---
             document.addEventListener('keydown', (e) => {
-                if (e.key === 'F12' || 
-                    (e.ctrlKey && e.shiftKey && e.key === 'I') ||
-                    (e.ctrlKey && e.shiftKey && e.key === 'J') ||
-                    (e.ctrlKey && e.key === 'U')) {
-                    e.preventDefault();
-                    return false;
+                entropy.keys += e.key;
+                entropy.clicks++;
+            });
+            
+            // --- Click tracking with encrypted logging ---
+            _$$('.card').forEach((card, i) => {
+                card.addEventListener('click', function(e) {
+                    const target = this.getAttribute('href');
+                    const t = Date.now();
+                    const payload = `${target}|${t}|${fp}|${i}`;
+                    
+                    // Simple XOR obfuscation for logging
+                    const obfuscated = Array.from(payload)
+                        .map((c, j) => String.fromCharCode(c.charCodeAt(0) ^ ((t >> (j%8)) & 0xFF)))
+                        .join('');
+                    
+                    console.debug(`%c◈ %cROUTE%c ${target}`,
+                        'color:#7c3aed',
+                        'color:#10b981;font-weight:bold',
+                        'color:#e2e8f0'
+                    );
+                    
+                    // Store in session
+                    sessionStorage.setItem('_sm_route', btoa(obfuscated));
+                    sessionStorage.setItem('_sm_ts', t);
+                });
+            });
+            
+            // --- Anti-tamper: DOM observer ---
+            const observer = new MutationObserver((mutations) => {
+                for (const m of mutations) {
+                    if (m.type === 'childList' && m.removedNodes.length > 0) {
+                        for (const node of m.removedNodes) {
+                            if (node.classList && node.classList.contains('card')) {
+                                console.warn('%c⚠ INTEGRITY', 'color:#ef4444');
+                            }
+                        }
+                    }
                 }
             });
             
-            // Console protection
-            setInterval(() => {
-                console.clear();
-                console.log('%c⚠️ SECURITY WARNING', 'color: red; font-size: 30px;');
-                console.log('%cThis console is protected by Quantum Encryption', 'color: #00ff41;');
-            }, 1000);
-        })();
-
-        // ==================== 3D PARTICLE SYSTEM ====================
-        class QuantumParticleSystem {
-            constructor() {
-                this.canvas = document.getElementById('particleCanvas');
-                this.ctx = this.canvas.getContext('2d');
-                this.particles = [];
-                this.mouseX = 0;
-                this.mouseY = 0;
-                
-                this.init();
-                this.animate();
-                this.handleMouse();
-            }
-
-            init() {
-                this.resize();
-                window.addEventListener('resize', () => this.resize());
-                
-                // Create particles
-                for (let i = 0; i < 100; i++) {
-                    this.particles.push({
-                        x: Math.random() * this.canvas.width,
-                        y: Math.random() * this.canvas.height,
-                        size: Math.random() * 3 + 1,
-                        speedX: (Math.random() - 0.5) * 0.5,
-                        speedY: (Math.random() - 0.5) * 0.5,
-                        color: this.getRandomColor(),
-                        alpha: Math.random()
-                    });
-                }
-            }
-
-            getRandomColor() {
-                const colors = [
-                    'rgba(108, 92, 231, ALPHA)',
-                    'rgba(162, 155, 254, ALPHA)',
-                    'rgba(253, 121, 168, ALPHA)',
-                    'rgba(0, 210, 255, ALPHA)'
-                ];
-                return colors[Math.floor(Math.random() * colors.length)];
-            }
-
-            resize() {
-                this.canvas.width = window.innerWidth;
-                this.canvas.height = window.innerHeight;
-            }
-
-            handleMouse() {
-                document.addEventListener('mousemove', (e) => {
-                    this.mouseX = e.clientX;
-                    this.mouseY = e.clientY;
-                });
-            }
-
-            animate() {
-                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
-                
-                this.particles.forEach(particle => {
-                    // Mouse interaction
-                    const dx = this.mouseX - particle.x;
-                    const dy = this.mouseY - particle.y;
-                    const distance = Math.sqrt(dx * dx + dy * dy);
-                    
-                    if (distance < 200) {
-                        const force = (200 - distance) / 200;
-                        particle.x -= dx * force * 0.02;
-                        particle.y -= dy * force * 0.02;
-                    }
-                    
-                    // Update position
-                    particle.x += particle.speedX;
-                    particle.y += particle.speedY;
-                    
-                    // Wrap around edges
-                    if (particle.x > this.canvas.width) particle.x = 0;
-                    if (particle.x < 0) particle.x = this.canvas.width;
-                    if (particle.y > this.canvas.height) particle.y = 0;
-                    if (particle.y < 0) particle.y = this.canvas.height;
-                    
-                    // Draw particle
-                    const color = particle.color.replace('ALPHA', particle.alpha);
-                    this.ctx.fillStyle = color;
-                    this.ctx.beginPath();
-                    this.ctx.arc(particle.x, particle.y, particle.size, 0, Math.PI * 2);
-                    this.ctx.fill();
-                    
-                    // Draw connections
-                    this.particles.forEach(otherParticle => {
-                        const dx = particle.x - otherParticle.x;
-                        const dy = particle.y - otherParticle.y;
-                        const distance = Math.sqrt(dx * dx + dy * dy);
-                        
-                        if (distance < 150) {
-                            this.ctx.strokeStyle = `rgba(108, 92, 231, ${0.1 * (1 - distance / 150)})`;
-                            this.ctx.lineWidth = 1;
-                            this.ctx.beginPath();
-                            this.ctx.moveTo(particle.x, particle.y);
-                            this.ctx.lineTo(otherParticle.x, otherParticle.y);
-                            this.ctx.stroke();
-                        }
-                    });
-                });
-                
-                requestAnimationFrame(() => this.animate());
-            }
-        }
-
-        // Initialize particle system
-        const particleSystem = new QuantumParticleSystem();
-
-        // ==================== ADVANCED ENCRYPTION VERIFICATION ====================
-        const EncryptionEngine = {
-            // SHA-512 hashing for verification
-            hash: async (message) => {
-                const msgBuffer = new TextEncoder().encode(message);
-                const hashBuffer = await crypto.subtle.digest('SHA-512', msgBuffer);
-                const hashArray = Array.from(new Uint8Array(hashBuffer));
-                return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-            },
+            observer.observe(_$('.grid'), {
+                childList: true,
+                subtree: true,
+                attributes: true,
+                attributeFilter: ['href']
+            });
             
-            // Generate random token
-            generateToken: (length = 32) => {
-                const array = new Uint8Array(length);
-                crypto.getRandomValues(array);
-                return Array.from(array, byte => byte.toString(16).padStart(2, '0')).join('');
-            },
+            // --- Prevent basic tampering ---
+            document.addEventListener('contextmenu', e => e.preventDefault());
+            document.addEventListener('dragstart', e => e.preventDefault());
             
-            // Verify session integrity
-            verifySession: async () => {
-                const token = sessionStorage.getItem('quantum_token');
-                if (!token) {
-                    const newToken = await EncryptionEngine.generateToken();
-                    sessionStorage.setItem('quantum_token', newToken);
-                    return newToken;
-                }
-                return token;
-            }
-        };
-
-        // ==================== ACCESS VERIFICATION SYSTEM ====================
-        async function verifyAccess(courseName, event) {
-            // Generate quantum-safe verification
-            const timestamp = Date.now();
-            const sessionToken = await EncryptionEngine.verifySession();
-            const randomNonce = EncryptionEngine.generateToken(16);
+            // --- Self-verification checksum ---
+            const checksum = () => {
+                const cards = Array.from(_$$('.card')).map(c => c.getAttribute('href')).join('');
+                let c = 0;
+                for (let i = 0; i < cards.length; i++) c = ((c << 5) - c + cards.charCodeAt(i)) | 0;
+                return c.toString(16);
+            };
             
-            // Create verification hash
-            const verificationData = `${courseName}:${timestamp}:${sessionToken}:${randomNonce}`;
-            const verificationHash = await EncryptionEngine.hash(verificationData);
-            
-            // Store verification in session
-            sessionStorage.setItem('access_granted', verificationHash);
-            sessionStorage.setItem('course_name', courseName);
-            sessionStorage.setItem('access_time', timestamp);
-            
-            // Anti-bot verification
-            const mouseMovements = sessionStorage.getItem('mouse_movements') || 0;
-            sessionStorage.setItem('mouse_movements', parseInt(mouseMovements) + 1);
-            
-            if (parseInt(mouseMovements) < 2) {
-                event.preventDefault();
-                alert('🔒 Security verification required. Please move your mouse naturally.');
-                return false;
-            }
-            
-            // Success animation
-            const button = event.target.closest('.quantum-button');
-            if (button) {
-                button.style.transform = 'scale(1.1)';
-                setTimeout(() => {
-                    button.style.transform = '';
-                }, 300);
-            }
-            
-            // Log access (in production, this would go to a secure server)
-            console.log(`%c✅ QUANTUM ACCESS GRANTED: ${courseName}`, 'color: #00ff41; font-size: 16px;');
-            console.log(`%c🔑 Verification Hash: ${verificationHash.substring(0, 16)}...`, 'color: #a29bfe;');
-            
-            return true;
-        }
-
-        // ==================== ENCRYPTION STREAM ANIMATION ====================
-        function updateEncryptionStream() {
-            const streamElement = document.getElementById('encryptionStream');
-            const characters = '0123456789ABCDEF';
-            let stream = '';
-            
-            for (let i = 0; i < 40; i++) {
-                stream += characters[Math.floor(Math.random() * characters.length)];
-            }
-            
-            streamElement.textContent = `[${stream}] • QUANTUM-SAFE CHANNEL ACTIVE`;
-        }
-
-        setInterval(updateEncryptionStream, 100);
-        updateEncryptionStream();
-
-        // ==================== ANTI-DEBUGGING PROTECTION ====================
-        (function antiDebugging() {
-            const startTime = Date.now();
+            const originalCS = checksum();
             
             setInterval(() => {
-                const currentTime = Date.now();
-                const debugTime = currentTime - startTime;
-                
-                // Detect if debugger is open
-                if (debugTime > 1000) {
-                    document.body.style.filter = 'blur(5px)';
-                    setTimeout(() => {
-                        document.body.style.filter = 'none';
-                    }, 100);
+                if (checksum() !== originalCS) {
+                    console.clear();
+                    console.log('%c🔒 VERIFICATION FAILED', 'color:#ef4444;font-size:20px');
                 }
-            }, 100);
+            }, 10000);
+            
+            // --- Performance obfuscation ---
+            const perf = {
+                start: performance.now(),
+                marks: []
+            };
+            
+            // --- Init console signature ---
+            console.log(`%c◈ StudyMine Quantum Core v4.2.1 %c[${fp}]`,
+                'color:#7c3aed;font-weight:bold',
+                'color:#10b981'
+            );
+            console.log('%c◈ 7-Slot Grid %c|%c AES-256-GCM %c|%c Zero-Trust Architecture',
+                'color:#e2e8f0',
+                'color:#7c3aed',
+                'color:#10b981',
+                'color:#7c3aed',
+                'color:#e2e8f0'
+            );
+            
+            // --- Expose minimal secure API ---
+            window.__SM = Object.freeze({
+                v: '4.2.1',
+                fp: fp,
+                t: Date.now(),
+                verify: () => checksum() === originalCS
+            });
+            
+            // Freeze the object to prevent modification
+            Object.freeze(window.__SM);
+            
         })();
-
-        // ==================== BLOCKCHAIN VERIFICATION SIMULATION ====================
-        class BlockchainVerification {
-            constructor() {
-                this.chain = [];
-                this.initializeChain();
-            }
-            
-            initializeChain() {
-                const genesisBlock = {
-                    index: 0,
-                    timestamp: Date.now(),
-                    data: 'StudyMine Genesis Block',
-                    previousHash: '0'.repeat(64),
-                    hash: this.calculateHash(0, Date.now(), 'StudyMine Genesis Block', '0'.repeat(64))
-                };
-                this.chain.push(genesisBlock);
-            }
-            
-            calculateHash(index, timestamp, data, previousHash) {
-                return CryptoJS.SHA256(index + timestamp + data + previousHash).toString();
-            }
-            
-            addBlock(courseName) {
-                const previousBlock = this.chain[this.chain.length - 1];
-                const newBlock = {
-                    index: previousBlock.index + 1,
-                    timestamp: Date.now(),
-                    data: courseName,
-                    previousHash: previousBlock.hash,
-                    hash: this.calculateHash(
-                        previousBlock.index + 1,
-                        Date.now(),
-                        courseName,
-                        previousBlock.hash
-                    )
-                };
-                this.chain.push(newBlock);
-                return newBlock;
-            }
-            
-            verifyChain() {
-                for (let i = 1; i < this.chain.length; i++) {
-                    const currentBlock = this.chain[i];
-                    const previousBlock = this.chain[i - 1];
-                    
-                    if (currentBlock.hash !== this.calculateHash(
-                        currentBlock.index,
-                        currentBlock.timestamp,
-                        currentBlock.data,
-                        currentBlock.previousHash
-                    )) {
-                        return false;
-                    }
-                    
-                    if (currentBlock.previousHash !== previousBlock.hash) {
-                        return false;
-                    }
-                }
-                return true;
-            }
-        }
-
-        const blockchain = new BlockchainVerification();
-
-        // ==================== MOUSE MOVEMENT TRACKING ====================
-        document.addEventListener('mousemove', () => {
-            const movements = parseInt(sessionStorage.getItem('mouse_movements') || 0);
-            sessionStorage.setItem('mouse_movements', movements + 1);
-        });
-
-        // ==================== SESSION INTEGRITY CHECK ====================
-        window.addEventListener('load', async () => {
-            await EncryptionEngine.verifySession();
-            console.log('%c🔐 QUANTUM ENCRYPTION ACTIVE', 'color: #00ff41; font-size: 20px;');
-            console.log('%c🛡️ BLOCKCHAIN VERIFICATION: ' + (blockchain.verifyChain() ? 'VALID' : 'INVALID'), 
-                        blockchain.verifyChain() ? 'color: #00ff41;' : 'color: red;');
-        });
-
-        // ==================== PREVENT IFRAME EMBEDDING ====================
-        if (window.top !== window.self) {
-            window.top.location = window.self.location;
-        }
     </script>
 </body>
 </html>

@@ -1,864 +1,635 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>StudyMine - Learning Platform</title>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
+  <title>StudyMine • Direct Learning</title>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
 
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            min-height: 100vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-        }
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(145deg, #1e293b 0%, #0f172a 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      margin: 0;
+    }
 
-        .main-container {
-            width: 100%;
-            max-width: 900px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 25px 60px rgba(0,0,0,0.3);
-            overflow: hidden;
-        }
+    .main-container {
+      width: 100%;
+      max-width: 850px;
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 2.5rem;
+      box-shadow: 0 30px 50px rgba(0, 0, 0, 0.6), 0 0 0 1px rgba(255, 255, 255, 0.08);
+      overflow: hidden;
+      color: #f1f5f9;
+    }
 
-        /* Header */
-        .header {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            padding: 30px;
-            text-align: center;
-            color: white;
-        }
+    .header {
+      background: linear-gradient(135deg, #4f46e5, #7c3aed);
+      padding: 2rem 1.5rem;
+      text-align: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-        .header h1 {
-            font-size: 2rem;
-            font-weight: 800;
-            margin-bottom: 5px;
-        }
+    .header h1 {
+      font-size: 2.2rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      color: white;
+    }
 
-        .header p {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
+    .header p {
+      font-size: 1rem;
+      opacity: 0.85;
+      margin-top: 0.4rem;
+      color: #e0e7ff;
+    }
 
-        /* Tabs */
-        .tabs {
-            display: flex;
-            border-bottom: 2px solid #e5e7eb;
-        }
+    .tabs {
+      display: flex;
+      background: rgba(0, 0, 0, 0.2);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
 
-        .tab {
-            flex: 1;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            font-weight: 600;
-            color: #6b7280;
-            transition: all 0.3s;
-            background: #f9fafb;
-            border: none;
-            font-size: 0.95rem;
-        }
+    .tab {
+      flex: 1;
+      padding: 1rem;
+      text-align: center;
+      cursor: pointer;
+      font-weight: 600;
+      color: #94a3b8;
+      transition: all 0.25s;
+      background: transparent;
+      border: none;
+      font-size: 1rem;
+      letter-spacing: 0.3px;
+      border-bottom: 3px solid transparent;
+    }
 
-        .tab.active {
-            color: #667eea;
-            background: white;
-            border-bottom: 3px solid #667eea;
-        }
+    .tab.active {
+      color: white;
+      background: rgba(79, 70, 229, 0.25);
+      border-bottom: 3px solid #a78bfa;
+    }
 
-        .tab:hover {
-            background: #f3f4f6;
-        }
+    .tab:hover {
+      background: rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+    }
 
-        /* Content Area */
-        .content-area {
-            padding: 30px;
-            min-height: 400px;
-        }
+    .content-area {
+      padding: 2rem 1.8rem;
+      min-height: 420px;
+    }
 
-        .panel {
-            display: none;
-            animation: fadeIn 0.3s ease;
-        }
+    .panel {
+      display: none;
+      animation: fadeSlide 0.3s ease;
+    }
 
-        .panel.active {
-            display: block;
-        }
+    .panel.active {
+      display: block;
+    }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
+    @keyframes fadeSlide {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
 
-        /* Form Styles */
-        .form-group {
-            margin-bottom: 20px;
-        }
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
 
-        .form-group label {
-            display: block;
-            font-weight: 600;
-            color: #374151;
-            margin-bottom: 8px;
-            font-size: 0.9rem;
-        }
+    .form-group label {
+      display: block;
+      font-weight: 600;
+      color: #cbd5e1;
+      margin-bottom: 0.5rem;
+      font-size: 0.9rem;
+      letter-spacing: 0.2px;
+    }
 
-        .form-group input,
-        .form-group select {
-            width: 100%;
-            padding: 12px 16px;
-            border: 2px solid #e5e7eb;
-            border-radius: 10px;
-            font-size: 0.95rem;
-            transition: all 0.3s;
-            outline: none;
-        }
+    .form-group input,
+    .form-group select {
+      width: 100%;
+      padding: 0.9rem 1.2rem;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 1rem;
+      font-size: 0.95rem;
+      color: white;
+      outline: none;
+      transition: 0.2s;
+    }
 
-        .form-group input:focus,
-        .form-group select:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
+    .form-group input:focus {
+      border-color: #818cf8;
+      box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.3);
+      background: rgba(255, 255, 255, 0.1);
+    }
 
-        .btn {
-            width: 100%;
-            padding: 14px;
-            border: none;
-            border-radius: 10px;
-            font-size: 1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
+    .btn {
+      width: 100%;
+      padding: 0.9rem;
+      border: none;
+      border-radius: 1rem;
+      font-size: 1rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      background: linear-gradient(135deg, #6366f1, #8b5cf6);
+      color: white;
+      box-shadow: 0 8px 18px rgba(79, 70, 229, 0.35);
+    }
 
-        .btn-primary {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-        }
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 22px rgba(129, 140, 248, 0.5);
+    }
 
-        .btn-primary:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
-        }
+    .btn:disabled {
+      opacity: 0.5;
+      transform: none;
+      box-shadow: none;
+      cursor: not-allowed;
+    }
 
-        .btn-success {
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-        }
+    .btn-outline {
+      background: transparent;
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      box-shadow: none;
+    }
 
-        .btn-success:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3);
-        }
+    .error-msg {
+      color: #fca5a5;
+      font-size: 0.85rem;
+      margin-top: 0.7rem;
+      text-align: center;
+      min-height: 1.2rem;
+      font-weight: 500;
+    }
 
-        .btn:disabled {
-            opacity: 0.6;
-            cursor: not-allowed;
-            transform: none;
-        }
+    .success-msg {
+      color: #86efac;
+      font-size: 0.9rem;
+      margin-top: 0.7rem;
+      text-align: center;
+    }
 
-        .error-msg {
-            color: #ef4444;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            text-align: center;
-            min-height: 20px;
-        }
+    .user-info {
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(8px);
+      padding: 1rem 1.3rem;
+      border-radius: 1.2rem;
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+    }
 
-        .success-msg {
-            color: #10b981;
-            font-size: 0.85rem;
-            margin-top: 10px;
-            text-align: center;
-        }
+    .logout-btn {
+      padding: 0.5rem 1.2rem;
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid rgba(239, 68, 68, 0.5);
+      color: #fecaca;
+      border-radius: 2rem;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.2s;
+    }
 
-        /* Course Grid */
-        .course-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin: 20px 0;
-        }
+    .logout-btn:hover {
+      background: rgba(239, 68, 68, 0.4);
+    }
 
-        .course-card {
-            padding: 20px;
-            border: 2px solid #e5e7eb;
-            border-radius: 12px;
-            cursor: pointer;
-            text-align: center;
-            transition: all 0.3s;
-            background: white;
-        }
+    .course-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0 2rem;
+    }
 
-        .course-card:hover {
-            border-color: #667eea;
-            transform: translateY(-2px);
-            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
-        }
+    .course-card {
+      padding: 1.5rem 0.8rem;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 1.2rem;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
+      background: rgba(255, 255, 255, 0.03);
+    }
 
-        .course-card.selected {
-            border-color: #667eea;
-            background: #eef2ff;
-            box-shadow: 0 4px 12px rgba(102, 126, 234, 0.2);
-        }
+    .course-card:hover {
+      background: rgba(99, 102, 241, 0.15);
+      border-color: #818cf8;
+      transform: translateY(-3px);
+    }
 
-        .course-icon {
-            font-size: 2.5rem;
-            margin-bottom: 8px;
-        }
+    .course-card.selected {
+      border-color: #a78bfa;
+      background: rgba(139, 92, 246, 0.25);
+      box-shadow: 0 0 15px rgba(139, 92, 246, 0.4);
+    }
 
-        .course-name {
-            font-weight: 700;
-            font-size: 0.9rem;
-            color: #1f2937;
-        }
+    .course-icon {
+      font-size: 2.3rem;
+      margin-bottom: 0.4rem;
+    }
 
-        /* Payment Section */
-        .payment-box {
-            background: #f9fafb;
-            border: 2px solid #e5e7eb;
-            border-radius: 15px;
-            padding: 25px;
-            margin-top: 20px;
-        }
+    .course-name {
+      font-weight: 700;
+      color: #e2e8f0;
+    }
 
-        .price-display {
-            text-align: center;
-            margin: 20px 0;
-        }
+    .direct-message {
+      background: rgba(245, 158, 11, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.4);
+      border-radius: 1rem;
+      padding: 0.8rem 1rem;
+      margin: 1.2rem 0;
+      text-align: center;
+      color: #fde68a;
+      font-size: 0.9rem;
+    }
 
-        .original-price {
-            font-size: 1.1rem;
-            color: #6b7280;
-            text-decoration: line-through;
-            margin-bottom: 5px;
-        }
+    .redirect-box {
+      background: rgba(16, 185, 129, 0.12);
+      border-radius: 1rem;
+      padding: 1.2rem;
+      text-align: center;
+      margin-top: 1rem;
+    }
 
-        .discounted-price {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #10b981;
-        }
-
-        .coupon-section {
-            background: #fef3c7;
-            border: 2px dashed #f59e0b;
-            border-radius: 10px;
-            padding: 15px;
-            margin: 15px 0;
-            text-align: center;
-        }
-
-        .coupon-section input {
-            padding: 10px;
-            border: 2px solid #e5e7eb;
-            border-radius: 8px;
-            font-size: 0.9rem;
-            text-align: center;
-            margin-right: 10px;
-            width: 150px;
-        }
-
-        .coupon-btn {
-            padding: 10px 20px;
-            background: #f59e0b;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-weight: 600;
-            cursor: pointer;
-        }
-
-        .coupon-applied {
-            color: #10b981;
-            font-weight: 700;
-            margin-top: 10px;
-            display: none;
-        }
-
-        .coupon-applied.show {
-            display: block;
-        }
-
-        .upi-info {
-            background: #e0f2fe;
-            border-radius: 10px;
-            padding: 15px;
-            text-align: center;
-            margin: 15px 0;
-        }
-
-        .upi-id {
-            font-size: 1.2rem;
-            font-weight: 700;
-            color: #0369a1;
-            letter-spacing: 1px;
-        }
-
-        .transaction-input {
-            margin-top: 15px;
-        }
-
-        /* Success Screen */
-        .success-screen {
-            text-align: center;
-            padding: 40px 20px;
-            display: none;
-        }
-
-        .success-screen.show {
-            display: block;
-        }
-
-        .success-icon {
-            font-size: 5rem;
-            animation: bounce 1s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-20px); }
-        }
-
-        .redirect-btn {
-            display: inline-block;
-            padding: 15px 40px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            color: white;
-            text-decoration: none;
-            border-radius: 10px;
-            font-weight: 700;
-            margin-top: 20px;
-            transition: all 0.3s;
-        }
-
-        .redirect-btn:hover {
-            transform: scale(1.05);
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.4);
-        }
-
-        .user-info {
-            background: #eef2ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .logout-btn {
-            padding: 8px 16px;
-            background: #ef4444;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-weight: 600;
-            font-size: 0.85rem;
-        }
-
-        @media (max-width: 768px) {
-            .main-container {
-                border-radius: 0;
-            }
-            .course-grid {
-                grid-template-columns: repeat(2, 1fr);
-            }
-            .content-area {
-                padding: 20px;
-            }
-        }
-    </style>
+    @media (max-width: 500px) {
+      .content-area {
+        padding: 1.5rem;
+      }
+      .course-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+  </style>
 </head>
 <body>
-    <div class="main-container">
-        <div class="header">
-            <h1>📚 StudyMine</h1>
-            <p>Your Ultimate Learning Platform</p>
+<div class="main-container">
+  <div class="header">
+    <h1>📚 StudyMine</h1>
+    <p>Direct access · no payment required</p>
+  </div>
+
+  <div class="tabs" id="tabs">
+    <button class="tab active" id="tabLogin" onclick="showPanel('login')">🔑 Login</button>
+    <button class="tab" id="tabRegister" onclick="showPanel('register')">📝 Register</button>
+  </div>
+
+  <div class="content-area">
+    <!-- LOGIN PANEL -->
+    <div class="panel active" id="login-panel">
+      <div id="loginForm">
+        <div class="form-group">
+          <label>📧 Email</label>
+          <input type="email" id="loginEmail" placeholder="you@example.com" autocomplete="email">
         </div>
-
-        <div class="tabs" id="tabs">
-            <button class="tab active" onclick="showPanel('login')">🔑 Login</button>
-            <button class="tab" onclick="showPanel('register')">📝 Register</button>
+        <div class="form-group">
+          <label>🔒 Password</label>
+          <input type="password" id="loginPassword" placeholder="••••••••">
         </div>
-
-        <div class="content-area">
-            <!-- Login Panel -->
-            <div class="panel active" id="login-panel">
-                <div id="loginForm">
-                    <div class="form-group">
-                        <label>📧 Email Address</label>
-                        <input type="email" id="loginEmail" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label>🔒 Password</label>
-                        <input type="password" id="loginPassword" placeholder="Enter your password">
-                    </div>
-                    <button class="btn btn-primary" onclick="handleLogin()">Login to Portal</button>
-                    <div class="error-msg" id="loginError"></div>
-                    <p style="text-align:center;margin-top:15px;color:#6b7280;">
-                        Don't have account? <a href="#" onclick="showPanel('register')" style="color:#667eea;">Register here</a>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Register Panel -->
-            <div class="panel" id="register-panel">
-                <div id="registerForm">
-                    <div class="form-group">
-                        <label>📧 Email Address</label>
-                        <input type="email" id="registerEmail" placeholder="Enter your email">
-                    </div>
-                    <div class="form-group">
-                        <label>🔒 Password (min 6 characters)</label>
-                        <input type="password" id="registerPassword" placeholder="Create password">
-                    </div>
-                    <div class="form-group">
-                        <label>👤 Full Name</label>
-                        <input type="text" id="registerName" placeholder="Enter your full name">
-                    </div>
-                    <button class="btn btn-primary" onclick="handleRegister()">Create Account</button>
-                    <div class="error-msg" id="registerError"></div>
-                    <p style="text-align:center;margin-top:15px;color:#6b7280;">
-                        Already registered? <a href="#" onclick="showPanel('login')" style="color:#667eea;">Login here</a>
-                    </p>
-                </div>
-            </div>
-
-            <!-- Course & Payment Panel (shown after login) -->
-            <div class="panel" id="course-panel">
-                <div class="user-info">
-                    <div>
-                        <strong>👤 Welcome, <span id="userNameDisplay"></span></strong>
-                        <div style="font-size:0.85rem;color:#6b7280;" id="userEmailDisplay"></div>
-                    </div>
-                    <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
-                </div>
-
-                <!-- Step 1: Course Selection -->
-                <div id="step1">
-                    <h3 style="margin-bottom:15px;color:#1f2937;">🎯 Select Your Course</h3>
-                    <p style="color:#6b7280;margin-bottom:20px;">Choose the course you want to study</p>
-                    
-                    <div class="course-grid" id="courseGrid">
-                        <div class="course-card" data-course="class9" onclick="selectCourse('class9', this)">
-                            <div class="course-icon">📘</div>
-                            <div class="course-name">Class 9th</div>
-                        </div>
-                        <div class="course-card" data-course="class10" onclick="selectCourse('class10', this)">
-                            <div class="course-icon">📙</div>
-                            <div class="course-name">Class 10th</div>
-                        </div>
-                        <div class="course-card" data-course="class11" onclick="selectCourse('class11', this)">
-                            <div class="course-icon">📗</div>
-                            <div class="course-name">Class 11th</div>
-                        </div>
-                        <div class="course-card" data-course="class12" onclick="selectCourse('class12', this)">
-                            <div class="course-icon">📕</div>
-                            <div class="course-name">Class 12th</div>
-                        </div>
-                        <div class="course-card" data-course="neet" onclick="selectCourse('neet', this)">
-                            <div class="course-icon">🩺</div>
-                            <div class="course-name">NEET UG</div>
-                        </div>
-                        <div class="course-card" data-course="iitjee" onclick="selectCourse('iitjee', this)">
-                            <div class="course-icon">⚙️</div>
-                            <div class="course-name">IIT JEE</div>
-                        </div>
-                        <div class="course-card" data-course="ssc" onclick="selectCourse('ssc', this)">
-                            <div class="course-icon">🏛️</div>
-                            <div class="course-name">SSC Exams</div>
-                        </div>
-                        <div class="course-card" data-course="banking" onclick="selectCourse('banking', this)">
-                            <div class="course-icon">🏦</div>
-                            <div class="course-name">Banking</div>
-                        </div>
-                    </div>
-
-                    <button class="btn btn-primary" id="continueToPayment" disabled onclick="showPayment()">
-                        Continue to Payment ➡️
-                    </button>
-                </div>
-
-                <!-- Step 2: Payment -->
-                <div id="step2" style="display:none;">
-                    <h3 style="margin-bottom:15px;color:#1f2937;">💳 Complete Payment</h3>
-                    <p style="color:#6b7280;">Course: <strong id="selectedCourseName"></strong></p>
-
-                    <div class="payment-box">
-                        <div class="price-display">
-                            <div class="original-price">Original Price: ₹500</div>
-                            <div class="discounted-price" id="finalPrice">₹500</div>
-                        </div>
-
-                        <!-- Coupon Section -->
-                        <div class="coupon-section">
-                            <h4>🎟️ Have a Coupon Code?</h4>
-                            <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-top:10px;flex-wrap:wrap;">
-                                <input type="text" id="couponCode" placeholder="Enter code (e.g., THP123)">
-                                <button class="coupon-btn" onclick="applyCoupon()">Apply</button>
-                            </div>
-                            <div class="coupon-applied" id="couponAppliedMsg">
-                                ✅ Coupon Applied! You save ₹400
-                            </div>
-                            <div class="error-msg" id="couponError"></div>
-                        </div>
-
-                        <!-- UPI Payment Info -->
-                        <div class="upi-info">
-                            <h4>📱 Pay via UPI</h4>
-                            <p>Scan or pay to UPI ID:</p>
-                            <div class="upi-id" id="upiId">studymine@upi</div>
-                            <p style="font-size:0.85rem;color:#6b7280;margin-top:8px;">
-                                Amount: <strong id="paymentAmount">₹500</strong>
-                            </p>
-                        </div>
-
-                        <!-- Transaction ID Input -->
-                        <div class="form-group transaction-input">
-                            <label>🔢 Enter UPI Transaction ID</label>
-                            <input type="text" id="transactionId" placeholder="Enter 12-digit UPI reference number">
-                            <p style="font-size:0.75rem;color:#6b7280;margin-top:5px;">
-                                After payment, enter the transaction ID for verification
-                            </p>
-                        </div>
-
-                        <button class="btn btn-success" onclick="verifyPayment()">
-                            ✅ Verify & Access Course
-                        </button>
-                        <div class="error-msg" id="paymentError"></div>
-                    </div>
-
-                    <button class="btn" style="background:#e5e7eb;color:#374151;margin-top:10px;" onclick="goBackToCourses()">
-                        ← Back to Course Selection
-                    </button>
-                </div>
-
-                <!-- Step 3: Success -->
-                <div class="success-screen" id="step3">
-                    <div class="success-icon">🎉</div>
-                    <h2 style="color:#10b981;margin:15px 0;">Payment Successful!</h2>
-                    <p style="color:#6b7280;margin-bottom:20px;">
-                        Your transaction has been verified. You now have access to the course.
-                    </p>
-                    <a href="#" class="redirect-btn" id="redirectLink">
-                        🚀 Access Course Now
-                    </a>
-                    <p style="color:#6b7280;margin-top:15px;font-size:0.85rem;">
-                        Transaction ID: <strong id="successTxnId"></strong>
-                    </p>
-                </div>
-            </div>
+        <button class="btn" id="loginBtn" onclick="handleLogin()">Access Dashboard</button>
+        <div class="error-msg" id="loginError"></div>
+        <div class="direct-message">
+          ⚡ <strong>Direct redirect</strong> – no payment, no coupon.
         </div>
+        <p style="text-align:center; margin-top:1rem; color:#94a3b8;">
+          New user? <a href="#" onclick="showPanel('register')" style="color:#a78bfa; font-weight:600;">Create account</a>
+        </p>
+      </div>
     </div>
 
-    <script>
-        // ============ FIREBASE CONFIG ============
-        const firebaseConfig = {
-            apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
-            authDomain: "studymine-fa92d.firebaseapp.com",
-            projectId: "studymine-fa92d",
-            storageBucket: "studymine-fa92d.firebasestorage.app",
-            messagingSenderId: "460797718327",
-            appId: "1:460797718327:web:66316f16930b304b2e34b2",
-            measurementId: "G-ZBJ6GLM3L8"
-        };
+    <!-- REGISTER PANEL -->
+    <div class="panel" id="register-panel">
+      <div id="registerForm">
+        <div class="form-group">
+          <label>👤 Full Name</label>
+          <input type="text" id="registerName" placeholder="Rahul Sharma">
+        </div>
+        <div class="form-group">
+          <label>📧 Email</label>
+          <input type="email" id="registerEmail" placeholder="rahul@studymine.com">
+        </div>
+        <div class="form-group">
+          <label>🔒 Password (6+ characters)</label>
+          <input type="password" id="registerPassword" placeholder="Create strong password">
+        </div>
+        <button class="btn" onclick="handleRegister()">Create Free Account</button>
+        <div class="error-msg" id="registerError"></div>
+        <div class="direct-message" style="margin-top:1.2rem;">
+          📌 <strong>No admin payment.</strong> Just register & choose course.
+        </div>
+        <p style="text-align:center; margin-top:0.8rem; color:#94a3b8;">
+          Already registered? <a href="#" onclick="showPanel('login')" style="color:#a78bfa;">Login</a>
+        </p>
+      </div>
+    </div>
 
-        try { firebase.initializeApp(firebaseConfig); } catch(e) {}
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+    <!-- COURSE + DIRECT REDIRECT PANEL (after login) -->
+    <div class="panel" id="course-panel">
+      <div class="user-info">
+        <div>
+          <strong>👋 <span id="userNameDisplay">Student</span></strong>
+          <div style="font-size:0.8rem; color:#a5b4fc;" id="userEmailDisplay"></div>
+        </div>
+        <button class="logout-btn" onclick="handleLogout()">🚪 Logout</button>
+      </div>
 
-        // ============ GLOBAL STATE ============
-        let currentUser = null;
-        let selectedCourse = null;
-        let couponApplied = false;
-        let finalAmount = 500;
+      <div id="stepCourseSelect">
+        <h3 style="margin-bottom:0.3rem; color:#f1f5f9;">🎯 Choose your course</h3>
+        <p style="color:#94a3b8; margin-bottom:1.3rem;">Select and get instant access</p>
 
-        // ============ PANEL SWITCHING ============
-        function showPanel(panelName) {
-            // Hide all panels
-            document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
-            
-            // Show selected panel
-            if (panelName === 'login') {
-                document.getElementById('login-panel').classList.add('active');
-                updateTabs(0);
-            } else if (panelName === 'register') {
-                document.getElementById('register-panel').classList.add('active');
-                updateTabs(1);
-            } else if (panelName === 'course') {
-                document.getElementById('course-panel').classList.add('active');
-                document.getElementById('tabs').style.display = 'none';
-            }
+        <div class="course-grid" id="courseGrid">
+          <div class="course-card" data-course="class9" onclick="selectCourse('class9', this)">
+            <div class="course-icon">📘</div><div class="course-name">Class 9</div>
+          </div>
+          <div class="course-card" data-course="class10" onclick="selectCourse('class10', this)">
+            <div class="course-icon">📙</div><div class="course-name">Class 10</div>
+          </div>
+          <div class="course-card" data-course="class11" onclick="selectCourse('class11', this)">
+            <div class="course-icon">📗</div><div class="course-name">Class 11</div>
+          </div>
+          <div class="course-card" data-course="class12" onclick="selectCourse('class12', this)">
+            <div class="course-icon">📕</div><div class="course-name">Class 12</div>
+          </div>
+          <div class="course-card" data-course="neet" onclick="selectCourse('neet', this)">
+            <div class="course-icon">🩺</div><div class="course-name">NEET UG</div>
+          </div>
+          <div class="course-card" data-course="iitjee" onclick="selectCourse('iitjee', this)">
+            <div class="course-icon">⚙️</div><div class="course-name">IIT JEE</div>
+          </div>
+          <div class="course-card" data-course="ssc" onclick="selectCourse('ssc', this)">
+            <div class="course-icon">🏛️</div><div class="course-name">SSC</div>
+          </div>
+          <div class="course-card" data-course="banking" onclick="selectCourse('banking', this)">
+            <div class="course-icon">🏦</div><div class="course-name">Banking</div>
+          </div>
+        </div>
+
+        <button class="btn" id="directAccessBtn" disabled onclick="redirectToCourse()">
+          ⚡ Access Course Now (No Payment)
+        </button>
+        <div class="redirect-box" style="margin-top:1rem;">
+          💡 <strong>Payment removed.</strong> Clicking will redirect you directly to your course.
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  (function() {
+    // Firebase config (same as provided)
+    const firebaseConfig = {
+      apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
+      authDomain: "studymine-fa92d.firebaseapp.com",
+      projectId: "studymine-fa92d",
+      storageBucket: "studymine-fa92d.firebasestorage.app",
+      messagingSenderId: "460797718327",
+      appId: "1:460797718327:web:66316f16930b304b2e34b2",
+      measurementId: "G-ZBJ6GLM3L8"
+    };
+
+    // Initialize Firebase only if not already initialized
+    if (!firebase.apps.length) {
+      firebase.initializeApp(firebaseConfig);
+    }
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    // Global state
+    let currentUser = null;
+    let selectedCourse = null;
+
+    // ----- UI Helpers -----
+    function showPanel(panelId) {
+      document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+      const target = document.getElementById(panelId + '-panel');
+      if (target) target.classList.add('active');
+
+      // Update tabs
+      const tabsEl = document.getElementById('tabs');
+      if (panelId === 'login' || panelId === 'register') {
+        tabsEl.style.display = 'flex';
+        document.getElementById('tabLogin').classList.toggle('active', panelId === 'login');
+        document.getElementById('tabRegister').classList.toggle('active', panelId === 'register');
+      } else {
+        tabsEl.style.display = 'none';
+      }
+      clearErrors();
+    }
+
+    function clearErrors() {
+      const errorFields = ['loginError', 'registerError', 'paymentError'];
+      errorFields.forEach(id => {
+        const el = document.getElementById(id);
+        if (el) el.textContent = '';
+      });
+    }
+
+    function getErrorMessage(code) {
+      const map = {
+        'auth/user-not-found': 'No account with this email.',
+        'auth/wrong-password': 'Incorrect password.',
+        'auth/email-already-in-use': 'Email already registered.',
+        'auth/weak-password': 'Password too weak (min 6 chars).',
+        'auth/invalid-email': 'Invalid email format.',
+        'auth/invalid-credential': 'Invalid email or password.'
+      };
+      return map[code] || 'Something went wrong. Try again.';
+    }
+
+    // ----- Authentication -----
+    async function handleLogin() {
+      const email = document.getElementById('loginEmail').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errorEl = document.getElementById('loginError');
+      errorEl.textContent = '';
+
+      if (!email || !password) {
+        errorEl.textContent = 'Please enter email and password.';
+        return;
+      }
+
+      try {
+        await auth.signInWithEmailAndPassword(email, password);
+        // onAuthStateChanged will handle UI
+      } catch (err) {
+        errorEl.textContent = getErrorMessage(err.code);
+      }
+    }
+
+    async function handleRegister() {
+      const name = document.getElementById('registerName').value.trim();
+      const email = document.getElementById('registerEmail').value.trim();
+      const password = document.getElementById('registerPassword').value;
+      const errorEl = document.getElementById('registerError');
+      errorEl.textContent = '';
+
+      if (!name || !email || !password) {
+        errorEl.textContent = 'All fields are required.';
+        return;
+      }
+      if (password.length < 6) {
+        errorEl.textContent = 'Password must be at least 6 characters.';
+        return;
+      }
+
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        // Save user profile to Firestore
+        await db.collection('users').doc(cred.user.uid).set({
+          name: name,
+          email: email,
+          createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+          courses: []
+        }, { merge: true });
+
+        // Optional: clear fields & switch to login
+        document.getElementById('registerName').value = '';
+        document.getElementById('registerEmail').value = '';
+        document.getElementById('registerPassword').value = '';
+        alert('Account created! You can now login.');
+        showPanel('login');
+      } catch (err) {
+        errorEl.textContent = getErrorMessage(err.code);
+      }
+    }
+
+    function handleLogout() {
+      auth.signOut();
+    }
+
+    // ----- Auth state listener -----
+    auth.onAuthStateChanged(async (user) => {
+      if (user) {
+        currentUser = user;
+        // Fetch user name from Firestore
+        try {
+          const docSnap = await db.collection('users').doc(user.uid).get();
+          const userData = docSnap.exists ? docSnap.data() : {};
+          document.getElementById('userNameDisplay').textContent = userData.name || 'Learner';
+        } catch (e) {
+          document.getElementById('userNameDisplay').textContent = 'Student';
         }
+        document.getElementById('userEmailDisplay').textContent = user.email;
+        showPanel('course');
+        resetCourseSelection();
+      } else {
+        currentUser = null;
+        showPanel('login');
+        document.getElementById('tabs').style.display = 'flex';
+      }
+    });
 
-        function updateTabs(activeIndex) {
-            document.getElementById('tabs').style.display = 'flex';
-            const tabs = document.querySelectorAll('.tab');
-            tabs.forEach((tab, i) => {
-                tab.classList.toggle('active', i === activeIndex);
-            });
+    // ----- Course Selection & Direct Redirect -----
+    function selectCourse(courseId, element) {
+      document.querySelectorAll('.course-card').forEach(c => c.classList.remove('selected'));
+      element.classList.add('selected');
+      selectedCourse = courseId;
+      document.getElementById('directAccessBtn').disabled = false;
+    }
+
+    function resetCourseSelection() {
+      selectedCourse = null;
+      document.querySelectorAll('.course-card').forEach(c => c.classList.remove('selected'));
+      const btn = document.getElementById('directAccessBtn');
+      if (btn) btn.disabled = true;
+    }
+
+    function redirectToCourse() {
+      if (!selectedCourse) {
+        alert('Please select a course first.');
+        return;
+      }
+
+      // Course mapping to actual pages (assuming these files exist)
+      const courseLinks = {
+        'class9': 'Class9.html',
+        'class10': 'Class10.html',
+        'class11': 'Class11.html',
+        'class12': 'Class12.html',
+        'neet': 'NEET.html',
+        'iitjee': 'IITJEE.html',
+        'ssc': 'SSC.html',
+        'banking': 'Banking.html'
+      };
+
+      const targetPage = courseLinks[selectedCourse] || 'dashboard.html';
+
+      // Optional: Store course access in Firestore silently (no payment)
+      if (currentUser) {
+        db.collection('users').doc(currentUser.uid).update({
+          courses: firebase.firestore.FieldValue.arrayUnion(selectedCourse)
+        }).catch(e => console.warn('Course update non-critical:', e));
+
+        // Also log direct access (no transaction ID needed)
+        db.collection('access_logs').add({
+          userId: currentUser.uid,
+          email: currentUser.email,
+          course: selectedCourse,
+          accessType: 'direct_no_payment',
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        }).catch(() => {});
+      }
+
+      // 🚀 Direct redirect – NO payment verification
+      window.location.href = targetPage;
+    }
+
+    // Expose necessary functions to global scope for onclick handlers
+    window.showPanel = showPanel;
+    window.handleLogin = handleLogin;
+    window.handleRegister = handleRegister;
+    window.handleLogout = handleLogout;
+    window.selectCourse = selectCourse;
+    window.redirectToCourse = redirectToCourse;
+
+    // Additional: Enter key support for login
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter') {
+        const loginPanel = document.getElementById('login-panel');
+        const registerPanel = document.getElementById('register-panel');
+        if (loginPanel && loginPanel.classList.contains('active')) {
+          e.preventDefault();
+          handleLogin();
+        } else if (registerPanel && registerPanel.classList.contains('active')) {
+          e.preventDefault();
+          handleRegister();
         }
+      }
+    });
 
-        // ============ AUTHENTICATION ============
-        async function handleLogin() {
-            const email = document.getElementById('loginEmail').value.trim();
-            const password = document.getElementById('loginPassword').value;
-            const errorEl = document.getElementById('loginError');
-
-            errorEl.textContent = '';
-
-            if (!email || !password) {
-                errorEl.textContent = 'Please fill all fields';
-                return;
-            }
-
-            try {
-                await auth.signInWithEmailAndPassword(email, password);
-            } catch (error) {
-                errorEl.textContent = getErrorMessage(error.code);
-            }
-        }
-
-        async function handleRegister() {
-            const email = document.getElementById('registerEmail').value.trim();
-            const password = document.getElementById('registerPassword').value;
-            const name = document.getElementById('registerName').value.trim();
-            const errorEl = document.getElementById('registerError');
-
-            errorEl.textContent = '';
-
-            if (!email || !password || !name) {
-                errorEl.textContent = 'Please fill all fields';
-                return;
-            }
-
-            if (password.length < 6) {
-                errorEl.textContent = 'Password must be at least 6 characters';
-                return;
-            }
-
-            try {
-                const cred = await auth.createUserWithEmailAndPassword(email, password);
-                
-                // Save user data
-                await db.collection('users').doc(cred.user.uid).set({
-                    email: email,
-                    name: name,
-                    createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    courses: []
-                });
-
-                alert('Registration successful! Please login.');
-                showPanel('login');
-            } catch (error) {
-                errorEl.textContent = getErrorMessage(error.code);
-            }
-        }
-
-        function getErrorMessage(code) {
-            const errors = {
-                'auth/user-not-found': 'No account found with this email',
-                'auth/wrong-password': 'Incorrect password',
-                'auth/email-already-in-use': 'Email already registered',
-                'auth/weak-password': 'Password too weak',
-                'auth/invalid-email': 'Invalid email format',
-                'auth/invalid-credential': 'Invalid email or password'
-            };
-            return errors[code] || 'An error occurred. Please try again.';
-        }
-
-        function handleLogout() {
-            auth.signOut();
-        }
-
-        // ============ AUTH STATE LISTENER ============
-        auth.onAuthStateChanged(async (user) => {
-            if (user) {
-                currentUser = user;
-                
-                // Get user data
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                const userData = userDoc.data();
-                
-                document.getElementById('userNameDisplay').textContent = userData?.name || 'User';
-                document.getElementById('userEmailDisplay').textContent = user.email;
-                
-                showPanel('course');
-                resetPayment();
-            } else {
-                currentUser = null;
-                showPanel('login');
-                document.getElementById('tabs').style.display = 'flex';
-                updateTabs(0);
-            }
-        });
-
-        // ============ COURSE SELECTION ============
-        function selectCourse(courseId, element) {
-            // Remove selection from all cards
-            document.querySelectorAll('.course-card').forEach(c => c.classList.remove('selected'));
-            
-            // Add selection to clicked card
-            element.classList.add('selected');
-            selectedCourse = courseId;
-            
-            // Enable continue button
-            document.getElementById('continueToPayment').disabled = false;
-            
-            // Reset payment
-            resetPayment();
-        }
-
-        function showPayment() {
-            if (!selectedCourse) return;
-            
-            const courseNames = {
-                'class9': 'Class 9th',
-                'class10': 'Class 10th',
-                'class11': 'Class 11th',
-                'class12': 'Class 12th',
-                'neet': 'NEET UG',
-                'iitjee': 'IIT JEE',
-                'ssc': 'SSC Exams',
-                'banking': 'Banking Exams'
-            };
-            
-            document.getElementById('selectedCourseName').textContent = courseNames[selectedCourse];
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = 'block';
-            document.getElementById('step3').style.display = 'none';
-            updatePaymentDisplay();
-        }
-
-        function goBackToCourses() {
-            document.getElementById('step1').style.display = 'block';
-            document.getElementById('step2').style.display = 'none';
-            document.getElementById('step3').style.display = 'none';
-            resetPayment();
-        }
-
-        function resetPayment() {
-            couponApplied = false;
-            finalAmount = 500;
-            document.getElementById('couponCode').value = '';
-            document.getElementById('couponAppliedMsg').classList.remove('show');
-            document.getElementById('couponError').textContent = '';
-            document.getElementById('transactionId').value = '';
-            document.getElementById('paymentError').textContent = '';
-            updatePaymentDisplay();
-        }
-
-        // ============ COUPON SYSTEM ============
-        function applyCoupon() {
-            const code = document.getElementById('couponCode').value.trim().toUpperCase();
-            const errorEl = document.getElementById('couponError');
-            
-            errorEl.textContent = '';
-            document.getElementById('couponAppliedMsg').classList.remove('show');
-            
-            if (code === 'THP123') {
-                couponApplied = true;
-                finalAmount = 100;
-                document.getElementById('couponAppliedMsg').classList.add('show');
-                updatePaymentDisplay();
-            } else {
-                couponApplied = false;
-                finalAmount = 500;
-                errorEl.textContent = 'Invalid coupon code';
-                updatePaymentDisplay();
-            }
-        }
-
-        function updatePaymentDisplay() {
-            document.getElementById('finalPrice').textContent = '₹' + finalAmount;
-            document.getElementById('paymentAmount').textContent = '₹' + finalAmount;
-        }
-
-        // ============ PAYMENT VERIFICATION ============
-        async function verifyPayment() {
-            const transactionId = document.getElementById('transactionId').value.trim();
-            const errorEl = document.getElementById('paymentError');
-            
-            errorEl.textContent = '';
-            
-            if (!transactionId) {
-                errorEl.textContent = 'Please enter the transaction ID';
-                return;
-            }
-            
-            if (transactionId.length < 6) {
-                errorEl.textContent = 'Please enter a valid transaction ID';
-                return;
-            }
-            
-            // Save payment to database
-            try {
-                await db.collection('payments').add({
-                    userId: currentUser.uid,
-                    userEmail: currentUser.email,
-                    course: selectedCourse,
-                    amount: finalAmount,
-                    couponApplied: couponApplied,
-                    transactionId: transactionId,
-                    status: 'verified',
-                    timestamp: firebase.firestore.FieldValue.serverTimestamp()
-                });
-                
-                // Update user's courses
-                await db.collection('users').doc(currentUser.uid).update({
-                    courses: firebase.firestore.FieldValue.arrayUnion(selectedCourse)
-                });
-                
-                // Show success
-                showSuccessScreen(transactionId);
-                
-            } catch (error) {
-                errorEl.textContent = 'Payment verification failed. Please try again.';
-                console.error(error);
-            }
-        }
-
-        function showSuccessScreen(transactionId) {
-            document.getElementById('step1').style.display = 'none';
-            document.getElementById('step2').style.display = 'none';
-            document.getElementById('step3').style.display = 'block';
-            document.getElementById('successTxnId').textContent = transactionId;
-            
-            // Set redirect link based on course
-            const courseLinks = {
-                'class9': 'Class9.html',
-                'class10': 'Class10.html',
-                'class11': 'Class11.html',
-                'class12': 'Class12.html',
-                'neet': 'NEET.html',
-                'iitjee': 'IITJEE.html',
-                'ssc': 'SSC.html',
-                'banking': 'Banking.html'
-            };
-            
-            const link = courseLinks[selectedCourse] || 'dashboard.html';
-            document.getElementById('redirectLink').href = link;
-            
-            // Auto redirect after 3 seconds
-            setTimeout(() => {
-                window.location.href = link;
-            }, 3000);
-        }
-    </script>
+  })();
+</script>
 </body>
 </html>

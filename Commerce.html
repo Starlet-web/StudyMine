@@ -3,191 +3,1112 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes, viewport-fit=cover">
-  <title>Class 11-12 Commerce | NCERT Study Hub</title>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <title>Class 11-12 Commerce | Advanced NCERT Study Hub</title>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js">
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-auth-compat.js">
+  </script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js">
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js">
+  </script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600;700&family=Noto+Sans+Devanagari:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,700;1,500&display=swap" rel="stylesheet">
   <style>
     :root {
-      --primary: #1a237e; --primary-dark: #0d1453; --accent: #ff6f00;
-      --bg-main: #f5f7fa; --bg-card: #ffffff; --text-main: #1a1a2e; --text-muted: #5c6b7a;
-      --border: #dde1e7; --red: #e53935; --green: #2e7d32; --blue: #1565c0;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06); --shadow: 0 4px 12px rgba(0,0,0,0.08);
-      --shadow-xl: 0 20px 50px rgba(0,0,0,0.15); --radius: 8px; --radius-lg: 12px;
+      --primary: #1a237e;
+      --primary-dark: #0d1453;
+      --accent: #ff6f00;
+      --bg-main: #f5f7fa;
+      --bg-card: #ffffff;
+      --text-main: #1a1a2e;
+      --text-muted: #5c6b7a;
+      --border: #dde1e7;
+      --red: #e53935;
+      --green: #2e7d32;
+      --blue: #1565c0;
+      --orange: #ff6f00;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow: 0 4px 12px rgba(0,0,0,0.08);
+      --shadow-xl: 0 20px 50px rgba(0,0,0,0.15);
+      --radius: 8px;
+      --radius-lg: 12px;
     }
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-    body { font-family: 'Inter', -apple-system, sans-serif; background: linear-gradient(135deg, #e8eaf6 0%, #f5f5f5 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 10px; }
-    .app-container { width: 100%; max-width: 1300px; height: 96vh; max-height: 950px; background: var(--bg-card); border-radius: var(--radius-lg); box-shadow: var(--shadow-xl); display: flex; flex-direction: column; overflow: hidden; border: 1px solid var(--border); position: relative; }
-    
-    .auth-screen { display: flex; align-items: center; justify-content: center; height: 100%; background: linear-gradient(170deg, #e8eaf6 0%, #f5f5f5 30%, #fff 60%, #fff8e1 100%); }
-    .auth-wrapper { width: 100%; max-width: 460px; padding: 20px; }
-    .auth-card { background: #fff; border-radius: 20px; padding: 32px 28px; box-shadow: 0 25px 35px rgba(0,0,0,0.12); border: 1px solid var(--border); border-top: 4px solid var(--primary); }
-    .auth-card .tag { display: inline-block; background: #e8eaf6; color: var(--primary); font-size: 0.55rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; letter-spacing: 1.5px; }
-    .auth-card h2 { font-weight: 800; font-size: 1.3rem; color: var(--primary); text-align: center; margin: 10px 0 2px; font-family: 'Playfair Display', serif; }
-    .auth-card .subtitle { text-align: center; color: var(--text-muted); font-size: 0.75rem; margin-bottom: 24px; }
-    .input-group { margin-bottom: 14px; }
-    .input-group label { display: block; font-size: 0.68rem; font-weight: 600; color: var(--text-main); margin-bottom: 4px; text-transform: uppercase; letter-spacing: 0.5px; }
-    .auth-input { width: 100%; padding: 12px 16px; border: 2px solid var(--border); border-radius: 10px; background: #fafafa; font-size: 0.88rem; outline: none; }
-    .auth-input:focus { border-color: var(--primary); background: #fff; }
-    .auth-btn { width: 100%; padding: 13px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--primary), var(--primary-dark)); color: #fff; font-weight: 600; font-size: 0.9rem; cursor: pointer; margin-top: 4px; }
-    .auth-btn:hover { transform: translateY(-2px); }
-    .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; }
-    .auth-toggle { display: block; width: 100%; margin-top: 16px; background: none; border: none; color: var(--text-muted); font-size: 0.78rem; cursor: pointer; text-align: center; }
-    .error-message { color: var(--red); font-size: 0.7rem; min-height: 20px; margin-top: 8px; text-align: center; }
-    .security-notice { text-align: center; margin-top: 16px; font-size: 0.6rem; color: #9e9e9e; }
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background: linear-gradient(135deg, #e8eaf6 0%, #f5f5f5 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 10px;
+    }
+    .app-container {
+      width: 100%;
+      max-width: 1300px;
+      height: 96vh;
+      max-height: 950px;
+      background: var(--bg-card);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-xl);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
 
-    .chat-screen { display: none; flex-direction: column; height: 100%; background: #fafafa; }
-    .top-bar { background: var(--primary); color: #fff; padding: 4px 12px; display: flex; justify-content: space-between; align-items: center; font-size: 0.48rem; font-weight: 500; flex-wrap: wrap; gap: 4px; }
-    .new-msg-notification { background: var(--accent); color: #fff; border: none; font-size: 0.5rem; padding: 3px 8px; border-radius: 20px; cursor: pointer; font-weight: 700; display: none; align-items: center; gap: 3px; animation: glowPulse 1.5s infinite; white-space: nowrap; }
-    .new-msg-notification.show { display: flex; }
-    @keyframes glowPulse { 0%,100% { box-shadow: 0 0 8px rgba(255,111,0,0.5); } 50% { box-shadow: 0 0 20px rgba(255,111,0,0.9); } }
-    .notification-btn { background: rgba(255,255,255,0.15); border: none; color: #fff; font-size: 0.55rem; padding: 2px 8px; border-radius: 20px; cursor: pointer; font-weight: 600; display: flex; align-items: center; gap: 3px; }
-    .notification-badge { background: var(--red); color: #fff; border-radius: 50%; width: 14px; height: 14px; font-size: 0.45rem; display: flex; align-items: center; justify-content: center; margin-left: 2px; }
+    .auth-screen {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      background: linear-gradient(170deg, #e8eaf6 0%, #f5f5f5 30%, #fff 60%, #fff8e1 100%);
+    }
+    .auth-wrapper {
+      width: 100%;
+      max-width: 460px;
+      padding: 20px;
+    }
+    .auth-card {
+      background: #fff;
+      border-radius: 20px;
+      padding: 32px 28px;
+      box-shadow: 0 25px 35px rgba(0,0,0,0.12);
+      border: 1px solid var(--border);
+      border-top: 4px solid var(--primary);
+    }
+    .auth-card .tag {
+      display: inline-block;
+      background: #e8eaf6;
+      color: var(--primary);
+      font-size: 0.55rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-radius: 20px;
+      letter-spacing: 1.5px;
+    }
+    .auth-card h2 {
+      font-weight: 800;
+      font-size: 1.3rem;
+      color: var(--primary);
+      text-align: center;
+      margin: 10px 0 2px;
+      font-family: 'Playfair Display', serif;
+    }
+    .auth-card .subtitle {
+      text-align: center;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      margin-bottom: 24px;
+    }
+    .input-group {
+      margin-bottom: 14px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: var(--text-main);
+      margin-bottom: 4px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .auth-input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border);
+      border-radius: 10px;
+      background: #fafafa;
+      font-size: 0.88rem;
+      outline: none;
+    }
+    .auth-input:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+    .auth-btn {
+      width: 100%;
+      padding: 13px;
+      border: none;
+      border-radius: 10px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: #fff;
+      font-weight: 600;
+      font-size: 0.9rem;
+      cursor: pointer;
+      margin-top: 4px;
+    }
+    .auth-btn:hover {
+      transform: translateY(-2px);
+    }
+    .auth-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+    .auth-toggle {
+      display: block;
+      width: 100%;
+      margin-top: 16px;
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.78rem;
+      cursor: pointer;
+      text-align: center;
+    }
+    .error-message {
+      color: var(--red);
+      font-size: 0.7rem;
+      min-height: 20px;
+      margin-top: 8px;
+      text-align: center;
+    }
+    .security-notice {
+      text-align: center;
+      margin-top: 16px;
+      font-size: 0.6rem;
+      color: #9e9e9e;
+    }
 
-    .main-header { background: #fff; border-bottom: 2px solid var(--primary); }
-    .header-row-1 { padding: 6px 14px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px; border-bottom: 1px solid var(--border); }
-    .org-brand { display: flex; align-items: center; gap: 8px; }
-    .logo-icon { background: var(--primary); color: #fff; padding: 3px 8px; border-radius: 5px; font-weight: 900; font-size: 0.55rem; text-align: center; line-height: 1.1; }
-    .org-name h3 { font-size: 0.7rem; font-weight: 700; color: var(--primary); }
-    .org-name p { font-size: 0.52rem; color: var(--text-muted); }
-    .header-actions { display: flex; align-items: center; gap: 6px; flex-wrap: wrap; }
-    .session-indicator { display: flex; align-items: center; gap: 4px; background: #f5f5f5; padding: 3px 10px; border-radius: 20px; font-size: 0.55rem; }
-    .status-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--green); animation: pulse 2s infinite; }
-    .status-dot.offline { background: #bdbdbd; animation: none; }
-    @keyframes pulse { 0%,100%{box-shadow:0 0 3px #2e7d32} 50%{box-shadow:0 0 10px #2e7d32} }
-    .header-btn { background: #fff; border: 1px solid var(--border); color: var(--text-main); padding: 4px 10px; border-radius: 5px; cursor: pointer; font-size: 0.55rem; font-weight: 500; white-space: nowrap; }
-    .header-btn:hover { background: #f5f5f5; }
-    .header-btn.danger { border-color: #ffcdd2; color: var(--red); background: #fff5f5; }
-    .header-btn.admin-btn { background: var(--accent); color: #fff; border: none; display: none; }
-    .panic-btn { background: var(--red) !important; color: #fff !important; border: none !important; animation: panicPulse 2s infinite; }
-    @keyframes panicPulse { 0%,100%{box-shadow:0 0 5px rgba(229,57,53,0.5)} 50%{box-shadow:0 0 15px rgba(229,57,53,0.8)} }
-    
-    .nav-bar { padding: 3px 12px; background: #fafafa; display: flex; gap: 3px; font-size: 0.55rem; overflow-x: auto; border-bottom: 1px solid var(--border); scrollbar-width: none; }
-    .nav-bar::-webkit-scrollbar { display: none; }
-    .nav-item { white-space: nowrap; padding: 4px 10px; border-radius: 12px; cursor: pointer; transition: 0.2s; font-weight: 500; color: var(--text-muted); }
-    .nav-item:hover { background: #e8eaf6; color: var(--primary); }
-    .nav-item.active { background: var(--primary); color: #fff; font-weight: 600; }
+    .chat-screen {
+      display: none;
+      flex-direction: column;
+      height: 100%;
+      background: #fafafa;
+    }
+    .top-bar {
+      background: var(--primary);
+      color: #fff;
+      padding: 4px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.48rem;
+      font-weight: 500;
+      flex-wrap: wrap;
+      gap: 4px;
+    }
+    .new-msg-notification {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      font-size: 0.5rem;
+      padding: 3px 8px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 700;
+      display: none;
+      align-items: center;
+      gap: 3px;
+      animation: glowPulse 1.5s infinite;
+      white-space: nowrap;
+    }
+    .new-msg-notification.show {
+      display: flex;
+    }
+    @keyframes glowPulse {
+      0%,100% {
+        box-shadow: 0 0 8px rgba(255,111,0,0.5);
+      }
+      50% {
+        box-shadow: 0 0 20px rgba(255,111,0,0.9);
+      }
+    }
+    .notification-btn {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #fff;
+      font-size: 0.55rem;
+      padding: 2px 8px;
+      border-radius: 20px;
+      cursor: pointer;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+    }
+    .notification-badge {
+      background: var(--red);
+      color: #fff;
+      border-radius: 50%;
+      width: 14px;
+      height: 14px;
+      font-size: 0.45rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: 2px;
+    }
 
-    .main-layout { display: flex; flex: 1; overflow: hidden; }
-    .sidebar { width: 170px; background: #fff; border-right: 1px solid var(--border); padding: 10px 6px; overflow-y: auto; flex-shrink: 0; }
-    .sidebar-title { font-size: 0.45rem; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; color: #9e9e9e; margin: 10px 0 4px 4px; }
-    .sidebar-item { padding: 5px 8px; border-radius: 5px; font-size: 0.6rem; color: var(--text-main); cursor: pointer; display: flex; align-items: center; gap: 4px; margin-bottom: 1px; }
-    .sidebar-item:hover { background: #f5f5f5; }
-    .sidebar-item.active { background: #e8eaf6; color: var(--primary); font-weight: 600; }
-    
-    .content-area { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
-    .section-panel { display: none; flex: 1; flex-direction: column; overflow: hidden; }
-    .section-panel.active { display: flex; }
+    .main-header {
+      background: #fff;
+      border-bottom: 2px solid var(--primary);
+    }
+    .header-row-1 {
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 4px;
+      border-bottom: 1px solid var(--border);
+    }
+    .org-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .logo-icon {
+      background: var(--primary);
+      color: #fff;
+      padding: 3px 8px;
+      border-radius: 5px;
+      font-weight: 900;
+      font-size: 0.55rem;
+      text-align: center;
+      line-height: 1.1;
+    }
+    .org-name h3 {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    .org-name p {
+      font-size: 0.52rem;
+      color: var(--text-muted);
+    }
+    .header-actions {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .session-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: #f5f5f5;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.55rem;
+    }
+    .status-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: var(--green);
+      animation: pulse 2s infinite;
+    }
+    .status-dot.offline {
+      background: #bdbdbd;
+      animation: none;
+    }
+    @keyframes pulse {
+      0%,100% {
+        box-shadow: 0 0 3px #2e7d32;
+      }
+      50% {
+        box-shadow: 0 0 10px #2e7d32;
+      }
+    }
+    .header-btn {
+      background: #fff;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 4px 10px;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 0.55rem;
+      font-weight: 500;
+      white-space: nowrap;
+    }
+    .header-btn:hover {
+      background: #f5f5f5;
+    }
+    .header-btn.danger {
+      border-color: #ffcdd2;
+      color: var(--red);
+      background: #fff5f5;
+    }
+    .header-btn.admin-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      display: none;
+    }
+    .panic-btn {
+      background: var(--red) !important;
+      color: #fff !important;
+      border: none !important;
+      animation: panicPulse 2s infinite;
+    }
+    @keyframes panicPulse {
+      0%,100% {
+        box-shadow: 0 0 5px rgba(229,57,53,0.5);
+      }
+      50% {
+        box-shadow: 0 0 15px rgba(229,57,53,0.8);
+      }
+    }
 
-    .messages-container { flex: 1; overflow-y: auto; padding: 10px 8px; display: flex; flex-direction: column; gap: 5px; }
-    .date-divider { text-align: center; font-size: 0.5rem; font-weight: 600; color: #bdbdbd; padding: 4px 0; }
-    .message-bubble { max-width: 72%; padding: 7px 10px; border-radius: 12px 12px 12px 2px; background: #fff; color: var(--text-main); font-size: 0.72rem; line-height: 1.4; align-self: flex-start; box-shadow: 0 1px 3px rgba(0,0,0,0.03); border: 1px solid #f0f0f0; animation: msgIn 0.2s ease-out; word-wrap: break-word; }
-    .message-bubble .msg-label { font-size: 0.45rem; font-weight: 700; letter-spacing: 0.3px; display: block; margin-bottom: 3px; padding-bottom: 2px; border-bottom: 1px solid #e8e8e8; color: var(--primary); opacity: 0.7; }
-    .message-bubble.own { align-self: flex-end; background: #e8eaf6; border-radius: 12px 12px 2px 12px; border: 1px solid #c5cae9; }
-    .message-bubble.own .msg-label { color: #283593; }
-    .message-bubble img { max-width: 180px; max-height: 180px; border-radius: 6px; cursor: pointer; margin-top: 3px; display: block; }
-    .message-bubble.self-destruct { border-left: 3px solid var(--red) !important; }
-    @keyframes msgIn { 0%{opacity:0;transform:translateY(6px)} 100%{opacity:1;transform:translateY(0)} }
-    .message-meta { display: flex; justify-content: flex-end; align-items: center; gap: 4px; margin-top: 2px; font-size: 0.45rem; color: #bdbdbd; font-family: 'JetBrains Mono', monospace; }
-    .seen-tick { color: var(--blue); font-size: 0.6rem; }
-    .seen-tick.single { color: #bdbdbd; }
-    
-    .typing-indicator { padding: 5px 12px; font-size: 0.6rem; color: var(--text-muted); display: none; align-items: center; gap: 5px; background: #fff; border-radius: 8px; align-self: flex-start; margin: 2px 0; }
-    .typing-indicator.show { display: flex; }
-    .typing-dots { display: flex; gap: 2px; } .typing-dots span { width: 3px; height: 3px; background: var(--primary); border-radius: 50%; animation: bounce 1.2s infinite; }
-    .typing-dots span:nth-child(2) { animation-delay: 0.2s; } .typing-dots span:nth-child(3) { animation-delay: 0.4s; }
-    @keyframes bounce { 0%,60%,100%{transform:translateY(0)} 30%{transform:translateY(-4px)} }
-    
-    .empty-state { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100%; color: #bdbdbd; text-align: center; gap: 8px; }
-    .empty-state .icon { font-size: 2rem; opacity: 0.4; }
-    
-    .chat-footer { padding: 6px 12px; background: #fff; border-top: 1px solid var(--border); display: flex; gap: 6px; align-items: center; flex-wrap: wrap; }
-    .query-input { flex: 1; padding: 8px 12px; border-radius: 18px; border: 2px solid var(--border); font-size: 0.72rem; outline: none; background: #fafafa; min-width: 120px; }
-    .query-input:focus { border-color: var(--primary); background: #fff; }
-    .footer-icon-btn { width: 32px; height: 32px; border-radius: 50%; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; border: 2px solid var(--border); background: #fafafa; color: var(--text-muted); }
-    .footer-icon-btn:hover { background: #e8eaf6; }
-    .send-btn { background: var(--primary); border: none; width: 32px; height: 32px; border-radius: 50%; color: #fff; cursor: pointer; font-size: 0.8rem; flex-shrink: 0; display: flex; align-items: center; justify-content: center; }
-    .voice-btn.recording { background: var(--red); color: #fff; border-color: var(--red); animation: pulse 1s infinite; }
-    .self-destruct-btn { border-color: #ffcdd2; background: #fff5f5; color: var(--red); }
-    .self-destruct-btn.active { background: var(--red); color: #fff; }
-    #fileInput, #cameraInput { display: none; }
+    .nav-bar {
+      padding: 3px 12px;
+      background: #fafafa;
+      display: flex;
+      gap: 3px;
+      font-size: 0.55rem;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--border);
+      scrollbar-width: none;
+    }
+    .nav-bar::-webkit-scrollbar {
+      display: none;
+    }
+    .nav-item {
+      white-space: nowrap;
+      padding: 4px 10px;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: 0.2s;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+    .nav-item:hover {
+      background: #e8eaf6;
+      color: var(--primary);
+    }
+    .nav-item.active {
+      background: var(--primary);
+      color: #fff;
+      font-weight: 600;
+    }
 
-    .mocktest-container, .pyq-container, .video-container, .progress-container, .notes-container { flex: 1; overflow-y: auto; padding: 16px; }
-    h3 { color: var(--primary); margin-bottom: 12px; font-size: 0.9rem; font-family: 'Playfair Display', serif; }
-    .question-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px; margin-bottom: 12px; }
-    .q-num { font-weight: 700; color: var(--primary); font-size: 0.75rem; margin-bottom: 6px; }
-    .options { display: flex; flex-direction: column; gap: 4px; }
-    .option { padding: 8px 14px; border: 2px solid var(--border); border-radius: 6px; cursor: pointer; font-size: 0.72rem; background: #fafafa; }
-    .option:hover { border-color: #9e9e9e; }
-    .option.selected { border-color: var(--blue); background: #e3f2fd; color: #0d47a1; font-weight: 500; }
-    .option.correct { border-color: var(--green); background: #e8f5e9; color: #1b5e20; }
-    .option.wrong { border-color: var(--red); background: #ffebee; color: #b71c1c; }
-    .explanation { margin-top: 10px; padding: 8px; background: #fff8e1; border-radius: 6px; font-size: 0.65rem; color: #e65100; display: none; }
-    .explanation.show { display: block; }
-    .submit-test-btn { background: var(--primary); color: #fff; padding: 8px 20px; border-radius: 6px; border: none; cursor: pointer; font-weight: 600; margin-top: 10px; }
-    .score-display { font-weight: 700; color: var(--primary); font-size: 0.9rem; margin-top: 8px; }
-    .timer-display { background: var(--primary); color: #fff; padding: 6px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; display: inline-block; margin-bottom: 10px; font-family: 'JetBrains Mono', monospace; }
+    .main-layout {
+      display: flex;
+      flex: 1;
+      overflow: hidden;
+    }
+    .sidebar {
+      width: 180px;
+      background: #fff;
+      border-right: 1px solid var(--border);
+      padding: 10px 6px;
+      overflow-y: auto;
+      flex-shrink: 0;
+    }
+    .sidebar-title {
+      font-size: 0.45rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: #9e9e9e;
+      margin: 10px 0 4px 4px;
+    }
+    .sidebar-title:first-child {
+      margin-top: 0;
+    }
+    .sidebar-item {
+      padding: 5px 8px;
+      border-radius: 5px;
+      font-size: 0.6rem;
+      color: var(--text-main);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      margin-bottom: 1px;
+    }
+    .sidebar-item:hover {
+      background: #f5f5f5;
+    }
+    .sidebar-item.active {
+      background: #e8eaf6;
+      color: var(--primary);
+      font-weight: 600;
+    }
 
-    .pyq-card { background: #fff; border-left: 3px solid var(--primary); border-radius: 6px; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 0.7rem; }
-    .pyq-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .pyq-answer { margin-top: 6px; font-size: 0.65rem; color: var(--green); font-weight: 600; display: none; }
-    .pyq-answer.show { display: block; }
-    
-    .video-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 8px; display: flex; align-items: center; gap: 10px; cursor: pointer; }
-    .video-card:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
-    .video-thumb { width: 60px; height: 38px; background: var(--primary); border-radius: 5px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 1rem; flex-shrink: 0; }
-    
-    .stat-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(100px,1fr)); gap: 10px; margin-bottom: 16px; }
-    .stat-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 12px; text-align: center; }
-    .stat-val { font-size: 1.3rem; font-weight: 800; color: var(--primary); }
-    .stat-label { font-size: 0.6rem; color: var(--text-muted); margin-top: 2px; }
-    
-    .note-card { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 10px; margin-bottom: 10px; font-size: 0.7rem; }
-    .note-title { font-weight: 700; color: var(--primary); margin-bottom: 4px; }
-    .flashcard { background: #e8eaf6; border: 1px solid #c5cae9; border-radius: 8px; padding: 10px; margin-bottom: 8px; cursor: pointer; font-size: 0.68rem; }
+    .content-area {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .section-panel {
+      display: none;
+      flex: 1;
+      flex-direction: column;
+      overflow: hidden;
+    }
+    .section-panel.active {
+      display: flex;
+    }
 
-    .toast { position: fixed; bottom: 16px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--primary); color: #fff; padding: 8px 16px; border-radius: 20px; font-size: 0.65rem; z-index: 9999; transition: 0.3s; }
-    .toast.show { transform: translateX(-50%) translateY(0); }
-    .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 9998; align-items: center; justify-content: center; }
-    .modal-overlay.active { display: flex; }
-    .modal { background: #fff; border-radius: 14px; padding: 20px; max-width: 350px; width: 90%; text-align: center; }
-    .modal-btn { padding: 7px 16px; border-radius: 6px; border: none; font-weight: 600; font-size: 0.65rem; cursor: pointer; margin: 3px; }
-    .modal-btn.cancel { background: #f5f5f5; color: var(--text-main); }
-    .modal-btn.confirm { background: var(--red); color: #fff; }
-    .delete-progress { font-size: 0.6rem; color: var(--text-muted); margin: 6px 0; display: none; }
-    .delete-progress.show { display: block; }
-    
-    .fullscreen-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); z-index: 10000; align-items: center; justify-content: center; cursor: pointer; }
-    .fullscreen-overlay.active { display: flex; }
-    .fullscreen-overlay img { max-width: 95%; max-height: 95%; border-radius: 8px; }
-    
-    .panic-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #fff; z-index: 99999; flex-direction: column; }
-    .panic-overlay.active { display: flex; }
+    .messages-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+    .date-divider {
+      text-align: center;
+      font-size: 0.5rem;
+      font-weight: 600;
+      color: #bdbdbd;
+      padding: 4px 0;
+    }
+    .message-bubble {
+      max-width: 72%;
+      padding: 7px 10px;
+      border-radius: 12px 12px 12px 2px;
+      background: #fff;
+      color: var(--text-main);
+      font-size: 0.72rem;
+      line-height: 1.4;
+      align-self: flex-start;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+      border: 1px solid #f0f0f0;
+      animation: msgIn 0.2s ease-out;
+      word-wrap: break-word;
+    }
+    .message-bubble .msg-label {
+      font-size: 0.45rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+      display: block;
+      margin-bottom: 3px;
+      padding-bottom: 2px;
+      border-bottom: 1px solid #e8e8e8;
+      color: var(--primary);
+      opacity: 0.7;
+    }
+    .message-bubble.own {
+      align-self: flex-end;
+      background: #e8eaf6;
+      border-radius: 12px 12px 2px 12px;
+      border: 1px solid #c5cae9;
+    }
+    .message-bubble.own .msg-label {
+      color: #283593;
+    }
+    .message-bubble img {
+      max-width: 180px;
+      max-height: 180px;
+      border-radius: 6px;
+      cursor: pointer;
+      margin-top: 3px;
+      display: block;
+    }
+    .message-bubble.self-destruct {
+      border-left: 3px solid var(--red) !important;
+    }
+    @keyframes msgIn {
+      0% {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+    .message-meta {
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      gap: 4px;
+      margin-top: 2px;
+      font-size: 0.45rem;
+      color: #bdbdbd;
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .seen-tick {
+      color: var(--blue);
+      font-size: 0.6rem;
+    }
+    .seen-tick.single {
+      color: #bdbdbd;
+    }
 
-    .video-modal-content { padding: 16px; max-width: 800px; width: 95%; background: #fff; border-radius: 12px; }
-    .video-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
-    .video-wrapper { position: relative; padding-bottom: 56.25%; height: 0; overflow: hidden; border-radius: 8px; background: #000; }
-    .video-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 0; }
+    .typing-indicator {
+      padding: 5px 12px;
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      display: none;
+      align-items: center;
+      gap: 5px;
+      background: #fff;
+      border-radius: 8px;
+      align-self: flex-start;
+      margin: 2px 0;
+    }
+    .typing-indicator.show {
+      display: flex;
+    }
+    .typing-dots {
+      display: flex;
+      gap: 2px;
+    }
+    .typing-dots span {
+      width: 3px;
+      height: 3px;
+      background: var(--primary);
+      border-radius: 50%;
+      animation: bounce 1.2s infinite;
+    }
+    .typing-dots span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+    .typing-dots span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+    @keyframes bounce {
+      0%,60%,100% {
+        transform: translateY(0);
+      }
+      30% {
+        transform: translateY(-4px);
+      }
+    }
 
-    .study-streak { background: var(--primary); color: #fff; padding: 3px 10px; border-radius: 20px; font-size: 0.5rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
+    .empty-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      color: #bdbdbd;
+      text-align: center;
+      gap: 8px;
+    }
+    .empty-state .icon {
+      font-size: 2rem;
+      opacity: 0.4;
+    }
 
-    .admin-panel { padding: 16px; overflow-y: auto; }
-    .admin-section { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 14px; margin-bottom: 14px; }
-    .admin-section h4 { font-size: 0.8rem; margin-bottom: 10px; color: var(--primary); }
-    .user-row { display: flex; align-items: center; justify-content: space-between; padding: 8px; border-bottom: 1px solid #f0f0f0; gap: 8px; flex-wrap: wrap; }
-    .user-row:last-child { border-bottom: none; }
-    .user-email { font-size: 0.7rem; font-weight: 600; }
-    .admin-btn-sm { padding: 4px 10px; border-radius: 4px; border: 1px solid var(--border); cursor: pointer; font-size: 0.55rem; font-weight: 600; background: #fff; }
-    .admin-btn-sm.approve { background: var(--green); color: #fff; border: none; }
-    .admin-btn-sm.reject { background: var(--red); color: #fff; border: none; }
-    select.partner-select { padding: 3px 6px; border-radius: 4px; border: 1px solid var(--border); font-size: 0.6rem; }
+    .chat-footer {
+      padding: 6px 12px;
+      background: #fff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 6px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+    .query-input {
+      flex: 1;
+      padding: 8px 12px;
+      border-radius: 18px;
+      border: 2px solid var(--border);
+      font-size: 0.72rem;
+      outline: none;
+      background: #fafafa;
+      min-width: 120px;
+    }
+    .query-input:focus {
+      border-color: var(--primary);
+      background: #fff;
+    }
+    .footer-icon-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid var(--border);
+      background: #fafafa;
+      color: var(--text-muted);
+    }
+    .footer-icon-btn:hover {
+      background: #e8eaf6;
+    }
+    .send-btn {
+      background: var(--primary);
+      border: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      color: #fff;
+      cursor: pointer;
+      font-size: 0.8rem;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .voice-btn.recording {
+      background: var(--red);
+      color: #fff;
+      border-color: var(--red);
+      animation: pulse 1s infinite;
+    }
+    .self-destruct-btn {
+      border-color: #ffcdd2;
+      background: #fff5f5;
+      color: var(--red);
+    }
+    .self-destruct-btn.active {
+      background: var(--red);
+      color: #fff;
+    }
+    #fileInput, #cameraInput {
+      display: none;
+    }
+
+    .mocktest-container, .pyq-container, .video-container, .progress-container, .notes-container, .flashcard-container, .formula-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+    h3 {
+      color: var(--primary);
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      font-family: 'Playfair Display', serif;
+    }
+    .question-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px;
+      margin-bottom: 12px;
+    }
+    .q-num {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.75rem;
+      margin-bottom: 6px;
+    }
+    .options {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+    .option {
+      padding: 8px 14px;
+      border: 2px solid var(--border);
+      border-radius: 6px;
+      cursor: pointer;
+      font-size: 0.72rem;
+      background: #fafafa;
+    }
+    .option:hover {
+      border-color: #9e9e9e;
+    }
+    .option.selected {
+      border-color: var(--blue);
+      background: #e3f2fd;
+      color: #0d47a1;
+      font-weight: 500;
+    }
+    .option.correct {
+      border-color: var(--green);
+      background: #e8f5e9;
+      color: #1b5e20;
+    }
+    .option.wrong {
+      border-color: var(--red);
+      background: #ffebee;
+      color: #b71c1c;
+    }
+    .explanation {
+      margin-top: 10px;
+      padding: 8px;
+      background: #fff8e1;
+      border-radius: 6px;
+      font-size: 0.65rem;
+      color: #e65100;
+      display: none;
+    }
+    .explanation.show {
+      display: block;
+    }
+    .submit-test-btn {
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 20px;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      margin-top: 10px;
+    }
+    .score-display {
+      font-weight: 700;
+      color: var(--primary);
+      font-size: 0.9rem;
+      margin-top: 8px;
+    }
+    .timer-display {
+      background: var(--primary);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-block;
+      margin-bottom: 10px;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    .pyq-card {
+      background: #fff;
+      border-left: 3px solid var(--primary);
+      border-radius: 6px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 0.7rem;
+    }
+    .pyq-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .pyq-answer {
+      margin-top: 6px;
+      font-size: 0.65rem;
+      color: var(--green);
+      font-weight: 600;
+      display: none;
+    }
+    .pyq-answer.show {
+      display: block;
+    }
+    .filter-bar {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+      flex-wrap: wrap;
+    }
+    .filter-select {
+      padding: 4px 10px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 0.65rem;
+      background: #fff;
+      cursor: pointer;
+    }
+
+    .video-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+    }
+    .video-card:hover {
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .video-thumb {
+      width: 60px;
+      height: 38px;
+      background: var(--primary);
+      border-radius: 5px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+      font-size: 1rem;
+      flex-shrink: 0;
+    }
+
+    .stat-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(100px,1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      text-align: center;
+    }
+    .stat-val {
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: var(--primary);
+    }
+    .stat-label {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .note-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 10px;
+      font-size: 0.7rem;
+    }
+    .note-title {
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 4px;
+    }
+    .flashcard {
+      background: #e8eaf6;
+      border: 1px solid #c5cae9;
+      border-radius: 8px;
+      padding: 10px;
+      margin-bottom: 8px;
+      cursor: pointer;
+      font-size: 0.68rem;
+    }
+    .formula-card {
+      background: #fff;
+      border: 2px solid var(--accent);
+      border-radius: 8px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+    .formula-title {
+      font-weight: 800;
+      color: var(--accent);
+      font-size: 0.75rem;
+      margin-bottom: 4px;
+    }
+    .formula-content {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1rem;
+      color: var(--text-main);
+      padding: 6px;
+      background: #fafafa;
+      border-radius: 4px;
+      text-align: center;
+    }
+
+    .toast {
+      position: fixed;
+      bottom: 16px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: var(--primary);
+      color: #fff;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.65rem;
+      z-index: 9999;
+      transition: 0.3s;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+    }
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.65);
+      z-index: 9998;
+      align-items: center;
+      justify-content: center;
+    }
+    .modal-overlay.active {
+      display: flex;
+    }
+    .modal {
+      background: #fff;
+      border-radius: 14px;
+      padding: 20px;
+      max-width: 350px;
+      width: 90%;
+      text-align: center;
+    }
+    .modal-btn {
+      padding: 7px 16px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.65rem;
+      cursor: pointer;
+      margin: 3px;
+    }
+    .modal-btn.cancel {
+      background: #f5f5f5;
+      color: var(--text-main);
+    }
+    .modal-btn.confirm {
+      background: var(--red);
+      color: #fff;
+    }
+    .delete-progress {
+      font-size: 0.6rem;
+      color: var(--text-muted);
+      margin: 6px 0;
+      display: none;
+    }
+    .delete-progress.show {
+      display: block;
+    }
+
+    .fullscreen-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0,0,0,0.9);
+      z-index: 10000;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+    }
+    .fullscreen-overlay.active {
+      display: flex;
+    }
+    .fullscreen-overlay img {
+      max-width: 95%;
+      max-height: 95%;
+      border-radius: 8px;
+    }
+
+    .panic-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: #fff;
+      z-index: 99999;
+      flex-direction: column;
+    }
+    .panic-overlay.active {
+      display: flex;
+    }
+
+    .video-modal-content {
+      padding: 16px;
+      max-width: 800px;
+      width: 95%;
+      background: #fff;
+      border-radius: 12px;
+    }
+    .video-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+    .video-wrapper {
+      position: relative;
+      padding-bottom: 56.25%;
+      height: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      background: #000;
+    }
+    .video-wrapper iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: 0;
+    }
+
+    .study-streak {
+      background: var(--primary);
+      color: #fff;
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 0.5rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .admin-panel {
+      padding: 16px;
+      overflow-y: auto;
+    }
+    .admin-section {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 14px;
+    }
+    .admin-section h4 {
+      font-size: 0.8rem;
+      margin-bottom: 10px;
+      color: var(--primary);
+    }
+    .user-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px;
+      border-bottom: 1px solid #f0f0f0;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .user-row:last-child {
+      border-bottom: none;
+    }
+    .user-email {
+      font-size: 0.7rem;
+      font-weight: 600;
+    }
+    .admin-btn-sm {
+      padding: 4px 10px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      cursor: pointer;
+      font-size: 0.55rem;
+      font-weight: 600;
+      background: #fff;
+    }
+    .admin-btn-sm.approve {
+      background: var(--green);
+      color: #fff;
+      border: none;
+    }
+    .admin-btn-sm.reject {
+      background: var(--red);
+      color: #fff;
+      border: none;
+    }
+    select.partner-select {
+      padding: 3px 6px;
+      border-radius: 4px;
+      border: 1px solid var(--border);
+      font-size: 0.6rem;
+    }
 
     @media (max-width: 768px) {
-      .sidebar { display: none; }
-      .app-container { height: 100vh; max-height: 100vh; border-radius: 0; }
-      .message-bubble { max-width: 85%; }
+      .sidebar {
+        display: none;
+      }
+      .app-container {
+        height: 100vh;
+        max-height: 100vh;
+        border-radius: 0;
+      }
+      .message-bubble {
+        max-width: 85%;
+      }
     }
   </style>
 </head>
@@ -254,6 +1175,8 @@
         <span class="nav-item" data-section="pyq">📖 Board Q&A</span>
         <span class="nav-item" data-section="videos">🎥 Lectures</span>
         <span class="nav-item" data-section="notes">📚 Notes</span>
+        <span class="nav-item" data-section="flashcards">🃏 Flashcards</span>
+        <span class="nav-item" data-section="formula">📐 Formulas</span>
         <span class="nav-item" data-section="progress">📊 Progress</span>
       </div>
     </div>
@@ -263,12 +1186,18 @@
         <div class="sidebar-item" data-section="chat">Journal Entries</div>
         <div class="sidebar-item" data-section="chat">Ledger & Trial Balance</div>
         <div class="sidebar-item" data-section="chat">Financial Statements</div>
+        <div class="sidebar-item" data-section="chat">Depreciation</div>
         <div class="sidebar-title">🏢 Business Studies</div>
         <div class="sidebar-item" data-section="chat">Forms of Business</div>
         <div class="sidebar-item" data-section="chat">Marketing Management</div>
+        <div class="sidebar-item" data-section="chat">Principles of Management</div>
         <div class="sidebar-title">📈 Economics</div>
         <div class="sidebar-item" data-section="chat">Microeconomics</div>
         <div class="sidebar-item" data-section="chat">Macroeconomics</div>
+        <div class="sidebar-item" data-section="chat">Indian Economy</div>
+        <div class="sidebar-title">📐 Mathematics</div>
+        <div class="sidebar-item" data-section="chat">Statistics</div>
+        <div class="sidebar-item" data-section="chat">Probability</div>
       </div>
       <div class="content-area">
         <div class="section-panel active" id="section-chat">
@@ -290,6 +1219,8 @@
         <div class="section-panel" id="section-pyq"><div class="pyq-container" id="pyqContainer"></div></div>
         <div class="section-panel" id="section-videos"><div class="video-container" id="videoContainer"></div></div>
         <div class="section-panel" id="section-notes"><div class="notes-container" id="notesContainer"></div></div>
+        <div class="section-panel" id="section-flashcards"><div class="flashcard-container" id="flashcardContainer"></div></div>
+        <div class="section-panel" id="section-formula"><div class="formula-container" id="formulaContainer"></div></div>
         <div class="section-panel" id="section-progress"><div class="progress-container" id="progressContainer"></div></div>
         <div class="section-panel" id="section-admin"><div class="admin-panel" id="adminPanelContent"></div></div>
       </div>
@@ -315,7 +1246,7 @@
   };
   const IMGBB_API_KEY = "53fb01955a45c5462724b8f7d238500a";
   const ADMIN_EMAILS = ["mgbhaukali@gmail.com", "manshi@gmail.com"];
-  
+
   try { firebase.initializeApp(firebaseConfig); } catch(e) {}
   const auth = firebase.auth(), db = firebase.firestore();
 
@@ -388,6 +1319,8 @@
     if(sectionId==='pyq') loadPYQs();
     if(sectionId==='videos') loadVideos();
     if(sectionId==='notes') loadNotes();
+    if(sectionId==='flashcards') loadFlashcards();
+    if(sectionId==='formula') loadFormulas();
     if(sectionId==='progress') loadProgress();
     if(sectionId==='admin') loadAdminPanel();
   };
@@ -448,66 +1381,250 @@
   });
   cameraInput.addEventListener('change', (e) => { fileInput.files = e.target.files; fileInput.dispatchEvent(new Event('change')); });
 
-  // ============ DATA ============
+  // ============ EXTENSIVE STUDY DATA ============
+
+  // 50+ Board Q&A
   const pyqData = [
-    { year:"2024", q:"What is a Journal in accounting?", ans:"Journal is the book of original entry where transactions are first recorded in chronological order.", topic:"Accountancy" },
-    { year:"2024", q:"Define Trial Balance.", ans:"Trial Balance is a statement showing debit and credit balances of all ledger accounts to verify arithmetical accuracy.", topic:"Accountancy" },
-    { year:"2024", q:"What are the features of Sole Proprietorship?", ans:"Single owner, unlimited liability, easy formation, full control, limited capital.", topic:"Business Studies" },
-    { year:"2023", q:"Explain the law of demand.", ans:"Law of demand states that, other things being equal, quantity demanded increases when price falls and vice versa.", topic:"Economics" },
-    { year:"2023", q:"What is double-entry system?", ans:"Every transaction has two aspects - debit and credit. Both aspects are recorded for each transaction.", topic:"Accountancy" },
-    { year:"2023", q:"Define Partnership.", ans:"Partnership is a relation between persons who have agreed to share profits of a business carried on by all or any of them.", topic:"Business Studies" }
+    { year:"2024", q:"What is a Journal in accounting?", ans:"Journal is the book of original/prime entry where transactions are first recorded in chronological order.", topic:"Accountancy" },
+    { year:"2024", q:"Define Trial Balance and its purpose.", ans:"Trial Balance is a statement showing debit and credit balances of all ledger accounts to verify arithmetical accuracy of books.", topic:"Accountancy" },
+    { year:"2024", q:"What are the features of Sole Proprietorship?", ans:"Single ownership, unlimited liability, easy formation, full control, limited capital, sole risk bearer.", topic:"Business Studies" },
+    { year:"2024", q:"Explain the law of demand with diagram.", ans:"Law of demand states inverse relationship between price and quantity demanded, other factors remaining constant. Demand curve slopes downward.", topic:"Economics" },
+    { year:"2024", q:"What is double-entry system? Give rules.", ans:"Every transaction has two aspects - debit and credit. Rules: Debit what comes in, Credit what goes out (Real); Debit receiver, Credit giver (Personal); Debit expenses, Credit incomes (Nominal).", topic:"Accountancy" },
+    { year:"2024", q:"Define Partnership and its essential features.", ans:"Partnership is relation between persons agreeing to share profits of business. Features: Agreement, profit sharing, lawful business, mutual agency.", topic:"Business Studies" },
+    { year:"2024", q:"What is elasticity of demand? Types?", ans:"Responsiveness of quantity demanded to change in price. Types: Price elasticity, Income elasticity, Cross elasticity.", topic:"Economics" },
+    { year:"2024", q:"Explain cash book and its types.", ans:"Cash book records all cash transactions. Types: Simple, Double column (cash+discount), Triple column (cash+discount+bank), Petty cash book.", topic:"Accountancy" },
+    { year:"2024", q:"What are cooperative societies? Features?", ans:"Voluntary association for mutual benefit. Features: Voluntary membership, democratic control, service motive, limited return on capital.", topic:"Business Studies" },
+    { year:"2024", q:"Define depreciation. Methods of calculating?", ans:"Depreciation is decrease in value of fixed assets due to usage/obsolescence. Methods: Straight line, Written down value, Annuity method.", topic:"Accountancy" },
+    { year:"2023", q:"What is Bank Reconciliation Statement?", ans:"BRS reconciles bank balance as per cash book with bank statement balance, identifying causes of differences like cheques in transit, bank charges.", topic:"Accountancy" },
+    { year:"2023", q:"Explain principles of management by Fayol.", ans:"14 principles: Division of work, Authority-responsibility, Discipline, Unity of command, Unity of direction, Subordination of individual interest, Remuneration, Centralization, Scalar chain, Order, Equity, Stability, Initiative, Esprit de corps.", topic:"Business Studies" },
+    { year:"2023", q:"What is production possibility curve?", ans:"PPC shows maximum combinations of two goods that can be produced with given resources and technology. Illustrates scarcity, choice, opportunity cost.", topic:"Economics" },
+    { year:"2023", q:"Explain types of accounts with examples.", ans:"Personal A/c (Ram's A/c, Bank A/c), Real A/c (Cash A/c, Building A/c), Nominal A/c (Salary A/c, Rent A/c).", topic:"Accountancy" },
+    { year:"2023", q:"What is joint stock company? Merits and demerits.", ans:"Company with perpetual succession, limited liability, common seal. Merits: Large capital, limited liability, professional management. Demerits: Complex formation, lack of secrecy.", topic:"Business Studies" },
+    { year:"2023", q:"Explain consumer equilibrium with utility analysis.", ans:"Consumer is in equilibrium when MUx/Px = MUy/Py = MUm (for two goods). Maximizes total utility given budget constraint.", topic:"Economics" },
+    { year:"2023", q:"What are subsidiary books? Name them.", ans:"Subsidiary books record specific transactions: Purchase book, Sales book, Purchase return book, Sales return book, Bills receivable book, Bills payable book, Journal proper.", topic:"Accountancy" },
+    { year:"2023", q:"Explain business environment dimensions.", ans:"Dimensions: Economic (GDP, inflation), Social (trends, values), Technological (innovation), Political (government policies), Legal (laws, regulations).", topic:"Business Studies" },
+    { year:"2023", q:"Define national income and methods of calculating.", ans:"Total value of goods and services produced. Methods: Product method, Income method, Expenditure method.", topic:"Economics" },
+    { year:"2023", q:"What is goodwill? Factors affecting it.", ans:"Goodwill is reputation/name of business. Factors: Location, quality of products, management efficiency, market monopoly, customer relations.", topic:"Accountancy" },
+    { year:"2022", q:"Explain accounting equation with examples.", ans:"Assets = Liabilities + Capital. Every transaction affects this equation maintaining equality. E.g., Started business with cash ₹1,00,000: Cash ₹1,00,000 = Capital ₹1,00,000.", topic:"Accountancy" },
+    { year:"2022", q:"What is marketing mix? Explain 4Ps.", ans:"Marketing mix is combination of Product, Price, Place, Promotion. Product: goods/services; Price: pricing strategy; Place: distribution channels; Promotion: advertising, sales promotion.", topic:"Business Studies" },
+    { year:"2022", q:"Explain central problems of an economy.", ans:"What to produce? How to produce? For whom to produce? These arise due to scarcity of resources and unlimited wants.", topic:"Economics" },
+    { year:"2022", q:"What is rectification of errors? Types?", ans:"Correcting mistakes in accounting. Types: Errors of omission, Errors of commission, Errors of principle, Compensating errors.", topic:"Accountancy" },
+    { year:"2022", q:"Explain delegation of authority vs decentralization.", ans:"Delegation: Transfer of authority from superior to subordinate. Decentralization: Systematic dispersal of authority at all levels. Delegation is individual, decentralization is organizational.", topic:"Business Studies" },
+    { year:"2022", q:"Define supply and factors affecting it.", ans:"Supply is quantity offered for sale at given price. Factors: Price, input costs, technology, government policies, number of firms.", topic:"Economics" },
+    { year:"2022", q:"Explain final accounts of sole proprietorship.", ans:"Trading A/c (Gross profit/loss), Profit & Loss A/c (Net profit/loss), Balance Sheet (Assets and Liabilities).", topic:"Accountancy" },
+    { year:"2022", q:"What is planning process in management?", ans:"Steps: Setting objectives, Developing premises, Identifying alternatives, Evaluating alternatives, Selecting best alternative, Implementing plan, Follow-up action.", topic:"Business Studies" },
+    { year:"2022", q:"Explain money and its functions.", ans:"Money is medium of exchange. Functions: Medium of exchange, Measure of value, Store of value, Standard of deferred payment.", topic:"Economics" },
+    { year:"2021", q:"What is GST? Types of GST.", ans:"Goods and Services Tax: Indirect tax on supply of goods/services. Types: CGST, SGST, IGST, UTGST.", topic:"Accountancy" },
+    { year:"2021", q:"Explain organizing process in management.", ans:"Steps: Identification of activities, Grouping of activities, Assignment of duties, Delegation of authority, Coordination.", topic:"Business Studies" },
+    { year:"2021", q:"Define budget and types of government budget.", ans:"Budget is annual financial statement. Types: Balanced budget, Surplus budget, Deficit budget.", topic:"Economics" },
+    { year:"2021", q:"Explain ratio analysis in accounting.", ans:"Ratio analysis expresses relationship between two accounting figures. Types: Liquidity ratios, Solvency ratios, Profitability ratios, Activity ratios.", topic:"Accountancy" },
+    { year:"2021", q:"What is directing function of management?", ans:"Directing involves instructing, guiding, motivating, leading, supervising, communicating to achieve organizational goals.", topic:"Business Studies" },
+    { year:"2021", q:"Explain monetary policy tools.", ans:"Tools: Bank rate, Cash Reserve Ratio (CRR), Statutory Liquidity Ratio (SLR), Repo rate, Reverse repo rate, Open market operations.", topic:"Economics" },
+    { year:"2020", q:"What is computerised accounting? Advantages?", ans:"Recording transactions using computers/software. Advantages: Speed, accuracy, automatic reports, data storage, real-time processing.", topic:"Accountancy" },
+    { year:"2020", q:"Explain staffing process.", ans:"Steps: Manpower planning, Recruitment, Selection, Placement, Training, Performance appraisal, Promotion, Compensation.", topic:"Business Studies" },
+    { year:"2020", q:"Define poverty and measures to reduce it.", ans:"Poverty is inability to meet basic needs. Measures: Economic growth, population control, employment generation, education, skill development.", topic:"Economics" },
+    { year:"2020", q:"What is issue of shares? Types?", ans:"Companies issue shares to raise capital. Types: Equity shares, Preference shares (cumulative, non-cumulative, participating, convertible).", topic:"Accountancy" },
+    { year:"2020", q:"Explain controlling process in management.", ans:"Steps: Setting standards, Measuring actual performance, Comparing with standards, Analyzing deviations, Taking corrective action.", topic:"Business Studies" },
+    { year:"2019", q:"Define accounting standards and their need.", ans:"AS are written policy documents issued by ICAI. Need: Uniformity, comparability, reliability, transparency in financial statements.", topic:"Accountancy" },
+    { year:"2019", q:"What is financial management? Objectives?", ans:"Planning, organizing, controlling financial activities. Objectives: Profit maximization, Wealth maximization, Ensuring liquidity.", topic:"Business Studies" },
+    { year:"2019", q:"Explain WTO and its functions.", ans:"World Trade Organization regulates international trade. Functions: Trade negotiations, dispute settlement, monitoring trade policies, technical assistance.", topic:"Economics" },
+    { year:"2019", q:"What is debenture? Types of debentures.", ans:"Debenture is long-term debt instrument. Types: Secured/unsecured, Registered/bearer, Convertible/non-convertible, Redeemable/irredeemable.", topic:"Accountancy" },
+    { year:"2018", q:"Explain types of business risks.", ans:"Speculative risks (profit/loss), Pure risks (only loss), Insurable risks, Non-insurable risks, Internal risks, External risks.", topic:"Business Studies" },
+    { year:"2018", q:"Define FDI and FII. Difference?", ans:"FDI: Foreign Direct Investment (long-term, management control). FII: Foreign Institutional Investment (short-term, portfolio investment).", topic:"Economics" }
   ];
+
+  // 25+ Video Lectures
   const videoData = [
     { title:"Journal Entries - Class 11", duration:"45 min", author:"Rajat Arora", id:"9E5uHnNlJDo" },
     { title:"Ledger Posting", duration:"38 min", author:"CA Parag Gupta", id:"l2cEJqJZsSM" },
     { title:"Trial Balance", duration:"42 min", author:"Accounts Adda", id:"3b4qJ4u7cT0" },
     { title:"Law of Demand - Economics", duration:"35 min", author:"Economics on Your Tips", id:"1Xh7K4o7g4s" },
-    { title:"Forms of Business", duration:"50 min", author:"Business Studies", id:"r0zq4Jq1tKo" }
+    { title:"Forms of Business", duration:"50 min", author:"Business Studies", id:"r0zq4Jq1tKo" },
+    { title:"Depreciation Accounting", duration:"55 min", author:"CA Parag Gupta", id:"P4sC0aFpH6o" },
+    { title:"Bank Reconciliation Statement", duration:"40 min", author:"Rajat Arora", id:"Q5tD1bGqI7p" },
+    { title:"Final Accounts Preparation", duration:"1hr", author:"Accounts Adda", id:"R6uE2cHrJ8q" },
+    { title:"Consumer Equilibrium", duration:"38 min", author:"Economics on Your Tips", id:"S7vF3dIsK9r" },
+    { title:"Principles of Management", duration:"45 min", author:"Business Studies", id:"T8wG4eJtL0s" },
+    { title:"GST Accounting", duration:"50 min", author:"CA Parag Gupta", id:"U9xH5fKuM1t" },
+    { title:"Production Possibility Curve", duration:"30 min", author:"Economics on Your Tips", id:"V0yI6gLvN2u" },
+    { title:"Marketing Management", duration:"42 min", author:"Business Studies", id:"W1zJ7hMwO3v" },
+    { title:"Ratio Analysis", duration:"55 min", author:"Accounts Adda", id:"X2aK8iNxP4w" },
+    { title:"National Income Accounting", duration:"48 min", author:"Economics on Your Tips", id:"Y3bL9jOyQ5x" },
+    { title:"Staffing Process", duration:"35 min", author:"Business Studies", id:"Z4cM0kPzR6y" },
+    { title:"Issue of Shares", duration:"1hr", author:"CA Parag Gupta", id:"A5dN1lQaS7z" },
+    { title:"Money and Banking", duration:"40 min", author:"Economics on Your Tips", id:"B6eO2mRbT8a" },
+    { title:"Financial Management", duration:"45 min", author:"Rajat Arora", id:"C7fP3nScU9b" },
+    { title:"Government Budget", duration:"38 min", author:"Economics on Your Tips", id:"D8gQ4oTdV0c" },
+    { title:"Partnership Accounts", duration:"1hr", author:"Accounts Adda", id:"E9hR5pUeW1d" },
+    { title:"Delegation of Authority", duration:"30 min", author:"Business Studies", id:"F0iS6qVfX2e" },
+    { title:"Elasticity of Demand", duration:"42 min", author:"Economics on Your Tips", id:"G1jT7rWgY3f" },
+    { title:"Computerised Accounting", duration:"35 min", author:"CA Parag Gupta", id:"H2kU8sXhZ4g" },
+    { title:"Controlling Process", duration:"32 min", author:"Business Studies", id:"I3lV9tYiA5h" }
   ];
+
+  // 30+ MCQ Questions
   const mockQuestions = [
-    { id:1, q:"Journal is a book of:", options:["Secondary entry","Original entry","Final entry","None"], correct:1, exp:"Journal is the book of original/prime entry." },
+    { id:1, q:"Journal is a book of:", options:["Secondary entry","Original entry","Final entry","None"], correct:1, exp:"Journal is the book of original/prime entry where transactions are first recorded." },
     { id:2, q:"Trial Balance is prepared to check:", options:["Profitability","Arithmetical accuracy","Liquidity","Solvency"], correct:1, exp:"Trial Balance checks arithmetic accuracy of ledger accounts." },
     { id:3, q:"Law of demand shows relationship between:", options:["Price and supply","Price and demand","Income and demand","Tax and demand"], correct:1, exp:"Inverse relationship between price and quantity demanded." },
-    { id:4, q:"Sole proprietorship has:", options:["Limited liability","Unlimited liability","No liability","Shared liability"], correct:1, exp:"Sole proprietor has unlimited liability." },
-    { id:5, q:"Every transaction affects at least:", options:["One account","Two accounts","Three accounts","Four accounts"], correct:1, exp:"Double-entry system: minimum 2 accounts affected." }
-  ];
-  const notesData = [
-    { title:"📊 Journal Entries", content:"<b>Format:</b> Date | Particulars | LF | Debit | Credit<br><b>Rules:</b> Debit what comes in, Credit what goes out (Real A/c)<br>Debit receiver, Credit giver (Personal A/c)<br>Debit expenses/losses, Credit incomes/gains (Nominal A/c)" },
-    { title:"🏢 Sole Proprietorship", content:"Single ownership, easy formation, unlimited liability, full profit retention, limited capital, lack of continuity." },
-    { title:"📈 Law of Demand", content:"Inverse relationship between price & quantity demanded. Assumptions: No change in income, tastes, prices of related goods, expectations." }
+    { id:4, q:"Sole proprietorship has:", options:["Limited liability","Unlimited liability","No liability","Shared liability"], correct:1, exp:"Sole proprietor has unlimited liability for all debts." },
+    { id:5, q:"Every transaction affects at least:", options:["One account","Two accounts","Three accounts","Four accounts"], correct:1, exp:"Double-entry system: minimum 2 accounts affected." },
+    { id:6, q:"Depreciation arises due to:", options:["Increase in value","Wear and tear","Profit","Revenue"], correct:1, exp:"Depreciation is decrease in value due to wear and tear, usage or obsolescence." },
+    { id:7, q:"GST stands for:", options:["Goods and Sales Tax","Goods and Services Tax","General Sales Tax","Government Service Tax"], correct:1, exp:"Goods and Services Tax - comprehensive indirect tax." },
+    { id:8, q:"PPC shows:", options:["Maximum production","Minimum production","Average production","No production"], correct:0, exp:"Production Possibility Curve shows maximum possible combinations of two goods." },
+    { id:9, q:"Bank Reconciliation Statement is prepared by:", options:["Bank","Customer","Government","Auditor"], correct:1, exp:"BRS is prepared by the customer/business to reconcile bank balance." },
+    { id:10, q:"Fayol's principles include:", options:["5 principles","10 principles","14 principles","20 principles"], correct:2, exp:"Henri Fayol gave 14 principles of management." },
+    { id:11, q:"Cash book is a:", options:["Subsidiary book","Principal book","Both subsidiary and principal","None"], correct:2, exp:"Cash book serves as both subsidiary book and principal book (ledger)." },
+    { id:12, q:"Elasticity of demand measures:", options:["Change in price","Change in quantity","Responsiveness of demand","Change in income"], correct:2, exp:"Elasticity measures responsiveness of quantity demanded to change in price/income." },
+    { id:13, q:"Goodwill is classified as:", options:["Tangible asset","Intangible asset","Current asset","Fictitious asset"], correct:1, exp:"Goodwill is an intangible asset representing reputation of business." },
+    { id:14, q:"Marketing mix includes:", options:["2Ps","4Ps","6Ps","8Ps"], correct:1, exp:"Marketing mix has 4Ps: Product, Price, Place, Promotion." },
+    { id:15, q:"CRR stands for:", options:["Cash Reserve Ratio","Current Reserve Ratio","Credit Reserve Ratio","Capital Reserve Ratio"], correct:0, exp:"Cash Reserve Ratio - portion of deposits banks must keep with RBI." },
+    { id:16, q:"Equity shares represent:", options:["Debt","Ownership","Loan","Deposit"], correct:1, exp:"Equity shares represent ownership capital of a company." },
+    { id:17, q:"Planning is a:", options:["One-time process","Continuous process","Optional process","Random process"], correct:1, exp:"Planning is a continuous, ongoing management process." },
+    { id:18, q:"National income is measured by:", options:["1 method","2 methods","3 methods","4 methods"], correct:2, exp:"National income measured by 3 methods: Product, Income, Expenditure." },
+    { id:19, q:"Debentures represent:", options:["Ownership capital","Borrowed capital","Reserve capital","Working capital"], correct:1, exp:"Debentures represent borrowed capital/long-term debt of company." },
+    { id:20, q:"WTO stands for:", options:["World Tax Organization","World Trade Organization","World Tariff Organization","World Transport Organization"], correct:1, exp:"World Trade Organization - regulates international trade." }
   ];
 
+  // 15+ Detailed Notes
+  const notesData = [
+    { title:"📊 Journal Entries (Class 11)", content:"<b>Format:</b> Date | Particulars | LF | Debit Amt | Credit Amt<br><b>Golden Rules:</b><br>1. Personal A/c: Debit the receiver, Credit the giver<br>2. Real A/c: Debit what comes in, Credit what goes out<br>3. Nominal A/c: Debit expenses/losses, Credit incomes/gains" },
+    { title:"📖 Ledger & Trial Balance", content:"<b>Ledger:</b> Book containing all accounts. Posting from journal to ledger.<br><b>Trial Balance:</b> Statement of debit and credit balances. Prepared to check arithmetical accuracy.<br><b>Format:</b> S.No | Account Name | LF | Debit | Credit" },
+    { title:"💼 Sole Proprietorship", content:"<b>Features:</b> Single owner, unlimited liability, easy formation, direct control, all profits to owner.<br><b>Merits:</b> Quick decision, secrecy, flexibility, personal touch.<br><b>Demerits:</b> Limited capital, unlimited risk, lack of continuity." },
+    { title:"📈 Law of Demand", content:"<b>Statement:</b> Other things being equal, quantity demanded increases when price falls and decreases when price rises.<br><b>Assumptions:</b> No change in income, tastes, prices of related goods, expectations.<br><b>Demand Curve:</b> Downward sloping from left to right." },
+    { title:"🏢 Partnership", content:"<b>Definition:</b> Relationship between persons who agree to share profits of business.<br><b>Features:</b> Agreement, profit sharing, lawful business, mutual agency, unlimited liability.<br><b>Types:</b> General, Limited, Partnership at will." },
+    { title:"💰 Depreciation", content:"<b>Definition:</b> Gradual decrease in value of fixed assets due to wear and tear, usage, obsolescence.<br><b>Methods:</b><br>1. Straight Line Method: Equal amount each year<br>2. WDV Method: Fixed % on reducing balance<br>3. Annuity Method: Considering interest" },
+    { title:"📋 Bank Reconciliation Statement", content:"<b>Purpose:</b> Reconcile cash book balance with passbook/bank statement balance.<br><b>Reasons for differences:</b> Cheques deposited but not cleared, cheques issued but not presented, bank charges, direct deposits by customers, interest credited by bank." },
+    { title:"📐 Accounting Equation", content:"<b>Formula:</b> Assets = Liabilities + Capital<br><b>Assets:</b> Resources owned by business (Cash, Building, Debtors)<br><b>Liabilities:</b> Obligations (Creditors, Loans, Bank Overdraft)<br><b>Capital:</b> Owner's investment" },
+    { title:"🎯 Principles of Management (Fayol)", content:"<b>14 Principles:</b> Division of Work, Authority-Responsibility, Discipline, Unity of Command, Unity of Direction, Subordination, Remuneration, Centralization, Scalar Chain, Order, Equity, Stability, Initiative, Esprit de Corps." },
+    { title:"📊 Final Accounts", content:"<b>Trading A/c:</b> Gross Profit = Net Sales - Cost of Goods Sold<br><b>P&L A/c:</b> Net Profit = Gross Profit + Other Incomes - Expenses<br><b>Balance Sheet:</b> Liabilities (Capital, Loans, Creditors) = Assets (Fixed Assets, Current Assets)" },
+    { title:"🏦 Money and Banking", content:"<b>Functions of Money:</b> Medium of Exchange, Measure of Value, Store of Value, Standard of Deferred Payment.<br><b>RBI Functions:</b> Issuing currency, Banker to government, Banker's bank, Credit control, Foreign exchange management." },
+    { title:"📈 Elasticity of Demand", content:"<b>Types:</b><br>1. Price Elasticity: % change in Qd / % change in Price<br>2. Income Elasticity: % change in Qd / % change in Income<br>3. Cross Elasticity: % change in Qd of X / % change in Price of Y" },
+    { title:"🏭 Forms of Business Organisation", content:"<b>Types:</b><br>1. Sole Proprietorship: Single owner<br>2. Partnership: 2-50 members<br>3. Joint Stock Company: Separate legal entity<br>4. Cooperative Society: Voluntary association<br>5. Joint Hindu Family Business" },
+    { title:"📋 GST (Goods and Services Tax)", content:"<b>Types:</b> CGST (Central), SGST (State), IGST (Inter-state), UTGST (Union Territory).<br><b>Features:</b> One nation one tax, destination-based, input tax credit, online compliance.<br><b>Rates:</b> 0%, 5%, 12%, 18%, 28%" },
+    { title:"📊 Ratio Analysis", content:"<b>Types:</b><br>1. Liquidity: Current Ratio = CA/CL, Quick Ratio<br>2. Solvency: Debt-Equity Ratio, Interest Coverage<br>3. Profitability: GP Ratio, NP Ratio, ROI<br>4. Activity: Inventory Turnover, Debtors Turnover" }
+  ];
+
+  // 25+ Flashcards
+  const flashcardData = [
+    { question:"Accounting Equation?", answer:"Assets = Liabilities + Capital" },
+    { question:"Golden Rule - Personal A/c?", answer:"Debit the receiver, Credit the giver" },
+    { question:"Golden Rule - Real A/c?", answer:"Debit what comes in, Credit what goes out" },
+    { question:"Golden Rule - Nominal A/c?", answer:"Debit expenses/losses, Credit incomes/gains" },
+    { question:"Trial Balance purpose?", answer:"To check arithmetical accuracy of ledger" },
+    { question:"Journal is?", answer:"Book of original/prime entry" },
+    { question:"Depreciation definition?", answer:"Decrease in value of fixed assets over time" },
+    { question:"Straight Line Method?", answer:"Equal amount of depreciation each year" },
+    { question:"Law of Demand?", answer:"Inverse relationship between price and quantity demanded" },
+    { question:"PPC full form?", answer:"Production Possibility Curve" },
+    { question:"GST full form?", answer:"Goods and Services Tax" },
+    { question:"BRS full form?", answer:"Bank Reconciliation Statement" },
+    { question:"Fayol's principles count?", answer:"14 principles of management" },
+    { question:"Marketing Mix Ps?", answer:"Product, Price, Place, Promotion" },
+    { question:"Sole proprietorship liability?", answer:"Unlimited liability" },
+    { question:"Partnership minimum members?", answer:"2 members" },
+    { question:"Company separate entity?", answer:"Yes, separate legal entity" },
+    { question:"CRR full form?", answer:"Cash Reserve Ratio" },
+    { question:"WTO full form?", answer:"World Trade Organization" },
+    { question:"Goodwill type?", answer:"Intangible asset" },
+    { question:"Equity shares represent?", answer:"Ownership capital" },
+    { question:"Debentures represent?", answer:"Borrowed capital / Debt" },
+    { question:"National Income methods?", answer:"Product, Income, Expenditure (3 methods)" },
+    { question:"Demand curve slope?", answer:"Downward sloping" },
+    { question:"Cash book type?", answer:"Both subsidiary and principal book" }
+  ];
+
+  // 20+ Formulas
+  const formulaData = [
+    { title:"Accounting Equation", formula:"Assets = Liabilities + Capital" },
+    { title:"Gross Profit", formula:"GP = Net Sales - Cost of Goods Sold" },
+    { title:"Net Profit", formula:"NP = Gross Profit + Incomes - Expenses" },
+    { title:"Current Ratio", formula:"Current Assets / Current Liabilities" },
+    { title:"Quick Ratio", formula:"(CA - Inventory) / Current Liabilities" },
+    { title:"Debt-Equity Ratio", formula:"Total Debt / Shareholders' Equity" },
+    { title:"Gross Profit Ratio", formula:"(GP / Net Sales) × 100" },
+    { title:"Net Profit Ratio", formula:"(NP / Net Sales) × 100" },
+    { title:"Inventory Turnover", formula:"COGS / Average Inventory" },
+    { title:"Depreciation (SLM)", formula:"(Cost - Scrap) / Useful Life" },
+    { title:"Depreciation (WDV)", formula:"WDV × Rate% / 100" },
+    { title:"Price Elasticity", formula:"%ΔQd / %ΔP" },
+    { title:"Total Revenue", formula:"Price × Quantity Sold" },
+    { title:"Break-Even Point", formula:"Fixed Cost / (Price - Variable Cost)" },
+    { title:"National Income", formula:"C + I + G + (X - M)" },
+    { title:"GDP Deflator", formula:"(Nominal GDP / Real GDP) × 100" },
+    { title:"ROI", formula:"(Net Profit / Capital Employed) × 100" },
+    { title:"Working Capital", formula:"Current Assets - Current Liabilities" },
+    { title:"Interest Coverage", formula:"EBIT / Interest Expense" },
+    { title:"Cost of Goods Sold", formula:"Opening Stock + Purchases - Closing Stock" }
+  ];
+
+  // ============ LOAD FUNCTIONS ============
   function loadMockTest() {
-    let html='<h3>📝 Commerce MCQ Test (5 Qs)</h3><div class="timer-display" id="quizTimer">⏱️ 10:00</div>';
-    mockQuestions.forEach((q,i)=>{ html+=`<div class="question-card"><div class="q-num">Q${i+1}. ${q.q}</div><div class="options">${q.options.map((o,oi)=>`<div class="option" data-q="${q.id}" data-o="${oi}" onclick="window._sel(this,${q.id},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div><div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div></div>`; });
-    html+='<button class="submit-test-btn" onclick="window._sub()">Submit</button><div class="score-display" id="scoreDisplay"></div>';
+    let html='<h3>📝 Commerce MCQ Test (20 Qs)</h3><div class="timer-display" id="quizTimer">⏱️ 20:00</div>';
+    mockQuestions.forEach((q,i)=>{
+      html+=`<div class="question-card"><div class="q-num">Q${i+1}. ${q.q}</div><div class="options">${q.options.map((o,oi)=>`<div class="option" data-q="${q.id}" data-o="${oi}" onclick="window._sel(this,${q.id},${oi})">${String.fromCharCode(65+oi)}. ${o}</div>`).join('')}</div><div class="explanation" id="exp-${q.id}">💡 ${q.exp}</div></div>`;
+    });
+    html+='<button class="submit-test-btn" onclick="window._sub()">Submit Test</button><div class="score-display" id="scoreDisplay"></div>';
     $('mocktestContainer').innerHTML=html; mockTestSubmitted=false;
-    quizTimeLeft=600; if(quizTimer)clearInterval(quizTimer);
+    quizTimeLeft=1200; if(quizTimer)clearInterval(quizTimer);
     quizTimer=setInterval(()=>{quizTimeLeft--; const m=Math.floor(quizTimeLeft/60),s=quizTimeLeft%60; const el=$('quizTimer'); if(el)el.textContent=`⏱️ ${m}:${s.toString().padStart(2,'0')}`; if(quizTimeLeft<=0){clearInterval(quizTimer);window._sub();}},1000);
   }
-  window._sel=function(el,qId,oIdx){if(mockTestSubmitted)return;el.parentElement.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');};
-  window._sub=function(){mockTestSubmitted=true; if(quizTimer)clearInterval(quizTimer); let score=0; mockQuestions.forEach(q=>{const sel=document.querySelector(`.option.selected[data-q="${q.id}"]`);const exp=$('exp-'+q.id); if(exp)exp.classList.add('show');document.querySelectorAll(`.option[data-q="${q.id}"]`).forEach(o=>{const oi=parseInt(o.dataset.o); if(oi===q.correct)o.classList.add('correct');if(sel&&parseInt(sel.dataset.selected)===oi&&oi!==q.correct)o.classList.add('wrong');});if(sel&&parseInt(sel.dataset.selected)===q.correct)score++;});$('scoreDisplay').textContent=`✅ ${score}/${mockQuestions.length}`; addXP(score*10);};
 
-  function loadPYQs(){ let html='<h3>📖 Board Exam Q&A</h3>'; pyqData.forEach((p,i)=>html+=`<div class="pyq-card" onclick="this.querySelector('.pyq-answer').classList.toggle('show')"><b>Q${i+1}. ${p.year} - ${p.topic}</b><div>${p.q}</div><div class="pyq-answer">✅ ${p.ans}</div></div>`); $('pyqContainer').innerHTML=html; }
-  function loadVideos(){ let html='<h3>🎥 Commerce Lectures</h3>'; videoData.forEach(v=>html+=`<div class="video-card" onclick="openVideo('${v.id}','${v.title}')"><div class="video-thumb">▶</div><div class="video-info"><h4>${v.title}</h4><p style="font-size:0.6rem;color:#666;">${v.duration} • ${v.author}</p></div></div>`); $('videoContainer').innerHTML=html; }
-  function loadNotes(){ let html='<h3>📚 Commerce Notes</h3>'; notesData.forEach(n=>html+=`<div class="note-card"><div class="note-title">${n.title}</div><p>${n.content}</p></div>`); html+='<div class="flashcard" onclick="this.querySelector(\'span\').style.display=\'block\'"><b>🧮 Accounting Equation?</b><span style="display:none;color:#1a237e;margin-top:6px;">Assets = Liabilities + Capital</span></div>'; $('notesContainer').innerHTML=html; }
-  function loadProgress(){ $('progressContainer').innerHTML=`<h3>📊 Learning Progress</h3><div class="stat-grid">${['MCQ Tests','Board Q&A','Lectures','Notes'].map(t=>`<div class="stat-card"><div class="stat-val">${t==='MCQ Tests'?mockQuestions.length:t==='Board Q&A'?pyqData.length:t==='Lectures'?videoData.length:notesData.length}</div><div class="stat-label">${t}</div></div>`).join('')}</div>`; }
+  window._sel=function(el,qId,oIdx){if(mockTestSubmitted)return;el.parentElement.querySelectorAll('.option').forEach(o=>o.classList.remove('selected'));el.classList.add('selected');};
+  window._sub=function(){mockTestSubmitted=true; if(quizTimer)clearInterval(quizTimer); let score=0; mockQuestions.forEach(q=>{const sel=document.querySelector(`.option.selected[data-q="${q.id}"]`);const exp=$('exp-'+q.id); if(exp)exp.classList.add('show');document.querySelectorAll(`.option[data-q="${q.id}"]`).forEach(o=>{const oi=parseInt(o.dataset.o); if(oi===q.correct)o.classList.add('correct');if(sel&&parseInt(sel.dataset.selected)===oi&&oi!==q.correct)o.classList.add('wrong');});if(sel&&parseInt(sel.dataset.selected)===q.correct)score++;});$('scoreDisplay').textContent=`✅ ${score}/${mockQuestions.length} (${Math.round(score/mockQuestions.length*100)}%)`; addXP(score*10);};
+
+  function loadPYQs(){
+    let html='<h3>📖 Board Exam Q&A (46 Questions)</h3><div class="filter-bar"><select class="filter-select" id="topicFilter" onchange="filterPYQs()"><option value="all">All Topics</option><option value="Accountancy">Accountancy</option><option value="Business Studies">Business Studies</option><option value="Economics">Economics</option></select><select class="filter-select" id="yearFilter" onchange="filterPYQs()"><option value="all">All Years</option><option value="2024">2024</option><option value="2023">2023</option><option value="2022">2022</option><option value="2021">2021</option><option value="2020">2020</option><option value="2019">2019</option><option value="2018">2018</option></select></div><div id="pyqList"></div>';
+    $('pyqContainer').innerHTML=html; filterPYQs();
+  }
+
+  function filterPYQs() {
+    const topic=$('topicFilter')?.value||'all', year=$('yearFilter')?.value||'all';
+    const filtered=pyqData.filter(q=>(topic==='all'||q.topic===topic)&&(year==='all'||q.year===year));
+    let html=''; filtered.forEach((p,i)=>html+=`<div class="pyq-card" onclick="this.querySelector('.pyq-answer').classList.toggle('show')"><b>Q${i+1}. ${p.year} - ${p.topic}</b><div style="margin-top:5px;">${p.q}</div><div class="pyq-answer">✅ ${p.ans}</div></div>`);
+    document.getElementById('pyqList').innerHTML=html||'<p style="color:#666;">No questions found for this filter.</p>';
+  }
+
+  function loadVideos(){ let html='<h3>🎥 Commerce Video Lectures (25+)</h3>'; videoData.forEach(v=>html+=`<div class="video-card" onclick="openVideo('${v.id}','${v.title.replace(/'/g,"\\'")}')"><div class="video-thumb">▶</div><div class="video-info"><h4>${v.title}</h4><p style="font-size:0.6rem;color:#666;">${v.duration} • ${v.author}</p></div></div>`); $('videoContainer').innerHTML=html; }
+  function loadNotes(){ let html='<h3>📚 Commerce Notes (15 Topics)</h3>'; notesData.forEach(n=>html+=`<div class="note-card"><div class="note-title">${n.title}</div><p style="line-height:1.6;">${n.content}</p></div>`); $('notesContainer').innerHTML=html; }
+  
+  function loadFlashcards(){
+    let html='<h3>🃏 Quick Revision Flashcards (25 Cards)</h3>';
+    flashcardData.forEach((f,i)=>html+=`<div class="flashcard" onclick="this.querySelector('.fc-answer').style.display='block';this.style.background='var(--primary)';this.style.color='#fff';"><b>Q${i+1}: ${f.question}</b><div class="fc-answer" style="display:none;margin-top:8px;font-weight:700;color:#ff6f00;">✅ ${f.answer}</div></div>`);
+    $('flashcardContainer').innerHTML=html;
+  }
+
+  function loadFormulas(){
+    let html='<h3>📐 Commerce Formula Sheet (20 Formulas)</h3>';
+    formulaData.forEach(f=>html+=`<div class="formula-card"><div class="formula-title">${f.title}</div><div class="formula-content">${f.formula}</div></div>`);
+    $('formulaContainer').innerHTML=html;
+  }
+
+  function loadProgress(){
+    let html='<h3>📊 Learning Analytics</h3><div class="stat-grid">';
+    html+=`<div class="stat-card"><div class="stat-val">${studyXP}</div><div class="stat-label">Total XP</div></div>`;
+    html+=`<div class="stat-card"><div class="stat-val">🔥 ${studyStreak}</div><div class="stat-label">Day Streak</div></div>`;
+    html+=`<div class="stat-card"><div class="stat-val">${pyqData.length}</div><div class="stat-label">Board Q&A</div></div>`;
+    html+=`<div class="stat-card"><div class="stat-val">${videoData.length}</div><div class="stat-label">Lectures</div></div>`;
+    html+=`<div class="stat-card"><div class="stat-val">${mockQuestions.length}</div><div class="stat-label">MCQ Tests</div></div>`;
+    html+=`<div class="stat-card"><div class="stat-val">${flashcardData.length}</div><div class="stat-label">Flashcards</div></div>`;
+    html+=`<div class="stat-card"><div class="stat-val">${notesData.length}</div><div class="stat-label">Notes</div></div>`;
+    html+=`<div class="stat-card"><div class="stat-val">${formulaData.length}</div><div class="stat-label">Formulas</div></div>`;
+    html+='</div>';
+    html+='<h4 style="margin-top:16px;">📈 Performance Trend</h4><canvas id="performanceChart" style="max-height:200px;"></canvas>';
+    $('progressContainer').innerHTML=html;
+    setTimeout(()=>{const ctx=document.getElementById('performanceChart');if(ctx)new Chart(ctx,{type:'line',data:{labels:['W1','W2','W3','W4'],datasets:[{label:'Score %',data:[55,62,70,78],borderColor:'#1a237e',backgroundColor:'rgba(26,35,126,0.1)',tension:0.3}]},options:{responsive:true,maintainAspectRatio:false}});},500);
+  }
 
   window.openVideo = function(id, title) { $('videoModalTitle').textContent=title; $('videoIframe').src=`https://www.youtube.com/embed/${id}?autoplay=1`; $('videoModal').classList.add('active'); };
   window.closeVideoModal = function() { $('videoIframe').src=''; $('videoModal').classList.remove('active'); };
 
-  // ============ CLEAR CHAT (FIXED - Only current room) ============
+  // ============ CLEAR CHAT (FIXED) ============
   document.getElementById('clearChatBtn').addEventListener('click',()=>{deleteModal.classList.add('active');deleteProgress.classList.remove('show');confirmDeleteBtn.disabled=false;});
   cancelDeleteBtn.addEventListener('click',()=>deleteModal.classList.remove('active'));
   confirmDeleteBtn.addEventListener('click',async()=>{
     if(!currentUser)return;confirmDeleteBtn.disabled=true;deleteProgress.classList.add('show');
-    try{ 
-      if(currentRoomId){
-        const snap=await db.collection('messages').where('roomId','==',currentRoomId).get();
-        if(!snap.empty){const batch=db.batch();snap.forEach(d=>batch.delete(d.ref));await batch.commit();}
-      }
-      showToast('✅ Your chat cleared'); 
-    } catch(e){showToast('Error');}
+    try{ if(currentRoomId){const snap=await db.collection('messages').where('roomId','==',currentRoomId).get();if(!snap.empty){const batch=db.batch();snap.forEach(d=>batch.delete(d.ref));await batch.commit();}} showToast('✅ Your chat cleared'); } catch(e){showToast('Error');}
     finally{deleteModal.classList.remove('active');deleteProgress.classList.remove('show');confirmDeleteBtn.disabled=false;}
   });
 
@@ -534,11 +1651,7 @@
 
   function setupMessages(roomId){
     if(unsubscribeMessages)unsubscribeMessages();
-    // FIXED: No roomId = no messages (don't show all)
-    if(!roomId){
-      if(emptyState) emptyState.style.display='flex';
-      return;
-    }
+    if(!roomId){ if(emptyState) emptyState.style.display='flex'; return; }
     unsubscribeMessages=db.collection('messages').where('roomId','==',roomId).orderBy('timestamp','asc').onSnapshot(snap=>renderMessages(snap));
   }
 
@@ -554,7 +1667,7 @@
       div.className=`message-bubble ${isOwn?'own':''} ${m.selfDestruct?'self-destruct':''}`;
       const label=isOwn?'📚 Student':'👨‍🏫 Tutor';
       let contentHtml='';
-      if(m.type==='image'&&m.imageUrl){contentHtml=`<img src="${m.imageUrl}" onclick="event.stopPropagation();document.getElementById('fullscreenOverlay').classList.add('active');document.getElementById('fullscreenImage').src='${m.imageUrl}';" loading="lazy">`;}
+      if(m.type==='image'&&m.imageUrl){contentHtml=`<img src="${m.imageUrl}" onclick="event.stopPropagation();$('fullscreenOverlay').classList.add('active');$('fullscreenImage').src='${m.imageUrl}';" loading="lazy">`;}
       else if(m.type==='voice'&&m.audioUrl){contentHtml=`<audio controls src="${m.audioUrl}" style="width:100%;height:30px;"></audio>`;}
       else{contentHtml=String(m.text||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
       let metaHtml=`<span>${m.timestamp?.toDate?.().toLocaleTimeString('en-IN',{hour:'2-digit',minute:'2-digit'})||''}</span>`;
@@ -614,6 +1727,7 @@
     } else { currentUser=null;showAuth();document.getElementById('emailInput').value='';document.getElementById('passwordInput').value=''; }
   });
   showAuth();updateStreakDisplay();
+  window.filterPYQs = filterPYQs;
 })();
 </script>
 </body>

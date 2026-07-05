@@ -2,164 +2,278 @@
 <html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Viewer Phone</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Viewer</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: black; font-family: Arial; color: white; }
-        video { width: 100vw; height: 100vh; object-fit: contain; background: #111; }
-        .box {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9); padding: 30px; border-radius: 20px;
-            text-align: center; z-index: 10; border: 2px solid #2196F3;
+        body { background: #000; font-family: Arial; overflow: hidden; }
+        
+        img { 
+            width: 100vw; height: 100vh; 
+            object-fit: contain; background: #111; 
         }
-        input { padding: 12px; font-size: 18px; text-align: center; border-radius: 10px; border: 2px solid #2196F3; background: #111; color: #2196F3; width: 200px; margin: 10px 0; }
-        button { padding: 12px 30px; background: #2196F3; color: white; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 5px; }
+        
+        .screen {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; background: rgba(0,0,0,0.95);
+        }
+        .box {
+            background: #111; border: 2px solid #333;
+            border-radius: 20px; padding: 30px; text-align: center;
+            color: white; width: 90%; max-width: 350px;
+        }
+        input {
+            width: 100%; padding: 15px; font-size: 20px;
+            text-align: center; border: 2px solid #2196F3;
+            background: #000; color: #2196F3;
+            border-radius: 10px; margin: 15px 0;
+            letter-spacing: 3px; outline: none;
+        }
+        button {
+            width: 100%; padding: 15px;
+            background: #2196F3; color: white;
+            border: none; border-radius: 10px;
+            font-size: 18px; font-weight: bold; cursor: pointer;
+        }
         .hidden { display: none !important; }
-        #status { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); text-align: center; background: rgba(0,0,0,0.8); padding: 20px; border-radius: 15px; z-index: 5; }
-        .loader { width: 40px; height: 40px; border: 3px solid #333; border-top: 3px solid #2196F3; border-radius: 50%; animation: spin 1s linear infinite; margin: 15px auto; }
+        
+        #statusBar {
+            position: fixed; top: 15px; left: 50%;
+            transform: translateX(-50%);
+            color: white; background: rgba(0,0,0,0.8);
+            padding: 8px 15px; border-radius: 20px;
+            font-size: 11px; z-index: 20;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .dot { 
+            width: 8px; height: 8px; border-radius: 50%; 
+            background: #f00; 
+        }
+        .dot.live { background: #0f0; animation: glow 1.5s infinite; }
+        @keyframes glow { 
+            0%, 100% { box-shadow: 0 0 5px #0f0; }
+            50% { box-shadow: 0 0 20px #0f0; }
+        }
+        
+        #controls {
+            position: fixed; bottom: 30px; left: 50%;
+            transform: translateX(-50%); display: flex; gap: 12px;
+            z-index: 20;
+        }
+        #controls button {
+            width: 46px; height: 46px; border-radius: 50%;
+            background: rgba(0,0,0,0.65); 
+            border: 1px solid rgba(255,255,255,0.25);
+            color: white; font-size: 18px; cursor: pointer;
+            backdrop-filter: blur(10px);
+        }
+        
+        .offline {
+            position: fixed; top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            color: white; text-align: center; z-index: 15;
+            background: rgba(0,0,0,0.85); padding: 25px;
+            border-radius: 15px;
+        }
+        .spinner {
+            width: 40px; height: 40px;
+            border: 3px solid #333;
+            border-top: 3px solid #2196F3;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 15px;
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
-        #controls { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); display: flex; gap: 15px; z-index: 10; }
-        #controls button { width: 45px; height: 45px; border-radius: 50%; background: rgba(0,0,0,0.7); border: 1px solid rgba(255,255,255,0.3); font-size: 18px; }
-        .rec { border-color: red !important; animation: pulse 1s infinite; }
-        @keyframes pulse { 0%,100% { box-shadow: 0 0 0 0 red; } 50% { box-shadow: 0 0 0 12px transparent; } }
     </style>
 </head>
 <body>
-    <video id="v" autoplay playsinline></video>
+    <img id="feed" src="" alt="Waiting...">
     
-    <div id="login" class="box">
-        <h2>👁️ Connect to Camera</h2>
-        <p style="font-size:12px;color:#aaa;">Same room name as Camera phone</p>
-        <input type="text" id="room" placeholder="Room Name" maxlength="15">
-        <br>
-        <button onclick="connect()">🔗 CONNECT</button>
+    <!-- Login Screen -->
+    <div class="screen" id="login">
+        <div class="box">
+            <h2>👁️ Join Room</h2>
+            <p style="font-size:12px;color:#888;">Same code as Camera phone</p>
+            <input type="text" id="roomInput" placeholder="e.g., baby123" maxlength="20" autocomplete="off">
+            <button onclick="connect()">🔗 CONNECT</button>
+        </div>
     </div>
     
-    <div id="status" class="hidden">
-        <div class="loader"></div>
-        <p>Connecting to camera...</p>
-        <button onclick="location.reload()" style="background:#2196F3;color:white;border:none;padding:10px 20px;border-radius:10px;margin-top:10px;">RETRY</button>
+    <!-- Offline Message -->
+    <div id="offlineMsg" class="offline">
+        <div class="spinner"></div>
+        <p>Waiting for camera...</p>
+        <p style="font-size:11px;color:#888;margin-top:5px;">
+            Check room code or start camera first
+        </p>
     </div>
     
+    <!-- Status -->
+    <div id="statusBar" class="hidden">
+        <span class="dot" id="dot"></span>
+        <span id="statusText">Connecting...</span>
+    </div>
+    
+    <!-- Controls -->
     <div id="controls" class="hidden">
-        <button onclick="snap()">📸</button>
-        <button id="recBtn" onclick="toggleRec()">⏺️</button>
+        <button onclick="takeScreenshot()">📸</button>
+        <button onclick="toggleFullscreen()">⛶</button>
+        <button onclick="refreshFeed()">🔄</button>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0/dist/browser/signalr.min.js"></script>
-    <script>
-        let connection, pc, roomName, mediaRecorder, chunks = [];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const SIGNALR_URL = "https://webrtc-signalr.azurewebsites.net/chat";
+        // Tumhara Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
+            authDomain: "studymine-fa92d.firebaseapp.com",
+            projectId: "studymine-fa92d",
+            storageBucket: "studymine-fa92d.firebasestorage.app",
+            messagingSenderId: "460797718327",
+            appId: "1:460797718327:web:66316f16930b304b2e34b2"
+        };
 
-        async function connect() {
-            roomName = document.getElementById('room').value.trim();
-            if (!roomName) return alert('Room name dalo!');
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        let isConnected = false;
+        let lastImageTime = 0;
 
-            document.getElementById('login').classList.add('hidden');
-            document.getElementById('status').classList.remove('hidden');
-
-            connection = new signalR.HubConnectionBuilder()
-                .withUrl(SIGNALR_URL)
-                .build();
-
-            connection.on('Signal', async (from, data) => {
-                if (!pc) await createPC();
-                
-                if (data.type === 'offer') {
-                    await pc.setRemoteDescription(new RTCSessionDescription(data));
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-                    connection.invoke('Signal', from, answer);
-                } else if (data.candidate) {
-                    await pc.addIceCandidate(new RTCIceCandidate(data));
-                }
-            });
-
-            connection.on('SenderLeft', () => {
-                document.getElementById('v').srcObject = null;
-                document.getElementById('controls').classList.add('hidden');
-                document.getElementById('status').classList.remove('hidden');
-                document.getElementById('status').innerHTML = '<p>Camera offline</p><button onclick="location.reload()" style="background:#2196F3;color:white;border:none;padding:10px 20px;border-radius:10px;">RECONNECT</button>';
-            });
-
-            try {
-                await connection.start();
-                await connection.invoke('JoinRoom', roomName, 'viewer');
-                
-                setTimeout(() => {
-                    if (!pc || pc.connectionState !== 'connected') {
-                        document.getElementById('status').innerHTML = '<p>❌ Camera not found!</p><p style="font-size:12px;color:#aaa;">Check room name or start camera first</p><button onclick="location.reload()" style="background:#2196F3;color:white;border:none;padding:10px 20px;border-radius:10px;">RETRY</button>';
-                    }
-                }, 15000);
-            } catch(e) {
-                document.getElementById('status').innerHTML = '<p>Connection error!</p><button onclick="location.reload()" style="background:#2196F3;color:white;border:none;padding:10px 20px;border-radius:10px;">RETRY</button>';
-            }
-        }
-
-        async function createPC() {
-            pc = new RTCPeerConnection({
-                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-            });
-
-            pc.ontrack = e => {
-                document.getElementById('v').srcObject = e.streams[0];
-                document.getElementById('status').classList.add('hidden');
-                document.getElementById('controls').classList.remove('hidden');
-            };
-
-            pc.onicecandidate = e => {
-                if (e.candidate) connection.invoke('Signal', roomName, e.candidate);
-            };
-
-            pc.onconnectionstatechange = () => {
-                if (pc.connectionState === 'failed') {
-                    document.getElementById('controls').classList.add('hidden');
-                    document.getElementById('status').classList.remove('hidden');
-                }
-            };
-        }
-
-        function snap() {
-            const v = document.getElementById('v');
-            const c = document.createElement('canvas');
-            c.width = v.videoWidth; c.height = v.videoHeight;
-            c.getContext('2d').drawImage(v, 0, 0);
-            const a = document.createElement('a');
-            a.download = `snap-${Date.now()}.png`;
-            a.href = c.toDataURL();
-            a.click();
-        }
-
-        function toggleRec() {
-            const btn = document.getElementById('recBtn');
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                btn.classList.remove('rec');
-                btn.textContent = '⏺️';
+        window.connect = function() {
+            const roomCode = document.getElementById('roomInput').value.trim().toLowerCase();
+            if (!roomCode || roomCode.length < 3) {
+                alert('Enter room code!');
                 return;
             }
-            const stream = document.getElementById('v').srcObject;
-            if (!stream) return;
-            mediaRecorder = new MediaRecorder(stream, { mimeType: 'video/webm' });
-            mediaRecorder.ondataavailable = e => chunks.push(e.data);
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(chunks, { type: 'video/webm' });
-                const a = document.createElement('a');
-                a.download = `rec-${Date.now()}.webm`;
-                a.href = URL.createObjectURL(blob);
-                a.click();
-                chunks = [];
-            };
-            mediaRecorder.start();
-            btn.classList.add('rec');
-            btn.textContent = '⏹️';
+            
+            document.getElementById('login').classList.add('hidden');
+            document.getElementById('statusBar').classList.remove('hidden');
+            document.getElementById('offlineMsg').style.display = 'flex';
+            
+            updateStatus(false, 'Connecting...');
+            
+            // Listen to Firebase
+            const roomRef = ref(db, 'streams/' + roomCode);
+            
+            onValue(roomRef, (snapshot) => {
+                const data = snapshot.val();
+                
+                if (data && data.image) {
+                    // Update image
+                    document.getElementById('feed').src = data.image;
+                    
+                    // Hide offline message
+                    document.getElementById('offlineMsg').style.display = 'none';
+                    
+                    // Show controls
+                    document.getElementById('controls').classList.remove('hidden');
+                    
+                    // Update status
+                    const now = Date.now();
+                    const fps = lastImageTime ? Math.round(1000 / (now - lastImageTime)) : 0;
+                    lastImageTime = now;
+                    
+                    updateStatus(true, '🔴 LIVE | Room: ' + roomCode + ' | ~' + fps + ' fps');
+                    
+                    isConnected = true;
+                    
+                } else {
+                    // No data
+                    if (isConnected) {
+                        document.getElementById('offlineMsg').style.display = 'flex';
+                        document.getElementById('controls').classList.add('hidden');
+                        updateStatus(false, 'Camera offline...');
+                        isConnected = false;
+                    }
+                }
+            }, (error) => {
+                updateStatus(false, 'Connection error!');
+            });
+            
+            // Timeout - if no data after 15 seconds
+            setTimeout(() => {
+                if (!isConnected) {
+                    document.getElementById('offlineMsg').innerHTML = `
+                        <p style="font-size:18px;">❌ No Camera Found</p>
+                        <p style="font-size:12px;color:#888;">Check if:
+                        <br>• Camera phone is ON and streaming
+                        <br>• Room code is correct</p>
+                        <button onclick="location.reload()" 
+                            style="background:#2196F3;color:white;border:none;padding:10px 20px;
+                            border-radius:8px;margin-top:10px;font-size:14px;">
+                            🔄 RETRY
+                        </button>
+                    `;
+                }
+            }, 15000);
+        };
+
+        function updateStatus(live, msg) {
+            const bar = document.getElementById('statusBar');
+            const dot = document.getElementById('dot');
+            const text = document.getElementById('statusText');
+            
+            bar.classList.remove('hidden');
+            dot.className = 'dot' + (live ? ' live' : '');
+            text.textContent = msg;
         }
 
-        document.getElementById('room').addEventListener('keypress', e => {
+        // Screenshot
+        window.takeScreenshot = function() {
+            const img = document.getElementById('feed');
+            if (!img.src) return;
+            
+            const a = document.createElement('a');
+            a.download = 'screenshot_' + Date.now() + '.png';
+            a.href = img.src;
+            a.click();
+            
+            // Flash effect
+            const flash = document.createElement('div');
+            flash.style.cssText = `
+                position:fixed;top:0;left:0;width:100%;height:100%;
+                background:white;opacity:0.7;z-index:999;pointer-events:none;
+                transition:opacity 0.3s;
+            `;
+            document.body.appendChild(flash);
+            setTimeout(() => {
+                flash.style.opacity = '0';
+                setTimeout(() => flash.remove(), 300);
+            }, 10);
+        };
+
+        // Fullscreen
+        window.toggleFullscreen = function() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen().catch(() => {});
+            }
+        };
+
+        // Manual refresh
+        window.refreshFeed = function() {
+            const img = document.getElementById('feed');
+            img.src = img.src.split('?')[0] + '?t=' + Date.now();
+        };
+
+        // Enter key
+        document.getElementById('roomInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') connect();
         });
+
+        // Keep screen on
+        if (navigator.wakeLock) {
+            const lock = () => navigator.wakeLock.request('screen').catch(() => {});
+            lock();
+            document.addEventListener('visibilitychange', () => {
+                if (document.visibilityState === 'visible') lock();
+            });
+        }
     </script>
 </body>
 </html>

@@ -1,736 +1,150 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>Secure Cam</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Camera Phone</title>
     <style>
-        :root {
-            --bg: #0a0a0a;
-            --card: #1a1a1a;
-            --green: #00ff88;
-            --cyan: #00e5ff;
-            --red: #ff4757;
-            --text: #ffffff;
-            --subtext: #888888;
-            --border: #2a2a2a;
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: black; font-family: Arial; color: white; }
+        video { width: 100%; height: 100%; position: fixed; object-fit: cover; }
+        .box {
+            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9); padding: 30px; border-radius: 20px;
+            text-align: center; z-index: 10; border: 2px solid #4CAF50;
         }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            background: var(--bg);
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            color: var(--text);
-            height: 100vh;
-            width: 100vw;
-            overflow: hidden;
-            -webkit-tap-highlight-color: transparent;
-            -webkit-user-select: none;
-            user-select: none;
-        }
-
-        /* ── Video Background ── */
-        #videoContainer {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: 1;
-        }
-        #videoContainer video {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            background: #000;
-        }
-        .camera-mode video {
-            object-fit: cover;
-            opacity: 0.1;
-        }
-
-        /* ── UI Panels ── */
-        .screen {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 10;
-            background: var(--bg);
-            transition: opacity 0.3s;
-        }
-        .hidden {
-            opacity: 0;
-            pointer-events: none;
-        }
-
-        .card {
-            background: var(--card);
-            border: 1px solid var(--border);
-            border-radius: 20px;
-            padding: 35px 25px;
-            width: 90%;
-            max-width: 380px;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.5);
-        }
-
-        /* ── Logo / Icon ── */
-        .icon {
-            font-size: 50px;
-            margin-bottom: 10px;
-        }
-        .title {
-            font-size: 22px;
-            font-weight: 700;
-            margin-bottom: 5px;
-            letter-spacing: -0.5px;
-        }
-        .subtitle {
-            font-size: 13px;
-            color: var(--subtext);
-            margin-bottom: 25px;
-        }
-
-        /* ── Role Selector ── */
-        .role-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 20px;
-        }
-        .role-btn {
-            padding: 18px 12px;
-            border: 2px solid var(--border);
-            border-radius: 14px;
-            background: var(--card);
-            color: var(--text);
-            cursor: pointer;
-            font-size: 14px;
-            font-weight: 600;
-            transition: all 0.2s;
-            text-align: center;
-        }
-        .role-btn.active {
-            border-color: var(--green);
-            background: rgba(0,255,136,0.08);
-            color: var(--green);
-        }
-        .role-btn:last-child.active {
-            border-color: var(--cyan);
-            background: rgba(0,229,255,0.08);
-            color: var(--cyan);
-        }
-        .role-icon {
-            font-size: 28px;
-            display: block;
-            margin-bottom: 5px;
-        }
-
-        /* ── Input ── */
-        .input-group {
-            margin-bottom: 15px;
-        }
-        .input-group label {
-            display: block;
-            font-size: 12px;
-            color: var(--subtext);
-            margin-bottom: 6px;
-            text-align: left;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        .input-group input {
-            width: 100%;
-            padding: 15px 18px;
-            border: 2px solid var(--border);
-            border-radius: 12px;
-            background: #111;
-            color: var(--text);
-            font-size: 18px;
-            text-align: center;
-            letter-spacing: 3px;
-            outline: none;
-            transition: border 0.3s;
-        }
-        .input-group input:focus {
-            border-color: var(--green);
-        }
-        .input-group input.viewer-focus:focus {
-            border-color: var(--cyan);
-        }
-
-        /* ── Buttons ── */
-        .btn {
-            width: 100%;
-            padding: 16px;
-            border: none;
-            border-radius: 12px;
-            font-size: 16px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.2s;
-            letter-spacing: 0.5px;
-        }
-        .btn:active {
-            transform: scale(0.97);
-        }
-        .btn-start {
-            background: var(--green);
-            color: #000;
-        }
-        .btn-connect {
-            background: var(--cyan);
-            color: #000;
-        }
-        .btn:disabled {
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        /* ── Status Bar (always visible) ── */
-        #statusBar {
-            position: fixed;
-            bottom: 25px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 30;
-            background: rgba(0,0,0,0.85);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            padding: 10px 20px;
-            border-radius: 30px;
-            font-size: 12px;
-            font-weight: 500;
-            letter-spacing: 0.5px;
-            border: 1px solid rgba(255,255,255,0.1);
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            transition: all 0.3s;
-        }
-        .status-dot {
-            width: 8px;
-            height: 8px;
-            border-radius: 50%;
-            background: #ff4757;
-        }
-        .status-dot.connected {
-            background: #00ff88;
-            box-shadow: 0 0 10px #00ff8866;
-            animation: pulse 2s infinite;
-        }
-        .status-dot.waiting {
-            background: #ffa502;
-            animation: blink 1.5s infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { box-shadow: 0 0 5px #00ff8866; }
-            50% { box-shadow: 0 0 20px #00ff88aa; }
-        }
-        @keyframes blink {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.3; }
-        }
-
-        /* ── Action Buttons (Viewer) ── */
-        #actionButtons {
-            position: fixed;
-            bottom: 90px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 30;
-            display: flex;
-            gap: 12px;
-        }
-        .action-btn {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
-            border: 1px solid rgba(255,255,255,0.25);
-            color: white;
-            font-size: 18px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .action-btn:active {
-            background: rgba(255,255,255,0.2);
-        }
-        .recording {
-            border-color: var(--red) !important;
-            animation: pulse-red 1s infinite;
-        }
-        @keyframes pulse-red {
-            0%, 100% { box-shadow: 0 0 0 0 rgba(255,71,87,0.5); }
-            50% { box-shadow: 0 0 0 15px rgba(255,71,87,0); }
-        }
-
-        /* ── Toasts ── */
-        .toast {
-            position: fixed;
-            top: 20px;
-            left: 50%;
-            transform: translateX(-50%);
-            z-index: 50;
-            background: rgba(0,0,0,0.9);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 20px;
-            font-size: 13px;
-            pointer-events: none;
-            animation: fadeInOut 2s ease;
-        }
-        @keyframes fadeInOut {
-            0% { opacity: 0; top: 10px; }
-            20% { opacity: 1; top: 20px; }
-            80% { opacity: 1; top: 20px; }
-            100% { opacity: 0; top: 10px; }
-        }
+        input { padding: 12px; font-size: 18px; text-align: center; border-radius: 10px; border: 2px solid #4CAF50; background: #111; color: #4CAF50; width: 200px; margin: 10px 0; }
+        button { padding: 12px 30px; background: #4CAF50; color: black; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 5px; }
+        .hidden { display: none !important; }
+        #status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 20px; font-size: 12px; z-index: 5; }
+        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
+        .green { background: #4CAF50; animation: blink 1.5s infinite; }
+        .blue { background: #2196F3; }
+        @keyframes blink { 50% { opacity: 0.3; } }
     </style>
 </head>
 <body>
-
-    <!-- ──── VIDEO ──── -->
-    <div id="videoContainer">
-        <video id="video" autoplay playsinline muted></video>
+    <video id="v" autoplay playsinline muted></video>
+    
+    <div id="setup" class="box">
+        <h2>📷 Camera Setup</h2>
+        <p style="font-size:12px;color:#aaa;">Enter any room name</p>
+        <input type="text" id="room" placeholder="Room Name" maxlength="15">
+        <br>
+        <button onclick="initCamera()">▶ START</button>
+        <br><small style="color:#666;">Same name use karna Viewer mein</small>
+    </div>
+    
+    <div id="permBox" class="box hidden">
+        <h2>🔐 Allow Camera</h2>
+        <button onclick="getCamera()">📷 ALLOW CAMERA</button>
+    </div>
+    
+    <div id="status" class="hidden">
+        <span class="dot green" id="dot"></span>
+        <span id="txt">Ready</span>
     </div>
 
-    <!-- ──── STATUS BAR ──── -->
-    <div id="statusBar" class="hidden">
-        <span class="status-dot" id="statusDot"></span>
-        <span id="statusText">Ready</span>
-    </div>
-
-    <!-- ──── VIEWER ACTION BUTTONS ──── -->
-    <div id="actionButtons" class="hidden">
-        <button class="action-btn" onclick="takeScreenshot()" title="Screenshot">📸</button>
-        <button class="action-btn" id="recordBtn" onclick="toggleRecord()" title="Record">⏺️</button>
-        <button class="action-btn" onclick="toggleFullscreen()" title="Fullscreen">⛶</button>
-    </div>
-
-    <!-- ──── MAIN SETUP SCREEN ──── -->
-    <div class="screen" id="setupScreen">
-        <div class="card">
-            <div class="icon">📱</div>
-            <div class="title">Secure Cam</div>
-            <div class="subtitle">End-to-end encrypted P2P streaming</div>
-
-            <!-- Role Selection -->
-            <div class="role-buttons">
-                <div class="role-btn active" id="cameraRole" onclick="selectRole('camera')">
-                    <span class="role-icon">📷</span>
-                    Camera Phone
-                </div>
-                <div class="role-btn" id="viewerRole" onclick="selectRole('viewer')">
-                    <span class="role-icon">👁️</span>
-                    Viewer Phone
-                </div>
-            </div>
-
-            <!-- Room Input -->
-            <div class="input-group">
-                <label id="roomLabel">Room Name</label>
-                <input type="text" id="roomInput" placeholder="Enter room name" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off">
-            </div>
-
-            <!-- Action Button -->
-            <button class="btn btn-start" id="actionBtn" onclick="start()">
-                ▶ START STREAMING
-            </button>
-        </div>
-    </div>
-
-    <!-- ──── PERMISSION SCREEN ──── -->
-    <div class="screen hidden" id="permScreen">
-        <div class="card">
-            <div class="icon">🔐</div>
-            <div class="title">Camera Access Required</div>
-            <div class="subtitle">Tap below to grant permission</div>
-            <button class="btn btn-start" onclick="requestCameraAccess()">
-                ALLOW CAMERA ACCESS
-            </button>
-        </div>
-    </div>
-
-    <!-- ──── SCRIPTS ──── -->
-    <script src="/socket.io/socket.io.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0/dist/browser/signalr.min.js"></script>
     <script>
-        // ==================== GLOBAL STATE ====================
-        let role = 'camera'; // 'camera' | 'viewer'
-        let socket = null;
-        let pc = null;
-        let localStream = null;
-        let roomId = '';
-        let mediaRecorder = null;
-        let recordedChunks = [];
+        let connection, pc, stream, roomName, viewerId;
 
-        // ==================== ROLE SELECTION ====================
-        function selectRole(r) {
-            role = r;
-            const cameraBtn = document.getElementById('cameraRole');
-            const viewerBtn = document.getElementById('viewerRole');
-            const actionBtn = document.getElementById('actionBtn');
-            const roomLabel = document.getElementById('roomLabel');
-            const roomInput = document.getElementById('roomInput');
+        // FREE Signaling Server (already hosted)
+        const SIGNALR_URL = "https://webrtc-signalr.azurewebsites.net/chat";
 
-            cameraBtn.classList.toggle('active', r === 'camera');
-            viewerBtn.classList.toggle('active', r === 'viewer');
-
-            if (r === 'camera') {
-                actionBtn.textContent = '▶ START STREAMING';
-                actionBtn.className = 'btn btn-start';
-                roomLabel.textContent = 'Create Room Name';
-                roomInput.className = '';
-                roomInput.placeholder = 'e.g., bedroom';
-            } else {
-                actionBtn.textContent = '🔗 CONNECT TO CAMERA';
-                actionBtn.className = 'btn btn-connect';
-                roomLabel.textContent = 'Join Room Name';
-                roomInput.className = 'viewer-focus';
-                roomInput.placeholder = 'Same as camera phone';
-            }
+        async function initCamera() {
+            roomName = document.getElementById('room').value.trim();
+            if (!roomName) return alert('Room name dalo!');
+            document.getElementById('setup').classList.add('hidden');
+            document.getElementById('permBox').classList.remove('hidden');
         }
 
-        // ==================== MAIN START ====================
-        function start() {
-            roomId = document.getElementById('roomInput').value.trim().toLowerCase();
-            if (!roomId || roomId.length < 2) {
-                showToast('⚠️ Please enter a room name (min 2 chars)');
-                return;
-            }
-
-            if (role === 'camera') {
-                // Switch to permission screen
-                document.getElementById('setupScreen').classList.add('hidden');
-                document.getElementById('permScreen').classList.remove('hidden');
-            } else {
-                // Viewer - direct connect
-                document.getElementById('setupScreen').classList.add('hidden');
-                updateStatus('waiting', 'Connecting to camera...');
-                connectViewer();
-            }
-        }
-
-        // ==================== CAMERA: Request Permission ====================
-        async function requestCameraAccess() {
+        async function getCamera() {
             try {
-                // THIS MUST BE CALLED DIRECTLY FROM BUTTON CLICK
-                localStream = await navigator.mediaDevices.getUserMedia({
-                    video: {
-                        facingMode: 'environment',
-                        width: { ideal: 1920 },
-                        height: { ideal: 1080 }
-                    },
-                    audio: false
+                stream = await navigator.mediaDevices.getUserMedia({ 
+                    video: { facingMode: 'environment' }, 
+                    audio: false 
                 });
-
-                // Show stream on video element
-                const video = document.getElementById('video');
-                video.srcObject = localStream;
-                document.body.classList.add('camera-mode');
-
-                // Hide permission screen
-                document.getElementById('permScreen').classList.add('hidden');
-                updateStatus('waiting', 'Camera ready, connecting...');
-
-                // Connect to server
-                connectCamera();
-
-            } catch (err) {
-                console.error('Camera error:', err);
-                showToast('❌ Camera access denied! Please allow in settings.');
-                document.getElementById('permScreen').classList.remove('hidden');
+                document.getElementById('v').srcObject = stream;
+                document.getElementById('permBox').classList.add('hidden');
+                showStatus('green', 'Connecting...');
+                await connectSignalR(true);
+            } catch(e) {
+                alert('Camera access denied! Settings mein jaake allow karo.');
             }
         }
 
-        // ==================== WEBSOCKET CONNECTION ====================
-        function getSocket() {
-            if (socket && socket.connected) return socket;
-            socket = io({ transports: ['websocket', 'polling'] });
-            return socket;
+        function showStatus(color, msg) {
+            document.getElementById('status').classList.remove('hidden');
+            document.getElementById('dot').className = 'dot ' + color;
+            document.getElementById('txt').textContent = msg;
         }
 
-        // ==================== CAMERA MODE ====================
-        function connectCamera() {
-            const sock = getSocket();
+        async function connectSignalR(isSender) {
+            connection = new signalR.HubConnectionBuilder()
+                .withUrl(SIGNALR_URL)
+                .build();
 
-            sock.on('connect', () => {
-                sock.emit('create-room', roomId);
-            });
-
-            sock.on('room-created', () => {
-                updateStatus('waiting', `Room "${roomId}" created | Waiting for viewer...`);
-            });
-
-            sock.on('viewer-joined', async (viewerId) => {
-                updateStatus('connected', 'Viewer connected! Setting up stream...');
-                await setupPeerConnection(sock, viewerId, true);
-            });
-
-            sock.on('signal', async ({ from, data }) => {
-                await handleSignal(sock, from, data, true);
-            });
-
-            sock.on('viewer-disconnected', () => {
-                updateStatus('waiting', 'Viewer left. Waiting for new connection...');
-                if (pc) { pc.close(); pc = null; }
-            });
-
-            sock.on('error-msg', (msg) => {
-                showToast('❌ ' + msg);
-            });
-        }
-
-        // ==================== VIEWER MODE ====================
-        function connectViewer() {
-            const sock = getSocket();
-
-            sock.on('connect', () => {
-                sock.emit('join-room', roomId);
-            });
-
-            sock.on('room-joined', () => {
-                updateStatus('waiting', 'Joined room! Waiting for video...');
-            });
-
-            sock.on('signal', async ({ from, data }) => {
-                await handleSignal(sock, from, data, false);
-            });
-
-            sock.on('sender-disconnected', () => {
-                updateStatus('waiting', 'Camera went offline. Reconnecting...');
-                document.getElementById('video').srcObject = null;
-                if (pc) { pc.close(); pc = null; }
-                hideViewerControls();
-            });
-
-            sock.on('error-msg', (msg) => {
-                showToast('❌ ' + msg);
-                updateStatus('error', msg);
-            });
-        }
-
-        // ==================== WebRTC PEER CONNECTION ====================
-        async function setupPeerConnection(sock, remoteId, isSender) {
-            pc = new RTCPeerConnection({
-                iceServers: [
-                    { urls: 'stun:stun.l.google.com:19302' },
-                    { urls: 'stun:stun1.l.google.com:19302' },
-                    { urls: 'stun:stun2.l.google.com:19302' }
-                ]
-            });
-
-            // ICE candidates
-            pc.onicecandidate = (e) => {
-                if (e.candidate) {
-                    sock.emit('signal', { to: remoteId, data: e.candidate });
-                }
-            };
-
-            // Connection state
-            pc.onconnectionstatechange = () => {
-                if (pc.connectionState === 'connected') {
-                    if (isSender) {
-                        updateStatus('connected', '🔴 LIVE - Viewer is watching');
-                    }
-                } else if (pc.connectionState === 'failed' || pc.connectionState === 'disconnected') {
-                    if (!isSender) {
-                        updateStatus('waiting', 'Connection lost. Reconnecting...');
-                    }
-                }
-            };
-
-            // ICE connection state
-            pc.oniceconnectionstatechange = () => {
-                if (pc.iceConnectionState === 'disconnected') {
-                    if (!isSender) {
-                        hideViewerControls();
-                        updateStatus('waiting', 'Ice disconnected...');
-                    }
-                }
-            };
-
-            if (isSender) {
-                // Add local stream
-                localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
-
-                // Create offer
-                const offer = await pc.createOffer();
-                await pc.setLocalDescription(offer);
-                sock.emit('signal', { to: remoteId, data: offer });
-            } else {
-                // Viewer: handle incoming track
-                pc.ontrack = (event) => {
-                    document.getElementById('video').srcObject = event.streams[0];
-                    updateStatus('connected', '📡 LIVE STREAM');
-                    showViewerControls();
-                };
-            }
-        }
-
-        async function handleSignal(sock, from, data, isSender) {
-            if (!pc) {
-                if (isSender) return;
-                // Viewer: create PC when offer arrives
-                await setupPeerConnection(sock, from, false);
-            }
-
-            try {
+            connection.on('Signal', async (from, data) => {
+                if (!pc) await createPeerConnection(isSender);
+                
                 if (data.type === 'offer') {
                     await pc.setRemoteDescription(new RTCSessionDescription(data));
                     const answer = await pc.createAnswer();
                     await pc.setLocalDescription(answer);
-                    sock.emit('signal', { to: from, data: answer });
+                    connection.invoke('Signal', from, answer);
                 } else if (data.type === 'answer') {
                     await pc.setRemoteDescription(new RTCSessionDescription(data));
                 } else if (data.candidate) {
                     await pc.addIceCandidate(new RTCIceCandidate(data));
                 }
-            } catch (err) {
-                console.error('Signal error:', err);
-            }
-        }
-
-        // ==================== VIEWER CONTROLS ====================
-        function showViewerControls() {
-            document.getElementById('actionButtons').classList.remove('hidden');
-        }
-
-        function hideViewerControls() {
-            document.getElementById('actionButtons').classList.add('hidden');
-        }
-
-        function takeScreenshot() {
-            const video = document.getElementById('video');
-            if (!video.srcObject) return;
-            
-            const canvas = document.createElement('canvas');
-            canvas.width = video.videoWidth;
-            canvas.height = video.videoHeight;
-            canvas.getContext('2d').drawImage(video, 0, 0);
-            
-            const link = document.createElement('a');
-            link.download = `Screenshot_${Date.now()}.png`;
-            link.href = canvas.toDataURL('image/png');
-            link.click();
-            
-            showToast('📸 Screenshot saved!');
-        }
-
-        function toggleRecord() {
-            const btn = document.getElementById('recordBtn');
-            
-            if (mediaRecorder && mediaRecorder.state === 'recording') {
-                mediaRecorder.stop();
-                btn.classList.remove('recording');
-                btn.textContent = '⏺️';
-                showToast('✅ Recording saved!');
-                return;
-            }
-
-            const stream = document.getElementById('video').srcObject;
-            if (!stream) return;
-
-            const mime = MediaRecorder.isTypeSupported('video/webm;codecs=vp9')
-                ? 'video/webm;codecs=vp9'
-                : 'video/webm';
-
-            mediaRecorder = new MediaRecorder(stream, { mimeType: mime });
-            
-            mediaRecorder.ondataavailable = (e) => {
-                if (e.data.size > 0) recordedChunks.push(e.data);
-            };
-            
-            mediaRecorder.onstop = () => {
-                const blob = new Blob(recordedChunks, { type: 'video/webm' });
-                const url = URL.createObjectURL(blob);
-                const a = document.createElement('a');
-                a.href = url;
-                a.download = `Recording_${Date.now()}.webm`;
-                a.click();
-                recordedChunks = [];
-            };
-
-            mediaRecorder.start(1000);
-            btn.classList.add('recording');
-            btn.textContent = '⏹️';
-            showToast('🔴 Recording started...');
-        }
-
-        function toggleFullscreen() {
-            if (document.fullscreenElement) {
-                document.exitFullscreen();
-            } else {
-                document.documentElement.requestFullscreen();
-            }
-        }
-
-        // ==================== UI HELPERS ====================
-        function updateStatus(state, message) {
-            const bar = document.getElementById('statusBar');
-            const dot = document.getElementById('statusDot');
-            const text = document.getElementById('statusText');
-
-            bar.classList.remove('hidden');
-            dot.className = 'status-dot';
-            
-            if (state === 'connected') dot.classList.add('connected');
-            else if (state === 'waiting') dot.classList.add('waiting');
-            
-            text.textContent = message;
-        }
-
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-
-        // ==================== WAKE LOCK ====================
-        if (navigator.wakeLock) {
-            const requestWakeLock = () => {
-                navigator.wakeLock.request('screen').catch(() => {});
-            };
-            requestWakeLock();
-            document.addEventListener('visibilitychange', () => {
-                if (document.visibilityState === 'visible') requestWakeLock();
             });
-            setInterval(requestWakeLock, 30000);
+
+            connection.on('ViewerJoined', async (viewer) => {
+                viewerId = viewer;
+                showStatus('blue', 'Viewer connected!');
+                await createPeerConnection(true);
+            });
+
+            connection.on('ViewerLeft', () => {
+                showStatus('green', 'Viewer left. Waiting...');
+                if (pc) { pc.close(); pc = null; }
+            });
+
+            await connection.start();
+            await connection.invoke('JoinRoom', roomName, isSender ? 'sender' : 'viewer');
+            
+            if (isSender) {
+                showStatus('green', `Room: ${roomName} | Waiting for viewer...`);
+            }
         }
 
-        // ==================== ENTER KEY SUPPORT ====================
-        document.getElementById('roomInput').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') start();
-        });
+        async function createPeerConnection(isSender) {
+            pc = new RTCPeerConnection({
+                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
+            });
 
-        // ==================== RECONNECT ON VISIBILITY ====================
-        document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible') {
-                if (socket && !socket.connected && roomId) {
-                    socket.connect();
-                }
+            pc.onicecandidate = e => {
+                if (e.candidate) connection.invoke('Signal', viewerId, e.candidate);
+            };
+
+            if (isSender && stream) {
+                stream.getTracks().forEach(t => pc.addTrack(t, stream));
+                const offer = await pc.createOffer();
+                await pc.setLocalDescription(offer);
+                connection.invoke('Signal', viewerId, offer);
             }
-        });
 
-        console.log('✅ Secure Cam ready');
-        console.log('📷 Camera Mode: Start camera → share room name');
-        console.log('👁️ Viewer Mode: Enter same room name → connect');
+            if (!isSender) {
+                pc.ontrack = e => {
+                    document.getElementById('v').srcObject = e.streams[0];
+                    showStatus('blue', '📡 LIVE');
+                };
+            }
+        }
+
+        // Wake lock
+        if (navigator.wakeLock) setInterval(() => navigator.wakeLock.request('screen').catch(()=>{}), 15000);
     </script>
 </body>
 </html>

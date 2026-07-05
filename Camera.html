@@ -3,148 +3,207 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Camera Phone</title>
+    <title>.</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: black; font-family: Arial; color: white; }
-        video { width: 100%; height: 100%; position: fixed; object-fit: cover; }
-        .box {
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
-            background: rgba(0,0,0,0.9); padding: 30px; border-radius: 20px;
-            text-align: center; z-index: 10; border: 2px solid #4CAF50;
+        body { background: #000; overflow: hidden; font-family: Arial; }
+        video { width: 100%; height: 100%; position: fixed; object-fit: cover; opacity: 0.8; }
+        
+        .screen {
+            position: fixed; top: 0; left: 0;
+            width: 100%; height: 100%;
+            display: flex; align-items: center; justify-content: center;
+            z-index: 10; background: rgba(0,0,0,0.95);
         }
-        input { padding: 12px; font-size: 18px; text-align: center; border-radius: 10px; border: 2px solid #4CAF50; background: #111; color: #4CAF50; width: 200px; margin: 10px 0; }
-        button { padding: 12px 30px; background: #4CAF50; color: black; border: none; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin: 5px; }
+        .box {
+            background: #111; border: 2px solid #333;
+            border-radius: 20px; padding: 30px; text-align: center;
+            color: white; width: 90%; max-width: 350px;
+        }
+        input {
+            width: 100%; padding: 15px; font-size: 20px;
+            text-align: center; border: 2px solid #4CAF50;
+            background: #000; color: #4CAF50;
+            border-radius: 10px; margin: 15px 0;
+            letter-spacing: 3px; outline: none;
+        }
+        button {
+            width: 100%; padding: 15px;
+            background: #4CAF50; color: black;
+            border: none; border-radius: 10px;
+            font-size: 18px; font-weight: bold; cursor: pointer;
+        }
         .hidden { display: none !important; }
-        #status { position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%); background: rgba(0,0,0,0.8); padding: 8px 15px; border-radius: 20px; font-size: 12px; z-index: 5; }
-        .dot { width: 8px; height: 8px; border-radius: 50%; display: inline-block; margin-right: 5px; }
-        .green { background: #4CAF50; animation: blink 1.5s infinite; }
-        .blue { background: #2196F3; }
-        @keyframes blink { 50% { opacity: 0.3; } }
+        #status {
+            position: fixed; bottom: 20px; left: 50%;
+            transform: translateX(-50%); color: #0f0;
+            background: rgba(0,0,0,0.8); padding: 8px 15px;
+            border-radius: 20px; font-size: 11px; z-index: 5;
+        }
     </style>
 </head>
 <body>
     <video id="v" autoplay playsinline muted></video>
     
-    <div id="setup" class="box">
-        <h2>📷 Camera Setup</h2>
-        <p style="font-size:12px;color:#aaa;">Enter any room name</p>
-        <input type="text" id="room" placeholder="Room Name" maxlength="15">
-        <br>
-        <button onclick="initCamera()">▶ START</button>
-        <br><small style="color:#666;">Same name use karna Viewer mein</small>
+    <!-- Setup Screen -->
+    <div class="screen" id="setup">
+        <div class="box">
+            <h2>📷 Create Room</h2>
+            <p style="font-size:12px;color:#888;">Enter secret room code</p>
+            <input type="text" id="roomInput" placeholder="e.g., baby123" maxlength="20" autocomplete="off">
+            <button onclick="initCamera()">START CAMERA</button>
+            <p style="font-size:10px;color:#555;margin-top:15px;">
+                ✅ Screen off hone ke baad bhi chalega
+            </p>
+        </div>
     </div>
     
-    <div id="permBox" class="box hidden">
-        <h2>🔐 Allow Camera</h2>
-        <button onclick="getCamera()">📷 ALLOW CAMERA</button>
+    <!-- Permission Screen -->
+    <div class="screen hidden" id="permScreen">
+        <div class="box">
+            <h2>🔐 Allow Camera</h2>
+            <p style="font-size:12px;color:#888;">Tap button to grant permission</p>
+            <button onclick="startCamera()">📷 ALLOW CAMERA ACCESS</button>
+        </div>
     </div>
     
-    <div id="status" class="hidden">
-        <span class="dot green" id="dot"></span>
-        <span id="txt">Ready</span>
-    </div>
+    <div id="status" class="hidden">🟢 Ready</div>
 
-    <script src="https://cdn.jsdelivr.net/npm/@aspnet/signalr@1.0.0/dist/browser/signalr.min.js"></script>
-    <script>
-        let connection, pc, stream, roomName, viewerId;
+    <!-- Firebase SDK -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, set, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // FREE Signaling Server (already hosted)
-        const SIGNALR_URL = "https://webrtc-signalr.azurewebsites.net/chat";
+        // Tumhara Firebase config
+        const firebaseConfig = {
+            apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
+            authDomain: "studymine-fa92d.firebaseapp.com",
+            projectId: "studymine-fa92d",
+            storageBucket: "studymine-fa92d.firebasestorage.app",
+            messagingSenderId: "460797718327",
+            appId: "1:460797718327:web:66316f16930b304b2e34b2"
+        };
 
-        async function initCamera() {
-            roomName = document.getElementById('room').value.trim();
-            if (!roomName) return alert('Room name dalo!');
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+        
+        let roomCode, stream, isStreaming = false;
+
+        // Step 1: Room code enter
+        window.initCamera = function() {
+            roomCode = document.getElementById('roomInput').value.trim().toLowerCase();
+            if (!roomCode || roomCode.length < 3) {
+                alert('Room code minimum 3 characters!');
+                return;
+            }
             document.getElementById('setup').classList.add('hidden');
-            document.getElementById('permBox').classList.remove('hidden');
-        }
+            document.getElementById('permScreen').classList.remove('hidden');
+        };
 
-        async function getCamera() {
+        // Step 2: Get camera permission (MUST be from button click)
+        window.startCamera = async function() {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({ 
-                    video: { facingMode: 'environment' }, 
-                    audio: false 
+                stream = await navigator.mediaDevices.getUserMedia({
+                    video: { 
+                        facingMode: 'environment',
+                        width: { ideal: 320 },
+                        height: { ideal: 240 }
+                    },
+                    audio: false
                 });
-                document.getElementById('v').srcObject = stream;
-                document.getElementById('permBox').classList.add('hidden');
-                showStatus('green', 'Connecting...');
-                await connectSignalR(true);
-            } catch(e) {
-                alert('Camera access denied! Settings mein jaake allow karo.');
-            }
-        }
-
-        function showStatus(color, msg) {
-            document.getElementById('status').classList.remove('hidden');
-            document.getElementById('dot').className = 'dot ' + color;
-            document.getElementById('txt').textContent = msg;
-        }
-
-        async function connectSignalR(isSender) {
-            connection = new signalR.HubConnectionBuilder()
-                .withUrl(SIGNALR_URL)
-                .build();
-
-            connection.on('Signal', async (from, data) => {
-                if (!pc) await createPeerConnection(isSender);
                 
-                if (data.type === 'offer') {
-                    await pc.setRemoteDescription(new RTCSessionDescription(data));
-                    const answer = await pc.createAnswer();
-                    await pc.setLocalDescription(answer);
-                    connection.invoke('Signal', from, answer);
-                } else if (data.type === 'answer') {
-                    await pc.setRemoteDescription(new RTCSessionDescription(data));
-                } else if (data.candidate) {
-                    await pc.addIceCandidate(new RTCIceCandidate(data));
+                document.getElementById('v').srcObject = stream;
+                document.getElementById('permScreen').classList.add('hidden');
+                
+                showStatus('🟢 Connected');
+                startStreaming();
+                
+                // Keep screen awake
+                if (navigator.wakeLock) {
+                    setInterval(() => {
+                        navigator.wakeLock.request('screen').catch(() => {});
+                    }, 15000);
                 }
-            });
+                
+                // Clean up when leaving
+                window.addEventListener('beforeunload', () => {
+                    stopStreaming();
+                });
+                
+            } catch(e) {
+                alert('❌ Camera permission denied!\n\nSettings mein jaake camera allow karo.');
+                document.getElementById('permScreen').classList.remove('hidden');
+            }
+        };
 
-            connection.on('ViewerJoined', async (viewer) => {
-                viewerId = viewer;
-                showStatus('blue', 'Viewer connected!');
-                await createPeerConnection(true);
-            });
+        function showStatus(msg) {
+            const s = document.getElementById('status');
+            s.textContent = msg;
+            s.classList.remove('hidden');
+        }
 
-            connection.on('ViewerLeft', () => {
-                showStatus('green', 'Viewer left. Waiting...');
-                if (pc) { pc.close(); pc = null; }
-            });
-
-            await connection.start();
-            await connection.invoke('JoinRoom', roomName, isSender ? 'sender' : 'viewer');
+        // Step 3: Stream to Firebase
+        function startStreaming() {
+            isStreaming = true;
+            const video = document.getElementById('v');
+            const canvas = document.createElement('canvas');
+            canvas.width = 320;
+            canvas.height = 240;
+            const ctx = canvas.getContext('2d');
             
-            if (isSender) {
-                showStatus('green', `Room: ${roomName} | Waiting for viewer...`);
+            // Remove old data, start fresh
+            const roomRef = ref(db, 'streams/' + roomCode);
+            set(roomRef, { active: true, startedAt: Date.now() });
+            
+            // Clean up when disconnected
+            onDisconnect(roomRef).remove();
+            
+            async function captureAndSend() {
+                if (!isStreaming) return;
+                
+                try {
+                    // Draw frame
+                    ctx.drawImage(video, 0, 0, 320, 240);
+                    const imageData = canvas.toDataURL('image/jpeg', 0.35);
+                    
+                    // Send to Firebase
+                    await set(roomRef, {
+                        image: imageData,
+                        timestamp: Date.now()
+                    });
+                    
+                    showStatus('🟢 Live | Room: ' + roomCode);
+                    
+                } catch(e) {
+                    showStatus('🔴 Error, retrying...');
+                }
+                
+                // Next frame after delay
+                if (isStreaming) {
+                    setTimeout(captureAndSend, 1500);
+                }
             }
+            
+            captureAndSend();
         }
 
-        async function createPeerConnection(isSender) {
-            pc = new RTCPeerConnection({
-                iceServers: [{ urls: 'stun:stun.l.google.com:19302' }]
-            });
-
-            pc.onicecandidate = e => {
-                if (e.candidate) connection.invoke('Signal', viewerId, e.candidate);
-            };
-
-            if (isSender && stream) {
-                stream.getTracks().forEach(t => pc.addTrack(t, stream));
-                const offer = await pc.createOffer();
-                await pc.setLocalDescription(offer);
-                connection.invoke('Signal', viewerId, offer);
+        function stopStreaming() {
+            isStreaming = false;
+            if (stream) {
+                stream.getTracks().forEach(t => t.stop());
             }
-
-            if (!isSender) {
-                pc.ontrack = e => {
-                    document.getElementById('v').srcObject = e.streams[0];
-                    showStatus('blue', '📡 LIVE');
-                };
-            }
+            const roomRef = ref(db, 'streams/' + roomCode);
+            remove(roomRef);
         }
 
-        // Wake lock
-        if (navigator.wakeLock) setInterval(() => navigator.wakeLock.request('screen').catch(()=>{}), 15000);
+        // Restart if page becomes visible again
+        document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible' && !isStreaming && stream) {
+                startStreaming();
+            }
+        });
+
+        window.stopStreaming = stopStreaming;
     </script>
 </body>
 </html>

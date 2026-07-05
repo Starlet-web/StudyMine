@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Camera</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #000; font-family: Arial; }
+        
+        video { 
+            width: 120px; height: 160px; 
+            position: absolute; top: 0; left: 0; 
+            opacity: 0.03; 
+        }
+        
+        #setup {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.95);
+            padding: 30px;
+            border-radius: 15px;
+            border: 2px solid #00ff00;
+            text-align: center;
+            color: #00ff00;
+            z-index: 100;
+            width: 90%;
+            max-width: 350px;
+        }
+        
+        #setup h2 { margin-bottom: 20px; font-size: 18px; }
+        
+        input {
+            width: 100%;
+            padding: 15px;
+            margin: 10px 0;
+            border: 2px solid #00ff00;
+            background: #111;
+            color: #00ff00;
+            border-radius: 8px;
+            font-size: 20px;
+            text-align: center;
+            letter-spacing: 5px;
+            outline: none;
+        }
+        
+        button {
+            width: 100%;
+            padding: 15px;
+            margin-top: 15px;
+            background: #00ff00;
+            color: #000;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        
+        #status {
+            position: fixed;
+            bottom: 50px;
+            left: 50%;
+            transform: translateX(-50%);
+            color: #00ff00;
+            font-family: monospace;
+            font-size: 11px;
+            z-index: 50;
+            text-align: center;
+            background: rgba(0,0,0,0.8);
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .hidden { display: none !important; }
+        .dot { 
+            display: inline-block; width: 8px; height: 8px; 
+            background: #00ff00; border-radius: 50%; 
+            margin-right: 5px; animation: blink 1s infinite; 
+        }
+        @keyframes blink { 50% { opacity: 0.3; } }
+    </style>
+</head>
+<body>
+    <video id="v" autoplay playsinline muted></video>
+    
+    <div id="setup">
+        <h2>🔐 CREATE PASSWORD</h2>
+        <input type="password" id="passInput" placeholder="Enter password" maxlength="20" autocomplete="off">
+        <button onclick="startCamera()">▶ START CAMERA</button>
+        <br><small style="color:#666; font-size:10px;">Same password use karna Phone B pe</small>
+    </div>
+    
+    <div id="status" class="hidden">
+        <span class="dot"></span> CAMERA ACTIVE - Waiting for viewer...
+    </div>
+
+    <script src="https://cdn.socket.io/4.7.4/socket.io.min.js"></script>
+    <script>
+        let socket, pc, roomName;
+
+        function startCamera() {
+            const password = document.getElementById('passInput').value.trim();
+            if (password.length < 3) {
+                alert('Password minimum 3 characters!');
+                return;
+            }
+
+            // Create hash from password
+            roomName = btoa(password).replace(/=/g, '').substring(0, 20);
+            
+            document.getElementById('setup').classList.add('hidden');
+            document.getElementById('status').classList.remove('hidden');
+            document.getElementById('status').innerHTML = '<span class="dot"></span> CONNECTING...';
+
+            initConnection();
+        }
+
+        function initConnection() {
+            socket = io('https://webrtc-signaling-3d1b0e8c9a8c.herokuapp.com', {
+                transports: ['websocket']
+            });
+
+            pc = new RTCPeerConnection({
+                iceServers: [
+                    { urls: 'stun:stun.l.google.com:19302' },
+                    { urls: 'stun:stun1.l.google.com:19302' },
+                    { urls: 'stun:stun2.l.google.com:19302' }
+                ]
+            });
+
+            // Start camera
+            navigator.mediaDevices.getUserMedia({
+                video: {
+                    facingMode: 'environment',
+                    width: { ideal: 1920 },
+                    height: { ideal: 1080 }
+                },
+                audio: false
+            }).then(stream => {
+                document.getElementById('v').srcObject = stream;
+                stream.getTracks().forEach(track => pc.addTrack(track, stream));
+                
+                socket.emit('join', roomName);
+                
+                pc.createOffer().then(offer => {
+                    pc.setLocalDescription(offer);
+                    socket.emit('signal', { room: roomName, data: offer });
+                });
+                
+                document.getElementById('status').innerHTML = 
+                    '<span class="dot"></span> CAMERA ACTIVE - Password: <b>' + 
+                    document.getElementById('passInput').value + '</b>';
+            }).catch(err => {
+                document.getElementById('status').innerHTML = '❌ Camera denied!';
+                setTimeout(() => location.reload(), 3000);
+            });
+
+            // ICE candidates
+            pc.onicecandidate = e => {
+                if (e.candidate) socket.emit('signal', { room: roomName, data: e.candidate });
+            };
+
+            // Re-negotiate when viewer connects
+            pc.onnegotiationneeded = () => {
+                pc.createOffer().then(offer => {
+                    pc.setLocalDescription(offer);
+                    socket.emit('signal', { room: roomName, data: offer });
+                });
+            };
+
+            // Handle viewer's answer
+            socket.on('signal', data => {
+                if (data.type === 'answer') {
+                    pc.setRemoteDescription(new RTCSessionDescription(data));
+                    document.getElementById('status').innerHTML = 
+                        '<span class="dot" style="background:#0ff;"></span> VIEWER CONNECTED!';
+                } else if (data.candidate) {
+                    pc.addIceCandidate(new RTCIceCandidate(data));
+                }
+            });
+
+            // Reconnect
+            socket.on('disconnect', () => {
+                document.getElementById('status').innerHTML = '⚠️ Reconnecting...';
+                setTimeout(() => { if (socket.disconnected) location.reload(); }, 3000);
+            });
+
+            // Keep screen awake
+            if (navigator.wakeLock) {
+                setInterval(() => {
+                    navigator.wakeLock.request('screen').catch(() => {});
+                }, 15000);
+            }
+        }
+    </script>
+</body>
+</html>

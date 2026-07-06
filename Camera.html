@@ -1,209 +1,615 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>.</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>⚫</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { background: #000; overflow: hidden; font-family: Arial; }
-        video { width: 100%; height: 100%; position: fixed; object-fit: cover; opacity: 0.8; }
-        
+        :root {
+            --bg: #0a0a0a;
+            --card: #141414;
+            --green: #00e676;
+            --blue: #00b0ff;
+            --red: #ff1744;
+            --text: #ffffff;
+            --sub: #888888;
+            --border: #2a2a2a;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            color: var(--text);
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        /* Video */
+        #videoContainer {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+        }
+        #videoContainer video {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            background: #000;
+        }
+        .camera-mode video {
+            object-fit: cover;
+            opacity: 0.15;
+        }
+
+        /* Screens */
         .screen {
-            position: fixed; top: 0; left: 0;
-            width: 100%; height: 100%;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10; background: rgba(0,0,0,0.95);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            background: var(--bg);
+            transition: opacity 0.3s;
         }
-        .box {
-            background: #111; border: 2px solid #333;
-            border-radius: 20px; padding: 30px; text-align: center;
-            color: white; width: 90%; max-width: 350px;
+        .hidden {
+            opacity: 0;
+            pointer-events: none;
         }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 30px 20px;
+            width: 90%;
+            max-width: 370px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+
+        .icon {
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+        .title {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+            letter-spacing: -0.5px;
+        }
+        .subtitle {
+            font-size: 12px;
+            color: var(--sub);
+            margin-bottom: 22px;
+        }
+
+        /* Role buttons */
+        .role-btns {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 18px;
+        }
+        .role-btn {
+            padding: 16px 10px;
+            border: 2px solid var(--border);
+            border-radius: 14px;
+            background: var(--card);
+            color: var(--text);
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.2s;
+            text-align: center;
+        }
+        .role-btn .emoji {
+            font-size: 26px;
+            display: block;
+            margin-bottom: 4px;
+        }
+        .role-btn.active-cam {
+            border-color: var(--green);
+            background: rgba(0,230,118,0.08);
+            color: var(--green);
+        }
+        .role-btn.active-view {
+            border-color: var(--blue);
+            background: rgba(0,176,255,0.08);
+            color: var(--blue);
+        }
+
+        /* Input */
         input {
-            width: 100%; padding: 15px; font-size: 20px;
-            text-align: center; border: 2px solid #4CAF50;
-            background: #000; color: #4CAF50;
-            border-radius: 10px; margin: 15px 0;
-            letter-spacing: 3px; outline: none;
+            width: 100%;
+            padding: 15px;
+            font-size: 18px;
+            text-align: center;
+            border: 2px solid var(--border);
+            border-radius: 12px;
+            background: #0d0d0d;
+            color: var(--text);
+            letter-spacing: 2px;
+            outline: none;
+            margin-bottom: 14px;
+            transition: border 0.3s;
         }
-        button {
-            width: 100%; padding: 15px;
-            background: #4CAF50; color: black;
-            border: none; border-radius: 10px;
-            font-size: 18px; font-weight: bold; cursor: pointer;
+        input:focus {
+            border-color: var(--green);
         }
-        .hidden { display: none !important; }
-        #status {
-            position: fixed; bottom: 20px; left: 50%;
-            transform: translateX(-50%); color: #0f0;
-            background: rgba(0,0,0,0.8); padding: 8px 15px;
-            border-radius: 20px; font-size: 11px; z-index: 5;
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            font-size: 16px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s;
+            letter-spacing: 0.5px;
+        }
+        .btn:active {
+            transform: scale(0.96);
+        }
+        .btn-start {
+            background: var(--green);
+            color: #000;
+        }
+        .btn-connect {
+            background: var(--blue);
+            color: #fff;
+        }
+
+        /* Status bar */
+        #statusBar {
+            position: fixed;
+            bottom: 25px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
+            background: rgba(0,0,0,0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            padding: 10px 20px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 500;
+            border: 1px solid rgba(255,255,255,0.1);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ff1744;
+            flex-shrink: 0;
+        }
+        .status-dot.live {
+            background: #00e676;
+            box-shadow: 0 0 10px #00e67666;
+            animation: pulse 2s infinite;
+        }
+        .status-dot.waiting {
+            background: #ffa502;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes pulse {
+            0%,
+            100% {
+                box-shadow: 0 0 5px #00e67666;
+            }
+            50% {
+                box-shadow: 0 0 20px #00e676aa;
+            }
+        }
+        @keyframes blink {
+            0%,
+            100% {
+                opacity: 1;
+            }
+            50% {
+                opacity: 0.3;
+            }
+        }
+
+        /* Action buttons */
+        #actionBtns {
+            position: fixed;
+            bottom: 90px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 30;
+            display: flex;
+            gap: 12px;
+        }
+        .action-btn {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.2);
+            color: white;
+            font-size: 17px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .action-btn:active {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 50;
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            font-size: 12px;
+            pointer-events: none;
+            animation: fadeInOut 2s ease;
+        }
+        @keyframes fadeInOut {
+            0% {
+                opacity: 0;
+                top: 10px;
+            }
+            20% {
+                opacity: 1;
+                top: 20px;
+            }
+            80% {
+                opacity: 1;
+                top: 20px;
+            }
+            100% {
+                opacity: 0;
+                top: 10px;
+            }
         }
     </style>
 </head>
 <body>
-    <video id="v" autoplay playsinline muted></video>
-    
-    <!-- Setup Screen -->
-    <div class="screen" id="setup">
-        <div class="box">
-            <h2>📷 Create Room</h2>
-            <p style="font-size:12px;color:#888;">Enter secret room code</p>
-            <input type="text" id="roomInput" placeholder="e.g., baby123" maxlength="20" autocomplete="off">
-            <button onclick="initCamera()">START CAMERA</button>
-            <p style="font-size:10px;color:#555;margin-top:15px;">
-                ✅ Screen off hone ke baad bhi chalega
-            </p>
+
+    <!-- Video element (always present) -->
+    <div id="videoContainer">
+        <video id="video" autoplay playsinline muted></video>
+    </div>
+
+    <!-- Status bar -->
+    <div id="statusBar" class="hidden">
+        <span class="status-dot" id="statusDot"></span>
+        <span id="statusText">Ready</span>
+    </div>
+
+    <!-- Viewer action buttons -->
+    <div id="actionBtns" class="hidden">
+        <button class="action-btn" onclick="takeScreenshot()">📸</button>
+        <button class="action-btn" onclick="toggleFullscreen()">⛶</button>
+    </div>
+
+    <!-- ── SCREEN 1: Role Selection ── -->
+    <div class="screen" id="roleScreen">
+        <div class="card">
+            <div class="icon">📱</div>
+            <div class="title">Secret Cam</div>
+            <div class="subtitle">Choose your role</div>
+
+            <div class="role-btns">
+                <div class="role-btn active-cam" id="camRole" onclick="selectRole('camera')">
+                    <span class="emoji">📷</span> Camera
+                </div>
+                <div class="role-btn" id="viewRole" onclick="selectRole('viewer')">
+                    <span class="emoji">👁️</span> Viewer
+                </div>
+            </div>
+
+            <input type="text" id="roomInput" placeholder="Enter secret code" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off">
+            <button class="btn btn-start" id="actionBtn" onclick="go()">▶ START CAMERA</button>
         </div>
     </div>
-    
-    <!-- Permission Screen -->
+
+    <!-- ── SCREEN 2: Camera Permission ── -->
     <div class="screen hidden" id="permScreen">
-        <div class="box">
-            <h2>🔐 Allow Camera</h2>
-            <p style="font-size:12px;color:#888;">Tap button to grant permission</p>
-            <button onclick="startCamera()">📷 ALLOW CAMERA ACCESS</button>
+        <div class="card">
+            <div class="icon">🔐</div>
+            <div class="title">Allow Camera</div>
+            <div class="subtitle">Tap below to grant access</div>
+            <button class="btn btn-start" onclick="requestCamera()">📷 ALLOW CAMERA</button>
         </div>
     </div>
-    
-    <div id="status" class="hidden">🟢 Ready</div>
 
-    <!-- Firebase SDK -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, set, onDisconnect, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+    <!-- ── SCRIPTS ── -->
+    <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <script>
+        // ═══════════ STATE ═══════════
+        let role = 'camera';
+        let roomCode = '';
+        let peer = null;
+        let localStream = null;
+        let currentCall = null;
 
-        // Tumhara Firebase config
-        const firebaseConfig = {
-            apiKey: "AIzaSyDFQQ1cHavVG3X0yLm7qGpTOWCQziFLUeQ",
-            authDomain: "studymine-fa92d.firebaseapp.com",
-            projectId: "studymine-fa92d",
-            storageBucket: "studymine-fa92d.firebasestorage.app",
-            messagingSenderId: "460797718327",
-            appId: "1:460797718327:web:66316f16930b304b2e34b2"
-        };
+        // ═══════════ ROLE SELECTION ═══════════
+        function selectRole(r) {
+            role = r;
+            const camBtn = document.getElementById('camRole');
+            const viewBtn = document.getElementById('viewRole');
+            const actionBtn = document.getElementById('actionBtn');
+            const input = document.getElementById('roomInput');
 
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-        
-        let roomCode, stream, isStreaming = false;
+            camBtn.className = 'role-btn' + (r === 'camera' ? ' active-cam' : '');
+            viewBtn.className = 'role-btn' + (r === 'viewer' ? ' active-view' : '');
 
-        // Step 1: Room code enter
-        window.initCamera = function() {
+            if (r === 'camera') {
+                actionBtn.textContent = '▶ START CAMERA';
+                actionBtn.className = 'btn btn-start';
+                input.style.borderColor = 'var(--green)';
+                input.placeholder = 'Create a secret code';
+            } else {
+                actionBtn.textContent = '🔗 CONNECT TO CAMERA';
+                actionBtn.className = 'btn btn-connect';
+                input.style.borderColor = 'var(--blue)';
+                input.placeholder = 'Same code as camera';
+            }
+        }
+
+        // ═══════════ GO BUTTON ═══════════
+        function go() {
             roomCode = document.getElementById('roomInput').value.trim().toLowerCase();
             if (!roomCode || roomCode.length < 3) {
-                alert('Room code minimum 3 characters!');
+                showToast('⚠️ Enter a code (min 3 characters)');
                 return;
             }
-            document.getElementById('setup').classList.add('hidden');
-            document.getElementById('permScreen').classList.remove('hidden');
-        };
 
-        // Step 2: Get camera permission (MUST be from button click)
-        window.startCamera = async function() {
+            if (role === 'camera') {
+                document.getElementById('roleScreen').classList.add('hidden');
+                document.getElementById('permScreen').classList.remove('hidden');
+            } else {
+                document.getElementById('roleScreen').classList.add('hidden');
+                showStatus('waiting', 'Connecting to camera...');
+                connectAsViewer();
+            }
+        }
+
+        // ═══════════ CAMERA: Request Permission ═══════════
+        async function requestCamera() {
             try {
-                stream = await navigator.mediaDevices.getUserMedia({
-                    video: { 
-                        facingMode: 'environment',
-                        width: { ideal: 320 },
-                        height: { ideal: 240 }
+                localStream = await navigator.mediaDevices.getUserMedia({
+                    video: {
+                        facingMode: 'user',
+                        width: { ideal: 640 },
+                        height: { ideal: 480 }
                     },
                     audio: false
                 });
-                
-                document.getElementById('v').srcObject = stream;
+
+                document.getElementById('video').srcObject = localStream;
+                document.body.classList.add('camera-mode');
                 document.getElementById('permScreen').classList.add('hidden');
-                
-                showStatus('🟢 Connected');
-                startStreaming();
-                
-                // Keep screen awake
+                showStatus('waiting', 'Camera ready, connecting...');
+                connectAsCamera();
+
                 if (navigator.wakeLock) {
-                    setInterval(() => {
-                        navigator.wakeLock.request('screen').catch(() => {});
-                    }, 15000);
+                    setInterval(() => navigator.wakeLock.request('screen').catch(() => {}), 15000);
                 }
-                
-                // Clean up when leaving
-                window.addEventListener('beforeunload', () => {
-                    stopStreaming();
-                });
-                
-            } catch(e) {
-                alert('❌ Camera permission denied!\n\nSettings mein jaake camera allow karo.');
+
+            } catch (e) {
+                showToast('❌ Camera denied! Allow in settings.');
                 document.getElementById('permScreen').classList.remove('hidden');
             }
-        };
-
-        function showStatus(msg) {
-            const s = document.getElementById('status');
-            s.textContent = msg;
-            s.classList.remove('hidden');
         }
 
-        // Step 3: Stream to Firebase
-        function startStreaming() {
-            isStreaming = true;
-            const video = document.getElementById('v');
+        // ═══════════ CAMERA MODE ═══════════
+        function connectAsCamera() {
+            const peerId = 'spycam-' + roomCode;
+
+            peer = new Peer(peerId, {
+                host: '0.peerjs.com',
+                port: 443,
+                secure: true,
+                debug: 0
+            });
+
+            peer.on('open', () => {
+                showStatus('waiting', 'Room: ' + roomCode + ' | Waiting for viewer...');
+            });
+
+            peer.on('call', (call) => {
+                call.answer(localStream);
+                currentCall = call;
+                showStatus('live', '🔴 LIVE | Viewer connected!');
+
+                call.on('close', () => {
+                    showStatus('waiting', 'Viewer left. Waiting...');
+                    currentCall = null;
+                });
+
+                call.on('error', () => {
+                    showStatus('waiting', 'Call error. Waiting...');
+                });
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer error:', err);
+                showStatus('waiting', 'Retrying...');
+                setTimeout(() => {
+                    if (peer && peer.disconnected) {
+                        peer.reconnect();
+                    }
+                }, 3000);
+            });
+
+            peer.on('disconnected', () => {
+                showStatus('waiting', 'Disconnected. Reconnecting...');
+                setTimeout(() => {
+                    if (peer && peer.disconnected) {
+                        peer.reconnect();
+                    }
+                }, 3000);
+            });
+        }
+
+        // ═══════════ VIEWER MODE ═══════════
+        function connectAsViewer() {
+            const viewerId = 'spycam-viewer-' + roomCode + '-' + Date.now();
+
+            peer = new Peer(viewerId, {
+                host: '0.peerjs.com',
+                port: 443,
+                secure: true,
+                debug: 0
+            });
+
+            peer.on('open', () => {
+                showStatus('waiting', 'Calling camera...');
+
+                const cameraPeerId = 'spycam-' + roomCode;
+                const call = peer.call(cameraPeerId, new MediaStream());
+
+                call.on('stream', (remoteStream) => {
+                    document.getElementById('video').srcObject = remoteStream;
+                    document.body.classList.remove('camera-mode');
+                    showStatus('live', '🔴 LIVE | Room: ' + roomCode);
+                    document.getElementById('actionBtns').classList.remove('hidden');
+                });
+
+                call.on('error', (err) => {
+                    console.error('Call error:', err);
+                    showStatus('waiting', 'Cannot connect. Retrying...');
+                });
+
+                call.on('close', () => {
+                    showStatus('waiting', 'Camera offline.');
+                    document.getElementById('actionBtns').classList.add('hidden');
+                });
+
+                currentCall = call;
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer error:', err);
+                if (err.type === 'peer-unavailable') {
+                    showStatus('waiting', 'Camera not found. Check code.');
+                } else {
+                    showStatus('waiting', 'Error. Retrying...');
+                }
+                setTimeout(() => {
+                    if (peer && peer.disconnected) peer.reconnect();
+                }, 3000);
+            });
+
+            peer.on('disconnected', () => {
+                showStatus('waiting', 'Disconnected. Reconnecting...');
+                setTimeout(() => {
+                    if (peer && peer.disconnected) peer.reconnect();
+                }, 3000);
+            });
+
+            // Timeout agar 20 sec mein connect nahi hua
+            setTimeout(() => {
+                const dot = document.getElementById('statusDot');
+                if (!dot.classList.contains('live')) {
+                    showStatus('waiting', '❌ Camera not found! Check code.');
+                    document.getElementById('actionBtns').classList.add('hidden');
+                }
+            }, 20000);
+        }
+
+        // ═══════════ STATUS BAR ═══════════
+        function showStatus(state, msg) {
+            const bar = document.getElementById('statusBar');
+            const dot = document.getElementById('statusDot');
+            const text = document.getElementById('statusText');
+
+            bar.classList.remove('hidden');
+            dot.className = 'status-dot';
+            if (state === 'live') dot.classList.add('live');
+            if (state === 'waiting') dot.classList.add('waiting');
+            text.textContent = msg;
+        }
+
+        // ═══════════ TOAST ═══════════
+        function showToast(msg) {
+            const t = document.createElement('div');
+            t.className = 'toast';
+            t.textContent = msg;
+            document.body.appendChild(t);
+            setTimeout(() => t.remove(), 2000);
+        }
+
+        // ═══════════ SCREENSHOT ═══════════
+        function takeScreenshot() {
+            const video = document.getElementById('video');
+            if (!video.srcObject) return;
             const canvas = document.createElement('canvas');
-            canvas.width = 320;
-            canvas.height = 240;
-            const ctx = canvas.getContext('2d');
-            
-            // Remove old data, start fresh
-            const roomRef = ref(db, 'streams/' + roomCode);
-            set(roomRef, { active: true, startedAt: Date.now() });
-            
-            // Clean up when disconnected
-            onDisconnect(roomRef).remove();
-            
-            async function captureAndSend() {
-                if (!isStreaming) return;
-                
-                try {
-                    // Draw frame
-                    ctx.drawImage(video, 0, 0, 320, 240);
-                    const imageData = canvas.toDataURL('image/jpeg', 0.35);
-                    
-                    // Send to Firebase
-                    await set(roomRef, {
-                        image: imageData,
-                        timestamp: Date.now()
-                    });
-                    
-                    showStatus('🟢 Live | Room: ' + roomCode);
-                    
-                } catch(e) {
-                    showStatus('🔴 Error, retrying...');
-                }
-                
-                // Next frame after delay
-                if (isStreaming) {
-                    setTimeout(captureAndSend, 1500);
-                }
-            }
-            
-            captureAndSend();
+            canvas.width = video.videoWidth || 640;
+            canvas.height = video.videoHeight || 480;
+            canvas.getContext('2d').drawImage(video, 0, 0);
+            const a = document.createElement('a');
+            a.download = 'screenshot_' + Date.now() + '.png';
+            a.href = canvas.toDataURL('image/png');
+            a.click();
+            showToast('📸 Screenshot saved!');
         }
 
-        function stopStreaming() {
-            isStreaming = false;
-            if (stream) {
-                stream.getTracks().forEach(t => t.stop());
+        // ═══════════ FULLSCREEN ═══════════
+        function toggleFullscreen() {
+            if (document.fullscreenElement) {
+                document.exitFullscreen();
+            } else {
+                document.documentElement.requestFullscreen().catch(() => {});
             }
-            const roomRef = ref(db, 'streams/' + roomCode);
-            remove(roomRef);
         }
 
-        // Restart if page becomes visible again
+        // ═══════════ ENTER KEY ═══════════
+        document.getElementById('roomInput').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') go();
+        });
+
+        // ═══════════ CLEANUP ═══════════
+        window.addEventListener('beforeunload', () => {
+            if (currentCall) currentCall.close();
+            if (peer) peer.destroy();
+            if (localStream) localStream.getTracks().forEach(t => t.stop());
+        });
+
+        // ═══════════ RECONNECT ON VISIBILITY ═══════════
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && !isStreaming && stream) {
-                startStreaming();
+            if (document.visibilityState === 'visible' && peer && peer.disconnected) {
+                peer.reconnect();
             }
         });
 
-        window.stopStreaming = stopStreaming;
+        console.log('✅ Secret Cam Ready');
+        console.log('📷 Camera Mode: Create room code → Start');
+        console.log('👁️ Viewer Mode: Same room code → Connect');
     </script>
 </body>
 </html>

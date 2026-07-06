@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-    <title>⚫</title>
+    <title>Secret Cam - Internet Working</title>
     <style>
         :root {
             --bg: #0a0a0a;
@@ -34,7 +34,6 @@
             user-select: none;
         }
 
-        /* Video */
         #videoContainer {
             position: fixed;
             top: 0;
@@ -51,10 +50,9 @@
         }
         .camera-mode video {
             object-fit: cover;
-            opacity: 0.15;
+            opacity: 0.3;
         }
 
-        /* Screens */
         .screen {
             position: fixed;
             top: 0;
@@ -100,7 +98,6 @@
             margin-bottom: 22px;
         }
 
-        /* Role buttons */
         .role-btns {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -135,7 +132,6 @@
             color: var(--blue);
         }
 
-        /* Input */
         input {
             width: 100%;
             padding: 15px;
@@ -154,7 +150,6 @@
             border-color: var(--green);
         }
 
-        /* Buttons */
         .btn {
             width: 100%;
             padding: 15px;
@@ -165,6 +160,7 @@
             cursor: pointer;
             transition: all 0.2s;
             letter-spacing: 0.5px;
+            margin-bottom: 8px;
         }
         .btn:active {
             transform: scale(0.96);
@@ -177,8 +173,16 @@
             background: var(--blue);
             color: #fff;
         }
+        .btn-stop {
+            background: var(--red);
+            color: #fff;
+        }
+        .btn-room {
+            background: #6c5ce7;
+            color: #fff;
+            font-size: 14px;
+        }
 
-        /* Status bar */
         #statusBar {
             position: fixed;
             bottom: 25px;
@@ -214,25 +218,14 @@
             animation: blink 1.5s infinite;
         }
         @keyframes pulse {
-            0%,
-            100% {
-                box-shadow: 0 0 5px #00e67666;
-            }
-            50% {
-                box-shadow: 0 0 20px #00e676aa;
-            }
+            0%, 100% { box-shadow: 0 0 5px #00e67666; }
+            50% { box-shadow: 0 0 20px #00e676aa; }
         }
         @keyframes blink {
-            0%,
-            100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.3;
-            }
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.3; }
         }
 
-        /* Action buttons */
         #actionBtns {
             position: fixed;
             bottom: 90px;
@@ -261,7 +254,6 @@
             background: rgba(255,255,255,0.2);
         }
 
-        /* Toast */
         .toast {
             position: fixed;
             top: 20px;
@@ -277,50 +269,54 @@
             animation: fadeInOut 2s ease;
         }
         @keyframes fadeInOut {
-            0% {
-                opacity: 0;
-                top: 10px;
-            }
-            20% {
-                opacity: 1;
-                top: 20px;
-            }
-            80% {
-                opacity: 1;
-                top: 20px;
-            }
-            100% {
-                opacity: 0;
-                top: 10px;
-            }
+            0% { opacity: 0; top: 10px; }
+            20% { opacity: 1; top: 20px; }
+            80% { opacity: 1; top: 20px; }
+            100% { opacity: 0; top: 10px; }
+        }
+
+        #roomInfo {
+            background: #1a1a1a;
+            padding: 12px;
+            border-radius: 10px;
+            margin-top: 10px;
+            font-size: 11px;
+            color: #aaa;
+            display: none;
+        }
+        #roomInfo.show {
+            display: block;
+        }
+        .copy-text {
+            color: var(--green);
+            cursor: pointer;
+            text-decoration: underline;
         }
     </style>
 </head>
 <body>
 
-    <!-- Video element (always present) -->
     <div id="videoContainer">
         <video id="video" autoplay playsinline muted></video>
     </div>
 
-    <!-- Status bar -->
     <div id="statusBar" class="hidden">
         <span class="status-dot" id="statusDot"></span>
         <span id="statusText">Ready</span>
     </div>
 
-    <!-- Viewer action buttons -->
     <div id="actionBtns" class="hidden">
         <button class="action-btn" onclick="takeScreenshot()">📸</button>
         <button class="action-btn" onclick="toggleFullscreen()">⛶</button>
+        <button class="action-btn" onclick="stopConnection()">⏹️</button>
     </div>
 
-    <!-- ── SCREEN 1: Role Selection ── -->
+    <!-- Role Selection Screen -->
     <div class="screen" id="roleScreen">
         <div class="card">
-            <div class="icon">📱</div>
+            <div class="icon">🌐</div>
             <div class="title">Secret Cam</div>
-            <div class="subtitle">Choose your role</div>
+            <div class="subtitle">Door se bhi connect karein!</div>
 
             <div class="role-btns">
                 <div class="role-btn active-cam" id="camRole" onclick="selectRole('camera')">
@@ -331,32 +327,75 @@
                 </div>
             </div>
 
-            <input type="text" id="roomInput" placeholder="Enter secret code" maxlength="20" autocomplete="off" autocorrect="off" autocapitalize="off">
+            <input type="text" id="roomInput" placeholder="Secret code daalein" maxlength="30" autocomplete="off">
             <button class="btn btn-start" id="actionBtn" onclick="go()">▶ START CAMERA</button>
+            
+            <div id="roomInfo">
+                <p>🔑 Aapka Room Code: <strong id="displayRoomCode" class="copy-text" onclick="copyRoomCode()"></strong></p>
+                <p style="font-size: 10px;">Ye code dost ko bhejein</p>
+            </div>
         </div>
     </div>
 
-    <!-- ── SCREEN 2: Camera Permission ── -->
+    <!-- Permission Screen -->
     <div class="screen hidden" id="permScreen">
         <div class="card">
             <div class="icon">🔐</div>
             <div class="title">Allow Camera</div>
-            <div class="subtitle">Tap below to grant access</div>
+            <div class="subtitle">Camera access dena hoga</div>
             <button class="btn btn-start" onclick="requestCamera()">📷 ALLOW CAMERA</button>
+            <button class="btn btn-stop" onclick="goBack()">↩️ WAPAS</button>
         </div>
     </div>
 
-    <!-- ── SCRIPTS ── -->
     <script src="https://cdn.jsdelivr.net/npm/peerjs@1.4.7/dist/peerjs.min.js"></script>
     <script>
-        // ═══════════ STATE ═══════════
         let role = 'camera';
         let roomCode = '';
         let peer = null;
         let localStream = null;
         let currentCall = null;
+        let reconnectTimer = null;
+        let myPeerId = '';
 
-        // ═══════════ ROLE SELECTION ═══════════
+        // Multiple TURN servers for better connectivity
+        const ICE_SERVERS = {
+            iceServers: [
+                // Google's free STUN servers
+                { urls: 'stun:stun.l.google.com:19302' },
+                { urls: 'stun:stun1.l.google.com:19302' },
+                { urls: 'stun:stun2.l.google.com:19302' },
+                { urls: 'stun:stun3.l.google.com:19302' },
+                { urls: 'stun:stun4.l.google.com:19302' },
+                
+                // Twilio's free TURN server
+                {
+                    urls: 'turn:global.turn.twilio.com:3478?transport=udp',
+                    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
+                    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw='
+                },
+                {
+                    urls: 'turn:global.turn.twilio.com:3478?transport=tcp',
+                    username: 'f4b4035eaa76f4a55de5f4351567653ee4ff6fa97b50b6b334fcc1be9c27212d',
+                    credential: 'w1uxM55V9yVoqyVFjt+mxDBV0F87AUCemaYVQGxsPLw='
+                },
+                
+                // OpenRelay TURN server
+                { urls: 'turn:openrelay.metered.ca:80' },
+                { urls: 'turn:openrelay.metered.ca:443' },
+                
+                // Viagenie TURN
+                {
+                    urls: 'turn:numb.viagenie.ca',
+                    username: 'webrtc@live.com',
+                    credential: 'muazkh'
+                }
+            ],
+            iceCandidatePoolSize: 10,
+            iceTransportPolicy: 'all'
+        };
+
+        // Select Role
         function selectRole(r) {
             role = r;
             const camBtn = document.getElementById('camRole');
@@ -370,21 +409,36 @@
             if (r === 'camera') {
                 actionBtn.textContent = '▶ START CAMERA';
                 actionBtn.className = 'btn btn-start';
-                input.style.borderColor = 'var(--green)';
-                input.placeholder = 'Create a secret code';
+                input.placeholder = 'Secret code create karein';
             } else {
                 actionBtn.textContent = '🔗 CONNECT TO CAMERA';
                 actionBtn.className = 'btn btn-connect';
-                input.style.borderColor = 'var(--blue)';
-                input.placeholder = 'Same code as camera';
+                input.placeholder = 'Camera wala code daalein';
             }
         }
 
-        // ═══════════ GO BUTTON ═══════════
+        // Generate unique room code
+        function generateRoomCode() {
+            const random = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('roomInput').value = random;
+            return random;
+        }
+
+        // Copy room code
+        function copyRoomCode() {
+            const code = document.getElementById('displayRoomCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                showToast('📋 Code copy ho gaya! Dost ko bhejein');
+            }).catch(() => {
+                showToast('Code: ' + code);
+            });
+        }
+
+        // Go Button
         function go() {
-            roomCode = document.getElementById('roomInput').value.trim().toLowerCase();
+            roomCode = document.getElementById('roomInput').value.trim();
             if (!roomCode || roomCode.length < 3) {
-                showToast('⚠️ Enter a code (min 3 characters)');
+                showToast('⚠️ Kam se kam 3 characters ka code');
                 return;
             }
 
@@ -393,21 +447,40 @@
                 document.getElementById('permScreen').classList.remove('hidden');
             } else {
                 document.getElementById('roleScreen').classList.add('hidden');
-                showStatus('waiting', 'Connecting to camera...');
+                showStatus('waiting', 'Camera se connect ho rahe hain...');
                 connectAsViewer();
             }
         }
 
-        // ═══════════ CAMERA: Request Permission ═══════════
+        // Go Back
+        function goBack() {
+            document.getElementById('permScreen').classList.add('hidden');
+            document.getElementById('roleScreen').classList.remove('hidden');
+            if (localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+            }
+        }
+
+        // Request Camera
         async function requestCamera() {
             try {
                 localStream = await navigator.mediaDevices.getUserMedia({
                     video: {
-                        facingMode: 'user',
+                        facingMode: 'environment',
                         width: { ideal: 640 },
                         height: { ideal: 480 }
                     },
                     audio: false
+                }).catch(async () => {
+                    return await navigator.mediaDevices.getUserMedia({
+                        video: {
+                            facingMode: 'user',
+                            width: { ideal: 640 },
+                            height: { ideal: 480 }
+                        },
+                        audio: false
+                    });
                 });
 
                 document.getElementById('video').srcObject = localStream;
@@ -416,133 +489,188 @@
                 showStatus('waiting', 'Camera ready, connecting...');
                 connectAsCamera();
 
-                if (navigator.wakeLock) {
-                    setInterval(() => navigator.wakeLock.request('screen').catch(() => {}), 15000);
-                }
-
             } catch (e) {
-                showToast('❌ Camera denied! Allow in settings.');
+                console.error('Camera error:', e);
+                showToast('❌ Camera access denied!');
                 document.getElementById('permScreen').classList.remove('hidden');
             }
         }
 
-        // ═══════════ CAMERA MODE ═══════════
+        // Connect as Camera
         function connectAsCamera() {
-            const peerId = 'spycam-' + roomCode;
+            if (peer) {
+                peer.destroy();
+            }
 
-            peer = new Peer(peerId, {
-                host: '0.peerjs.com',
-                port: 443,
-                secure: true,
-                debug: 0
+            peer = new Peer({
+                config: ICE_SERVERS,
+                debug: 2
             });
 
-            peer.on('open', () => {
-                showStatus('waiting', 'Room: ' + roomCode + ' | Waiting for viewer...');
+            peer.on('open', (id) => {
+                myPeerId = id;
+                console.log('📷 Camera Peer ID:', id);
+                
+                // Show room info
+                const roomInfo = document.getElementById('roomInfo');
+                const displayCode = document.getElementById('displayRoomCode');
+                roomInfo.classList.add('show');
+                displayCode.textContent = roomCode;
+                
+                showStatus('waiting', 'Room: ' + roomCode + ' | Viewer ka wait...');
+                showToast('🔑 Code: ' + roomCode + ' (Dost ko bhejo)');
             });
 
             peer.on('call', (call) => {
+                console.log('📞 Incoming call from viewer');
                 call.answer(localStream);
                 currentCall = call;
-                showStatus('live', '🔴 LIVE | Viewer connected!');
+                showStatus('live', '🔴 LIVE | Connected!');
+                document.getElementById('actionBtns').classList.remove('hidden');
 
                 call.on('close', () => {
-                    showStatus('waiting', 'Viewer left. Waiting...');
+                    console.log('Call ended');
+                    showStatus('waiting', 'Viewer disconnected. Waiting...');
                     currentCall = null;
+                    document.getElementById('actionBtns').classList.add('hidden');
                 });
 
-                call.on('error', () => {
-                    showStatus('waiting', 'Call error. Waiting...');
+                call.on('error', (err) => {
+                    console.error('Call error:', err);
+                    showStatus('waiting', 'Connection error');
                 });
+            });
+
+            peer.on('error', (err) => {
+                console.error('Peer error:', err);
+                showStatus('waiting', 'Error. Retrying in 5s...');
+                clearTimeout(reconnectTimer);
+                reconnectTimer = setTimeout(() => connectAsCamera(), 5000);
+            });
+
+            peer.on('disconnected', () => {
+                console.log('Peer disconnected');
+                showStatus('waiting', 'Reconnecting...');
+                if (peer && !peer.destroyed) {
+                    peer.reconnect();
+                }
+            });
+        }
+
+        // Connect as Viewer
+        function connectAsViewer() {
+            if (peer) {
+                peer.destroy();
+            }
+
+            peer = new Peer({
+                config: ICE_SERVERS,
+                debug: 2
+            });
+
+            peer.on('open', (id) => {
+                myPeerId = id;
+                console.log('👁️ Viewer Peer ID:', id);
+                showStatus('waiting', 'Camera dhundh rahe hain...');
+                
+                // Try to connect with retry logic
+                attemptConnection(0);
             });
 
             peer.on('error', (err) => {
                 console.error('Peer error:', err);
                 showStatus('waiting', 'Retrying...');
-                setTimeout(() => {
-                    if (peer && peer.disconnected) {
-                        peer.reconnect();
-                    }
-                }, 3000);
+                clearTimeout(reconnectTimer);
+                reconnectTimer = setTimeout(() => attemptConnection(0), 5000);
             });
 
             peer.on('disconnected', () => {
-                showStatus('waiting', 'Disconnected. Reconnecting...');
-                setTimeout(() => {
-                    if (peer && peer.disconnected) {
-                        peer.reconnect();
-                    }
-                }, 3000);
+                showStatus('waiting', 'Reconnecting...');
+                if (peer && !peer.destroyed) {
+                    peer.reconnect();
+                }
             });
+
+            function attemptConnection(attempt) {
+                if (attempt > 3) {
+                    showStatus('waiting', '❌ Camera nahi mila. Code check karein!');
+                    return;
+                }
+
+                console.log(`Connection attempt ${attempt + 1} for room: ${roomCode}`);
+                showStatus('waiting', `Try ${attempt + 1}/4...`);
+
+                // Use room code as the peer ID for camera
+                const cameraPeerId = roomCode;
+                
+                try {
+                    const call = peer.call(cameraPeerId, new MediaStream(), {
+                        metadata: { roomCode: roomCode }
+                    });
+                    
+                    let connectionTimeout = setTimeout(() => {
+                        if (!call.peerConnection || call.peerConnection.iceConnectionState !== 'connected') {
+                            console.log('Connection timeout, retrying...');
+                            call.close();
+                            attemptConnection(attempt + 1);
+                        }
+                    }, 15000);
+
+                    call.on('stream', (remoteStream) => {
+                        clearTimeout(connectionTimeout);
+                        console.log('✅ Got remote stream!');
+                        document.getElementById('video').srcObject = remoteStream;
+                        document.body.classList.remove('camera-mode');
+                        showStatus('live', '🔴 LIVE | Connected!');
+                        document.getElementById('actionBtns').classList.remove('hidden');
+                    });
+
+                    call.on('error', (err) => {
+                        clearTimeout(connectionTimeout);
+                        console.error('Call error:', err);
+                        showStatus('waiting', 'Connect nahi hua. Retry...');
+                        setTimeout(() => attemptConnection(attempt + 1), 3000);
+                    });
+
+                    call.on('close', () => {
+                        clearTimeout(connectionTimeout);
+                        showStatus('waiting', 'Camera offline.');
+                        document.getElementById('actionBtns').classList.add('hidden');
+                    });
+
+                    currentCall = call;
+                } catch(e) {
+                    console.error('Call setup error:', e);
+                    showStatus('waiting', 'Error. Retry...');
+                    setTimeout(() => attemptConnection(attempt + 1), 3000);
+                }
+            }
         }
 
-        // ═══════════ VIEWER MODE ═══════════
-        function connectAsViewer() {
-            const viewerId = 'spycam-viewer-' + roomCode + '-' + Date.now();
-
-            peer = new Peer(viewerId, {
-                host: '0.peerjs.com',
-                port: 443,
-                secure: true,
-                debug: 0
-            });
-
-            peer.on('open', () => {
-                showStatus('waiting', 'Calling camera...');
-
-                const cameraPeerId = 'spycam-' + roomCode;
-                const call = peer.call(cameraPeerId, new MediaStream());
-
-                call.on('stream', (remoteStream) => {
-                    document.getElementById('video').srcObject = remoteStream;
-                    document.body.classList.remove('camera-mode');
-                    showStatus('live', '🔴 LIVE | Room: ' + roomCode);
-                    document.getElementById('actionBtns').classList.remove('hidden');
-                });
-
-                call.on('error', (err) => {
-                    console.error('Call error:', err);
-                    showStatus('waiting', 'Cannot connect. Retrying...');
-                });
-
-                call.on('close', () => {
-                    showStatus('waiting', 'Camera offline.');
-                    document.getElementById('actionBtns').classList.add('hidden');
-                });
-
-                currentCall = call;
-            });
-
-            peer.on('error', (err) => {
-                console.error('Peer error:', err);
-                if (err.type === 'peer-unavailable') {
-                    showStatus('waiting', 'Camera not found. Check code.');
-                } else {
-                    showStatus('waiting', 'Error. Retrying...');
-                }
-                setTimeout(() => {
-                    if (peer && peer.disconnected) peer.reconnect();
-                }, 3000);
-            });
-
-            peer.on('disconnected', () => {
-                showStatus('waiting', 'Disconnected. Reconnecting...');
-                setTimeout(() => {
-                    if (peer && peer.disconnected) peer.reconnect();
-                }, 3000);
-            });
-
-            // Timeout agar 20 sec mein connect nahi hua
-            setTimeout(() => {
-                const dot = document.getElementById('statusDot');
-                if (!dot.classList.contains('live')) {
-                    showStatus('waiting', '❌ Camera not found! Check code.');
-                    document.getElementById('actionBtns').classList.add('hidden');
-                }
-            }, 20000);
+        // Stop Connection
+        function stopConnection() {
+            if (currentCall) {
+                currentCall.close();
+                currentCall = null;
+            }
+            if (peer) {
+                peer.destroy();
+                peer = null;
+            }
+            if (localStream) {
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+            }
+            document.getElementById('video').srcObject = null;
+            document.getElementById('actionBtns').classList.add('hidden');
+            document.getElementById('statusBar').classList.add('hidden');
+            document.getElementById('roleScreen').classList.remove('hidden');
+            document.getElementById('roomInfo').classList.remove('show');
+            document.body.classList.remove('camera-mode');
+            clearTimeout(reconnectTimer);
         }
 
-        // ═══════════ STATUS BAR ═══════════
+        // Status Bar
         function showStatus(state, msg) {
             const bar = document.getElementById('statusBar');
             const dot = document.getElementById('statusDot');
@@ -555,16 +683,16 @@
             text.textContent = msg;
         }
 
-        // ═══════════ TOAST ═══════════
+        // Toast
         function showToast(msg) {
             const t = document.createElement('div');
             t.className = 'toast';
             t.textContent = msg;
             document.body.appendChild(t);
-            setTimeout(() => t.remove(), 2000);
+            setTimeout(() => t.remove(), 3000);
         }
 
-        // ═══════════ SCREENSHOT ═══════════
+        // Screenshot
         function takeScreenshot() {
             const video = document.getElementById('video');
             if (!video.srcObject) return;
@@ -579,7 +707,7 @@
             showToast('📸 Screenshot saved!');
         }
 
-        // ═══════════ FULLSCREEN ═══════════
+        // Fullscreen
         function toggleFullscreen() {
             if (document.fullscreenElement) {
                 document.exitFullscreen();
@@ -588,28 +716,31 @@
             }
         }
 
-        // ═══════════ ENTER KEY ═══════════
+        // Enter key
         document.getElementById('roomInput').addEventListener('keypress', (e) => {
             if (e.key === 'Enter') go();
         });
 
-        // ═══════════ CLEANUP ═══════════
+        // Cleanup
         window.addEventListener('beforeunload', () => {
-            if (currentCall) currentCall.close();
-            if (peer) peer.destroy();
-            if (localStream) localStream.getTracks().forEach(t => t.stop());
+            stopConnection();
         });
 
-        // ═══════════ RECONNECT ON VISIBILITY ═══════════
+        // Reconnect on visibility
         document.addEventListener('visibilitychange', () => {
-            if (document.visibilityState === 'visible' && peer && peer.disconnected) {
+            if (document.visibilityState === 'visible' && peer && peer.disconnected && !peer.destroyed) {
                 peer.reconnect();
             }
         });
 
-        console.log('✅ Secret Cam Ready');
-        console.log('📷 Camera Mode: Create room code → Start');
-        console.log('👁️ Viewer Mode: Same room code → Connect');
+        // Generate random code on load
+        window.addEventListener('load', () => {
+            generateRoomCode();
+        });
+
+        console.log('🌐 Secret Cam Ready - Internet Mode');
+        console.log('📷 Camera: Room code share karein');
+        console.log('👁️ Viewer: Same code enter karein');
     </script>
 </body>
 </html>

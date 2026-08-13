@@ -3,18 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Panel | Upload Memories for Himanshu Bhai</title>
+    <title>Admin Panel | Upload Memories</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-storage-compat.js"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        :root {
-            --gold: #FFD700;
-            --crimson: #DC143C;
-        }
         body {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
             font-family: 'Inter', sans-serif;
             min-height: 100vh;
         }
@@ -22,83 +19,43 @@
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .preview-image {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-            border-radius: 12px;
-            display: none;
-        }
-        .uploaded-badge {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-        .loading-spinner {
-            display: none;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,0.3);
-            border-top: 3px solid #FFD700;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        .preview-image { width: 100%; height: 200px; object-fit: cover; border-radius: 12px; display: none; }
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-lg upload-card rounded-2xl shadow-2xl p-8 text-white">
-        <div class="text-center mb-8">
+    <div class="w-full max-w-lg upload-card rounded-2xl p-8 text-white">
+        <div class="text-center mb-6">
             <span class="text-5xl">🎂</span>
-            <h1 class="text-3xl font-bold mt-4 bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text text-transparent">Memory Uploader</h1>
-            <p class="text-gray-300 text-sm mt-2">Add photos to Himanshu Bhai's birthday gallery</p>
+            <h1 class="text-3xl font-bold mt-4">Memory Uploader</h1>
+            <p class="text-gray-300 text-sm">Add photos for Himanshu Bhai</p>
         </div>
         
-        <!-- Image Preview -->
-        <div class="mb-4">
-            <img id="imagePreview" class="preview-image" alt="Preview">
-        </div>
+        <img id="imagePreview" class="preview-image mb-4" alt="Preview">
         
         <div class="space-y-4">
             <div>
-                <label class="block text-sm font-medium mb-2">Select Image</label>
-                <input type="file" id="imageInput" accept="image/*" class="w-full px-3 py-2 bg-white/10 rounded-lg border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-yellow-500 file:text-black hover:file:bg-yellow-400">
+                <label class="block text-sm mb-2">Select Image</label>
+                <input type="file" id="imageInput" accept="image/*" class="w-full px-3 py-2 bg-white/10 rounded-lg border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-yellow-500 file:text-black">
             </div>
             <div>
-                <label class="block text-sm font-medium mb-2">Caption (optional)</label>
-                <input type="text" id="captionInput" placeholder="e.g., Best day ever!" class="w-full px-3 py-2 bg-white/10 rounded-lg border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder-gray-400">
+                <label class="block text-sm mb-2">Caption</label>
+                <input type="text" id="captionInput" placeholder="e.g., Best memory!" class="w-full px-3 py-2 bg-white/10 rounded-lg border border-white/20 text-white placeholder-gray-400">
             </div>
-            <button id="uploadBtn" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-red-500 rounded-xl font-bold hover:opacity-90 transition flex items-center justify-center gap-2">
-                <span class="loading-spinner" id="loadingSpinner"></span>
-                <i class="fas fa-upload" id="uploadIcon"></i> 
-                <span id="uploadText">UPLOAD & SAVE</span>
+            <button id="uploadBtn" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-red-500 rounded-xl font-bold hover:opacity-90 transition">
+                <i class="fas fa-upload"></i> UPLOAD PHOTO
             </button>
         </div>
         
         <div id="status" class="mt-4 text-center text-sm"></div>
         
-        <!-- Recent Uploads -->
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold mb-3">Recent Uploads</h3>
-            <div id="recentUploads" class="space-y-2 max-h-40 overflow-y-auto">
-                <!-- Recent uploads will appear here -->
-            </div>
-        </div>
-        
         <div class="mt-6 border-t border-white/20 pt-4">
-            <p class="text-xs text-gray-400 text-center">Powered by ImgBB & Firebase</p>
+            <p class="text-xs text-gray-400 text-center">Images stored via Firebase Storage</p>
         </div>
     </div>
 
     <script>
-        // Firebase Config (UPDATED with your credentials)
+        // Firebase Config
         const firebaseConfig = {
             apiKey: "AIzaSyDS0rzCKglHblF2dlFEKE-ouV0yOu0z5UM",
             authDomain: "mine-a1e68.firebaseapp.com",
@@ -107,15 +64,12 @@
             messagingSenderId: "48499757892",
             appId: "1:48499757892:web:d0fd281ab0df945e893d11"
         };
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        
+        firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
+        const storage = firebase.storage();
         
-        // ImgBB API Key (UPDATED)
-        const IMGBB_API_KEY = '11a8d7bbccc391d93448522a384dd77a';
-        
-        // Image preview functionality
+        // Image preview
         document.getElementById('imageInput').addEventListener('change', function(e) {
             const file = e.target.files[0];
             if (file) {
@@ -129,111 +83,61 @@
             }
         });
         
-        // Load recent uploads
-        async function loadRecentUploads() {
-            const recentContainer = document.getElementById('recentUploads');
-            try {
-                const snapshot = await db.collection('birthday_images')
-                    .where('active', '==', true)
-                    .orderBy('uploadedAt', 'desc')
-                    .limit(5)
-                    .get();
-                
-                if (!snapshot.empty) {
-                    recentContainer.innerHTML = '';
-                    snapshot.forEach(doc => {
-                        const data = doc.data();
-                        const div = document.createElement('div');
-                        div.className = 'flex items-center gap-3 bg-white/5 rounded-lg p-2';
-                        div.innerHTML = `
-                            <img src="${data.url}" alt="${data.caption}" class="w-12 h-12 object-cover rounded-lg">
-                            <div class="flex-1">
-                                <p class="text-sm font-medium">${data.caption || 'Himanshu Bhai'}</p>
-                                <p class="text-xs text-gray-400">${data.uploadedAt ? new Date(data.uploadedAt.seconds * 1000).toLocaleDateString() : 'Just now'}</p>
-                            </div>
-                        `;
-                        recentContainer.appendChild(div);
-                    });
-                } else {
-                    recentContainer.innerHTML = '<p class="text-gray-400 text-sm text-center">No uploads yet</p>';
-                }
-            } catch (error) {
-                console.error("Error loading recent uploads:", error);
-            }
-        }
-        
-        // Upload functionality
+        // Upload to Firebase Storage (simpler and more reliable)
         document.getElementById('uploadBtn').addEventListener('click', async () => {
             const fileInput = document.getElementById('imageInput');
             const caption = document.getElementById('captionInput').value.trim() || 'Himanshu Bhai';
             const statusDiv = document.getElementById('status');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const uploadIcon = document.getElementById('uploadIcon');
-            const uploadText = document.getElementById('uploadText');
+            const btn = document.getElementById('uploadBtn');
             
             if (!fileInput.files || !fileInput.files[0]) {
-                statusDiv.innerHTML = '<p class="text-red-400">❌ Please select an image first.</p>';
+                statusDiv.innerHTML = '<p class="text-red-400">❌ Please select an image</p>';
                 return;
             }
             
             const file = fileInput.files[0];
-            
-            // Disable button and show loading
-            loadingSpinner.style.display = 'inline-block';
-            uploadIcon.style.display = 'none';
-            uploadText.textContent = 'UPLOADING...';
-            uploadBtn.disabled = true;
-            
-            statusDiv.innerHTML = '<p class="text-yellow-400"><i class="fas fa-spinner fa-spin"></i> Uploading to ImgBB...</p>';
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> UPLOADING...';
+            statusDiv.innerHTML = '<p class="text-yellow-400">Uploading image...</p>';
             
             try {
-                const formData = new FormData();
-                formData.append('image', file);
+                // Generate unique filename
+                const timestamp = Date.now();
+                const filename = `birthday_${timestamp}_${file.name}`;
+                const storageRef = storage.ref(`birthday_images/${filename}`);
                 
-                const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
-                    method: 'POST',
-                    body: formData
-                });
+                // Upload file
+                await storageRef.put(file);
                 
-                const imgbbData = await imgbbResponse.json();
-                if (!imgbbData.success) {
-                    throw new Error('ImgBB upload failed');
-                }
-                const imageUrl = imgbbData.data.url;
+                // Get download URL
+                const downloadURL = await storageRef.getDownloadURL();
                 
-                statusDiv.innerHTML = '<p class="text-blue-400">✅ Uploaded to ImgBB. Saving to Firebase...</p>';
+                statusDiv.innerHTML = '<p class="text-blue-400">Saving to database...</p>';
                 
+                // Save to Firestore
                 await db.collection('birthday_images').add({
-                    url: imageUrl,
+                    url: downloadURL,
                     caption: caption,
                     uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    active: true
+                    active: true,
+                    filename: filename
                 });
                 
-                statusDiv.innerHTML = '<p class="text-green-400">🎉 Memory added successfully! It will appear in the gallery.</p>';
+                statusDiv.innerHTML = '<p class="text-green-400">✅ Photo uploaded successfully!</p>';
                 
-                // Reset form
+                // Reset
                 fileInput.value = '';
                 document.getElementById('captionInput').value = '';
                 document.getElementById('imagePreview').style.display = 'none';
                 
-                // Reload recent uploads
-                loadRecentUploads();
-                
             } catch (error) {
-                console.error(error);
+                console.error("Upload error:", error);
                 statusDiv.innerHTML = `<p class="text-red-400">❌ Error: ${error.message}</p>`;
             } finally {
-                // Re-enable button
-                loadingSpinner.style.display = 'none';
-                uploadIcon.style.display = 'inline';
-                uploadText.textContent = 'UPLOAD & SAVE';
-                uploadBtn.disabled = false;
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-upload"></i> UPLOAD PHOTO';
             }
         });
-        
-        // Load recent uploads on page load
-        loadRecentUploads();
     </script>
 </body>
 </html>

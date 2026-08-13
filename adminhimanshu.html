@@ -9,7 +9,6 @@
     <!-- Firebase SDKs (Same as working CSIR portal) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
     
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -34,13 +33,6 @@
             display: none; 
             margin-bottom: 15px;
         }
-        .uploaded-badge {
-            background: rgba(46, 204, 113, 0.2);
-            color: #2ecc71;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 14px;
-        }
         .loading-spinner {
             display: none;
             width: 20px;
@@ -53,6 +45,24 @@
         @keyframes spin {
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
+        }
+        .success-toast {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #10B981;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 600;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+            z-index: 9999;
+            animation: slideUp 0.3s ease;
+        }
+        @keyframes slideUp {
+            from { transform: translateX(-50%) translateY(100px); opacity: 0; }
+            to { transform: translateX(-50%) translateY(0); opacity: 1; }
         }
     </style>
 </head>
@@ -93,7 +103,7 @@
         </div>
         
         <div class="mt-6 border-t border-white/20 pt-4">
-            <p class="text-xs text-gray-400 text-center">Photos stored in Firebase Storage</p>
+            <p class="text-xs text-gray-400 text-center">Photos stored as Base64 in Firestore</p>
         </div>
     </div>
 
@@ -110,7 +120,6 @@
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const storage = firebase.storage();
         
         // Image preview
         document.getElementById('imageInput').addEventListener('change', function(e) {
@@ -140,13 +149,14 @@
                     recentContainer.innerHTML = '';
                     snapshot.forEach(doc => {
                         const data = doc.data();
+                        const imageUrl = data.imageUrl || data.url;
                         const div = document.createElement('div');
                         div.className = 'flex items-center gap-3 bg-white/5 rounded-lg p-2';
                         div.innerHTML = `
-                            <img src="${data.url}" alt="${data.caption}" class="w-12 h-12 object-cover rounded-lg">
+                            <img src="${imageUrl}" alt="${data.caption}" class="w-12 h-12 object-cover rounded-lg">
                             <div class="flex-1">
                                 <p class="text-sm font-medium">${data.caption || 'Himanshu Bhai'}</p>
-                                <p class="text-xs text-gray-400">Uploaded successfully</p>
+                                <p class="text-xs text-gray-400">✓ Uploaded successfully</p>
                             </div>
                             <i class="fas fa-check-circle text-green-400"></i>
                         `;
@@ -157,10 +167,11 @@
                 }
             } catch (error) {
                 console.error("Error loading recent uploads:", error);
+                recentContainer.innerHTML = '<p class="text-red-400 text-sm text-center">Error loading uploads</p>';
             }
         }
         
-        // Upload to Firebase Storage
+        // Upload using Base64 (Same method as CSIR portal)
         document.getElementById('uploadBtn').addEventListener('click', async () => {
             const fileInput = document.getElementById('imageInput');
             const caption = document.getElementById('captionInput').value.trim() || 'Himanshu Bhai';
@@ -182,56 +193,70 @@
             loadingSpinner.style.display = 'inline-block';
             uploadIcon.style.display = 'none';
             uploadText.textContent = 'UPLOADING...';
-            statusDiv.innerHTML = '<p class="text-yellow-400"><i class="fas fa-spinner fa-spin"></i> Uploading photo...</p>';
+            statusDiv.innerHTML = '<p class="text-yellow-400">Reading file...</p>';
             
             try {
-                // Generate unique filename
-                const timestamp = Date.now();
-                const safeName = file.name.replace(/[^a-zA-Z0-9.]/g, '_');
-                const filename = `birthday_${timestamp}_${safeName}`;
-                const storageRef = storage.ref(`birthday_images/${filename}`);
+                // Read file as Base64 (Same as CSIR portal)
+                const reader = new FileReader();
                 
-                // Upload file to Firebase Storage
-                await storageRef.put(file);
+                reader.onload = async function(event) {
+                    const base64Data = event.target.result;
+                    
+                    statusDiv.innerHTML = '<p class="text-yellow-400">Saving to database...</p>';
+                    
+                    try {
+                        // Save Base64 directly to Firestore (Same as CSIR portal)
+                        await db.collection('birthday_images').add({
+                            imageUrl: base64Data,
+                            caption: caption,
+                            uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            active: true
+                        });
+                        
+                        statusDiv.innerHTML = '<p class="text-green-400">🎉 Photo uploaded successfully!</p>';
+                        
+                        // Reset form
+                        fileInput.value = '';
+                        document.getElementById('captionInput').value = '';
+                        document.getElementById('imagePreview').style.display = 'none';
+                        
+                        // Reload recent uploads
+                        loadRecentUploads();
+                        
+                        // Show success toast
+                        const toast = document.createElement('div');
+                        toast.className = 'success-toast';
+                        toast.innerHTML = '✅ Photo added to birthday gallery!';
+                        document.body.appendChild(toast);
+                        setTimeout(() => toast.remove(), 2500);
+                        
+                        setTimeout(() => {
+                            statusDiv.innerHTML = '';
+                        }, 3000);
+                        
+                    } catch (error) {
+                        console.error("Firestore save error:", error);
+                        statusDiv.innerHTML = `<p class="text-red-400">❌ Database error: ${error.message}</p>`;
+                    }
+                };
                 
-                // Get download URL
-                const downloadURL = await storageRef.getDownloadURL();
+                reader.onerror = function() {
+                    statusDiv.innerHTML = '<p class="text-red-400">❌ Error reading file</p>';
+                };
                 
-                statusDiv.innerHTML = '<p class="text-blue-400">✅ Uploaded! Saving to database...</p>';
-                
-                // Save to Firestore
-                await db.collection('birthday_images').add({
-                    url: downloadURL,
-                    caption: caption,
-                    uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    active: true,
-                    filename: filename
-                });
-                
-                statusDiv.innerHTML = '<p class="text-green-400">🎉 Photo uploaded successfully!</p>';
-                
-                // Reset form
-                fileInput.value = '';
-                document.getElementById('captionInput').value = '';
-                document.getElementById('imagePreview').style.display = 'none';
-                
-                // Reload recent uploads
-                loadRecentUploads();
-                
-                // Show success toast
-                setTimeout(() => {
-                    statusDiv.innerHTML = '';
-                }, 3000);
+                reader.readAsDataURL(file);
                 
             } catch (error) {
                 console.error("Upload error:", error);
                 statusDiv.innerHTML = `<p class="text-red-400">❌ Error: ${error.message}</p>`;
             } finally {
-                // Reset button state
-                uploadBtn.disabled = false;
-                loadingSpinner.style.display = 'none';
-                uploadIcon.style.display = 'inline';
-                uploadText.textContent = 'UPLOAD PHOTO';
+                // Reset button state after delay
+                setTimeout(() => {
+                    uploadBtn.disabled = false;
+                    loadingSpinner.style.display = 'none';
+                    uploadIcon.style.display = 'inline';
+                    uploadText.textContent = 'UPLOAD PHOTO';
+                }, 1000);
             }
         });
         

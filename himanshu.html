@@ -19,7 +19,6 @@
     <!-- Firebase SDKs (Same as working CSIR portal) -->
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.22.2/firebase-storage-compat.js"></script>
     
     <style>
         :root {
@@ -53,10 +52,11 @@
             position: relative;
             overflow: hidden;
             border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
         }
         .gallery-img:hover {
             transform: scale(1.05);
-            box-shadow: 0 20px 40px rgba(255,215,0,0.3);
+            box-shadow: 0 20px 50px rgba(255,215,0,0.4);
             z-index: 10;
         }
         .gallery-img img {
@@ -67,6 +67,14 @@
         }
         .gallery-img:hover img {
             transform: scale(1.1);
+        }
+        .gallery-overlay {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.9), transparent);
+            padding: 15px;
         }
         .animate-float { animation: float 5s ease-in-out infinite; }
         @keyframes float {
@@ -95,8 +103,30 @@
             100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
         }
         .modal-overlay { 
-            background: rgba(0,0,0,0.9); 
+            background: rgba(0,0,0,0.95); 
             backdrop-filter: blur(10px); 
+        }
+        .delete-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(255,0,0,0.8);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 30px;
+            height: 30px;
+            cursor: pointer;
+            font-size: 14px;
+            display: none;
+            z-index: 20;
+        }
+        .gallery-img:hover .delete-btn {
+            display: block;
+        }
+        .delete-btn:hover {
+            background: red;
+            transform: scale(1.1);
         }
     </style>
 </head>
@@ -192,7 +222,6 @@
         
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
-        const storage = firebase.storage();
         
         // Modal functionality
         const imageModal = document.getElementById('imageModal');
@@ -207,7 +236,7 @@
             if (e.target === imageModal) imageModal.classList.add('hidden');
         });
         
-        // Fetch images from Firebase
+        // Fetch images from Firebase (Base64 stored directly in Firestore)
         async function fetchBirthdayImages() {
             const galleryGrid = document.getElementById('galleryGrid');
             const loading = document.getElementById('galleryLoading');
@@ -222,19 +251,23 @@
                     galleryGrid.innerHTML = '';
                     snapshot.forEach(doc => {
                         const data = doc.data();
-                        const url = data.url;
+                        const imageUrl = data.imageUrl || data.url; // Base64 or URL
                         const caption = data.caption || 'Himanshu Bhai';
                         
                         const div = document.createElement('div');
-                        div.className = 'gallery-img shadow-lg';
+                        div.className = 'gallery-img';
                         div.innerHTML = `
-                            <img src="${url}" alt="${caption}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Himanshu+Bhai'">
-                            <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-3">
-                                <p class="text-white text-sm">${caption}</p>
+                            <img src="${imageUrl}" alt="${caption}" loading="lazy" onerror="this.src='https://via.placeholder.com/400x300?text=Himanshu+Bhai'">
+                            <div class="gallery-overlay">
+                                <p class="text-white text-sm font-medium">${caption}</p>
                             </div>
+                            <button class="delete-btn" onclick="deletePhoto('${doc.id}', event)" title="Delete photo">
+                                <i class="fas fa-trash"></i>
+                            </button>
                         `;
-                        div.addEventListener('click', () => {
-                            modalImage.src = url;
+                        div.addEventListener('click', (e) => {
+                            if (e.target.closest('.delete-btn')) return;
+                            modalImage.src = imageUrl;
                             modalCaption.textContent = caption;
                             imageModal.classList.remove('hidden');
                         });
@@ -253,6 +286,46 @@
             } finally {
                 loading.style.display = 'none';
             }
+        }
+        
+        // Delete photo
+        window.deletePhoto = async function(docId, event) {
+            event.stopPropagation();
+            if (!confirm('Delete this photo?')) return;
+            try {
+                await db.collection('birthday_images').doc(docId).update({ active: false });
+                showToast('Photo deleted', 'trash');
+                fetchBirthdayImages();
+            } catch (error) {
+                console.error("Delete error:", error);
+                showToast('Failed to delete', 'exclamation-circle');
+            }
+        };
+        
+        // Toast function
+        function showToast(message, icon = 'info-circle') {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 20px;
+                left: 50%;
+                transform: translateX(-50%);
+                background: linear-gradient(135deg, #1B3A5C, #2C5282);
+                color: white;
+                padding: 10px 20px;
+                border-radius: 20px;
+                font-size: 14px;
+                font-weight: 600;
+                z-index: 99999;
+                box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+                transition: all 0.3s ease;
+            `;
+            toast.innerHTML = `<i class="fas fa-${icon}"></i> ${message}`;
+            document.body.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                setTimeout(() => toast.remove(), 300);
+            }, 2500);
         }
         
         // Create confetti

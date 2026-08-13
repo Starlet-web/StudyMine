@@ -2,250 +2,102 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
-    <title>Himanshu Bhai 🎂 | Happy Birthday Special</title>
-    <meta name="description" content="A special birthday surprise for Himanshu Bhai. Crafted with love and advanced web tech.">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎂</text></svg>">
-    
-    <!-- Fonts & Icons -->
-    <link href="https://fonts.googleapis.com/css2?family=Great+Vibes&family=Inter:wght@300;400;500;600;700;800;900&family=Oswald:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    
-    <!-- Tailwind & Libraries -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Panel | Upload Memories for Himanshu Bhai</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/ScrollTrigger.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
-    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.js"></script>
-    
-    <!-- Firebase -->
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.0.0/firebase-firestore-compat.js"></script>
-    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --gold: #FFD700;
             --crimson: #DC143C;
-            --royal-blue: #1a2a6c;
-            --cream: #fff5e6;
         }
-        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
             font-family: 'Inter', sans-serif;
-            background: #0a0a0a;
-            overflow-x: hidden;
-            color: #f0f0f0;
+            min-height: 100vh;
         }
-        .font-script {
-            font-family: 'Great Vibes', cursive;
-        }
-        .font-oswald {
-            font-family: 'Oswald', sans-serif;
-        }
-        .gold-text {
-            background: linear-gradient(45deg, #FFD700, #FFA500, #FFD700);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .glassmorphism {
-            background: rgba(255, 255, 255, 0.05);
+        .upload-card {
+            background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.15);
+            border: 1px solid rgba(255, 255, 255, 0.2);
             box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        .hover-glow:hover {
-            box-shadow: 0 0 40px rgba(255, 215, 0, 0.6);
-            transform: scale(1.02);
-            transition: 0.4s;
+        .preview-image {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 12px;
+            display: none;
         }
-        .gallery-img {
-            transition: transform 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), box-shadow 0.5s;
-            cursor: pointer;
+        .uploaded-badge {
+            background: rgba(46, 204, 113, 0.2);
+            color: #2ecc71;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 14px;
         }
-        .gallery-img:hover {
-            transform: scale(1.08) rotate(1deg);
-            box-shadow: 0 30px 40px rgba(0,0,0,0.7);
-            z-index: 10;
-        }
-        .animate-float {
-            animation: float 5s ease-in-out infinite;
-        }
-        @keyframes float {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
-        }
-        .animate-marquee {
-            animation: marquee 20s linear infinite;
-            display: inline-block;
-        }
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
-        }
-        .confetti-piece {
-            position: fixed;
-            width: 10px;
+        .loading-spinner {
+            display: none;
+            width: 20px;
             height: 20px;
-            background: #f00;
-            top: -20px;
-            animation: confettiFall 3s linear infinite;
-            z-index: 100;
-            pointer-events: none;
+            border: 3px solid rgba(255,255,255,0.3);
+            border-top: 3px solid #FFD700;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
         }
-        @keyframes confettiFall {
-            0% { transform: translateY(-20px) rotate(0deg); opacity: 1; }
-            100% { transform: translateY(100vh) rotate(720deg); opacity: 0; }
-        }
-        .modal-overlay {
-            background: rgba(0,0,0,0.9);
-            backdrop-filter: blur(10px);
-        }
-        .image-modal {
-            max-width: 90vw;
-            max-height: 85vh;
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
-<body class="relative">
-
-    <!-- 3D Canvas Background -->
-    <canvas id="birthdayCanvas" class="fixed inset-0 z-0 pointer-events-none opacity-70"></canvas>
-    
-    <!-- Particle Overlay -->
-    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
-        <div class="absolute top-10 left-10 w-4 h-4 bg-yellow-400 rounded-full animate-ping opacity-30"></div>
-        <div class="absolute top-40 right-20 w-8 h-8 bg-red-500 rounded-full animate-pulse opacity-20"></div>
-        <div class="absolute bottom-40 left-1/3 w-3 h-3 bg-purple-500 rounded-full animate-bounce opacity-30"></div>
-        <div class="absolute bottom-20 right-1/4 w-6 h-6 bg-blue-400 rounded-full animate-ping opacity-20"></div>
-        <div class="absolute top-1/2 left-10 w-5 h-5 bg-green-400 rounded-full animate-bounce opacity-30"></div>
-        <div class="absolute bottom-10 left-20 w-7 h-7 bg-pink-500 rounded-full animate-pulse opacity-20"></div>
-    </div>
-
-    <!-- Confetti Container -->
-    <div id="confettiContainer"></div>
-
-    <!-- Image Modal -->
-    <div id="imageModal" class="fixed inset-0 z-[60] hidden modal-overlay flex items-center justify-center p-4">
-        <div class="relative max-w-4xl w-full">
-            <button id="closeModal" class="absolute -top-12 right-0 text-white text-3xl hover:text-red-500 transition">
-                <i class="fas fa-times"></i>
+<body class="min-h-screen flex items-center justify-center p-4">
+    <div class="w-full max-w-lg upload-card rounded-2xl shadow-2xl p-8 text-white">
+        <div class="text-center mb-8">
+            <span class="text-5xl">🎂</span>
+            <h1 class="text-3xl font-bold mt-4 bg-gradient-to-r from-yellow-400 to-red-500 bg-clip-text text-transparent">Memory Uploader</h1>
+            <p class="text-gray-300 text-sm mt-2">Add photos to Himanshu Bhai's birthday gallery</p>
+        </div>
+        
+        <!-- Image Preview -->
+        <div class="mb-4">
+            <img id="imagePreview" class="preview-image" alt="Preview">
+        </div>
+        
+        <div class="space-y-4">
+            <div>
+                <label class="block text-sm font-medium mb-2">Select Image</label>
+                <input type="file" id="imageInput" accept="image/*" class="w-full px-3 py-2 bg-white/10 rounded-lg border border-white/20 text-white file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:bg-yellow-500 file:text-black hover:file:bg-yellow-400">
+            </div>
+            <div>
+                <label class="block text-sm font-medium mb-2">Caption (optional)</label>
+                <input type="text" id="captionInput" placeholder="e.g., Best day ever!" class="w-full px-3 py-2 bg-white/10 rounded-lg border border-white/20 text-white focus:outline-none focus:ring-2 focus:ring-yellow-500 placeholder-gray-400">
+            </div>
+            <button id="uploadBtn" class="w-full py-3 bg-gradient-to-r from-yellow-500 to-red-500 rounded-xl font-bold hover:opacity-90 transition flex items-center justify-center gap-2">
+                <span class="loading-spinner" id="loadingSpinner"></span>
+                <i class="fas fa-upload" id="uploadIcon"></i> 
+                <span id="uploadText">UPLOAD & SAVE</span>
             </button>
-            <img id="modalImage" src="" alt="Memory" class="image-modal w-full rounded-2xl shadow-2xl">
-            <p id="modalCaption" class="text-center text-white text-xl mt-4 font-script"></p>
+        </div>
+        
+        <div id="status" class="mt-4 text-center text-sm"></div>
+        
+        <!-- Recent Uploads -->
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold mb-3">Recent Uploads</h3>
+            <div id="recentUploads" class="space-y-2 max-h-40 overflow-y-auto">
+                <!-- Recent uploads will appear here -->
+            </div>
+        </div>
+        
+        <div class="mt-6 border-t border-white/20 pt-4">
+            <p class="text-xs text-gray-400 text-center">Powered by ImgBB & Firebase</p>
         </div>
     </div>
 
-    <!-- Main Content -->
-    <main class="relative z-10">
-        
-        <!-- Navigation -->
-        <nav class="fixed top-0 left-0 w-full z-50 px-4 py-4">
-            <div class="max-w-7xl mx-auto glassmorphism rounded-full px-6 py-3 flex justify-between items-center">
-                <div class="flex items-center space-x-2">
-                    <span class="text-3xl">🎂</span>
-                    <div>
-                        <h1 class="font-script text-2xl md:text-3xl text-white leading-none">Himanshu Bhai</h1>
-                        <p class="text-[10px] tracking-widest text-yellow-400">BIRTHDAY SPECIAL</p>
-                    </div>
-                </div>
-                <div class="hidden md:flex items-center space-x-6 font-oswald text-sm">
-                    <a href="#hero" class="text-gray-300 hover:text-yellow-400">Home</a>
-                    <a href="#message" class="text-gray-300 hover:text-yellow-400">Wishes</a>
-                    <a href="#gallery" class="text-gray-300 hover:text-yellow-400">Memories</a>
-                    <a href="#wishes-wall" class="text-gray-300 hover:text-yellow-400">Wall</a>
-                </div>
-                <a href="admin.html" class="bg-yellow-500 text-black px-4 py-2 rounded-full font-bold text-sm hover:bg-yellow-400 transition">
-                    Admin Upload
-                </a>
-            </div>
-        </nav>
-
-        <!-- Hero Section -->
-        <section id="hero" class="min-h-screen flex items-center justify-center px-4 pt-24">
-            <div class="text-center space-y-8" data-aos="fade-up">
-                <div class="inline-block glassmorphism rounded-full px-6 py-3 text-yellow-300 font-medium animate-float">
-                    🥳 It's Party Time! 🎉
-                </div>
-                <h1 class="font-script text-7xl md:text-9xl gold-text leading-none drop-shadow-lg">
-                    Happy Birthday
-                </h1>
-                <h2 class="font-oswald text-4xl md:text-6xl font-black text-white tracking-widest">
-                    HIMANSHU <span class="text-red-500">BHAI</span>
-                </h2>
-                <p class="text-gray-300 text-lg md:text-xl max-w-2xl mx-auto">
-                    Another year of greatness, laughter, and unforgettable memories. This page is a tribute to the legend himself.
-                </p>
-                <div class="flex flex-wrap justify-center gap-4">
-                    <a href="#gallery" class="bg-gradient-to-r from-yellow-500 to-red-500 px-8 py-4 rounded-full font-oswald text-xl font-bold text-white hover:shadow-2xl hover:scale-105 transition">
-                        VIEW MEMORIES 📸
-                    </a>
-                    <button id="playMusicBtn" class="bg-white/10 backdrop-blur-md border border-yellow-500 text-yellow-400 px-8 py-4 rounded-full font-oswald text-xl font-bold hover:bg-yellow-500 hover:text-black transition">
-                        <i class="fas fa-music"></i> PLAY SURPRISE
-                    </button>
-                </div>
-                <div class="text-6xl animate-bounce mt-8">🎁</div>
-            </div>
-        </section>
-
-        <!-- Message Section -->
-        <section id="message" class="py-20 px-4">
-            <div class="max-w-4xl mx-auto glassmorphism rounded-3xl p-8 md:p-12 text-center space-y-6" data-aos="fade-up">
-                <h2 class="font-script text-5xl md:text-6xl text-yellow-400">A Message For You</h2>
-                <div class="space-y-4 text-gray-200 text-lg">
-                    <p>Dear Himanshu Bhai,</p>
-                    <p>On your special day, I just want to say thank you for being the incredible person you are. Your energy, wisdom, and kindness light up every room. May this year bring you everything you've ever dreamed of and more.</p>
-                    <p class="font-bold text-2xl text-white">You're not just a friend, you're family. 🎂✨</p>
-                    <p class="font-script text-4xl text-yellow-300 mt-8">— With lots of love</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Gallery Section -->
-        <section id="gallery" class="py-20 px-4">
-            <div class="max-w-7xl mx-auto">
-                <div class="text-center mb-12" data-aos="fade-up">
-                    <h2 class="font-script text-5xl md:text-7xl gold-text">Golden Memories</h2>
-                    <p class="text-gray-400">Relive the best moments with Himanshu Bhai</p>
-                </div>
-                
-                <div id="galleryGrid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
-                    <!-- Images injected by Firebase -->
-                </div>
-                <div id="galleryLoading" class="text-center py-10 text-gray-400">
-                    <i class="fas fa-spinner fa-spin text-4xl"></i>
-                    <p class="mt-2">Loading memories...</p>
-                </div>
-            </div>
-        </section>
-
-        <!-- Birthday Wishes Wall -->
-        <section id="wishes-wall" class="py-10 bg-black/40">
-            <div class="overflow-hidden whitespace-nowrap">
-                <div class="animate-marquee inline-block text-2xl font-oswald text-yellow-300">
-                    🎂 HAPPY BIRTHDAY HIMANSHU BHAI 🎂 • 🎉 CHEERS TO YOU 🎉 • 🥳 PARTY TIME 🥳 • 🎂 HAPPY BIRTHDAY HIMANSHU BHAI 🎂 • 🎉 CHEERS TO YOU 🎉 • 🥳 PARTY TIME 🥳 •
-                </div>
-            </div>
-        </section>
-
-        <!-- Footer -->
-        <footer class="py-10 text-center border-t border-white/10">
-            <p class="text-gray-400">Crafted with <span class="text-red-500">❤️</span> for Himanshu Bhai</p>
-            <p class="text-sm text-gray-600">© 2024 Special Birthday Edition | Powered by Imagination</p>
-        </footer>
-    </main>
-
-    <!-- Hidden Audio -->
-    <audio id="birthdayMusic" loop>
-        <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
-    </audio>
-
     <script>
-        AOS.init({ duration: 800, once: true });
-        
         // Firebase Config (UPDATED with your credentials)
         const firebaseConfig = {
             apiKey: "AIzaSyDS0rzCKglHblF2dlFEKE-ouV0yOu0z5UM",
@@ -260,169 +112,128 @@
         }
         const db = firebase.firestore();
         
-        // Image Modal functionality
-        const imageModal = document.getElementById('imageModal');
-        const modalImage = document.getElementById('modalImage');
-        const modalCaption = document.getElementById('modalCaption');
-        const closeModal = document.getElementById('closeModal');
+        // ImgBB API Key (UPDATED)
+        const IMGBB_API_KEY = '11a8d7bbccc391d93448522a384dd77a';
         
-        closeModal.addEventListener('click', () => {
-            imageModal.classList.add('hidden');
-        });
-        
-        imageModal.addEventListener('click', (e) => {
-            if (e.target === imageModal) {
-                imageModal.classList.add('hidden');
+        // Image preview functionality
+        document.getElementById('imageInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    const preview = document.getElementById('imagePreview');
+                    preview.src = e.target.result;
+                    preview.style.display = 'block';
+                };
+                reader.readAsDataURL(file);
             }
         });
         
-        async function fetchBirthdayImages() {
-            const galleryGrid = document.getElementById('galleryGrid');
-            const loading = document.getElementById('galleryLoading');
+        // Load recent uploads
+        async function loadRecentUploads() {
+            const recentContainer = document.getElementById('recentUploads');
             try {
-                const snapshot = await db.collection('birthday_images').where('active', '==', true).orderBy('uploadedAt', 'desc').get();
+                const snapshot = await db.collection('birthday_images')
+                    .where('active', '==', true)
+                    .orderBy('uploadedAt', 'desc')
+                    .limit(5)
+                    .get();
+                
                 if (!snapshot.empty) {
-                    galleryGrid.innerHTML = '';
+                    recentContainer.innerHTML = '';
                     snapshot.forEach(doc => {
                         const data = doc.data();
-                        const url = data.url || 'https://via.placeholder.com/400x500?text=Memory';
-                        const caption = data.caption || 'Himanshu Bhai';
                         const div = document.createElement('div');
-                        div.className = 'gallery-img relative group overflow-hidden rounded-xl shadow-lg';
+                        div.className = 'flex items-center gap-3 bg-white/5 rounded-lg p-2';
                         div.innerHTML = `
-                            <img src="${url}" alt="${caption}" class="w-full h-48 md:h-64 object-cover transition duration-700 group-hover:scale-110" loading="lazy">
-                            <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition flex items-end p-3">
-                                <p class="text-white font-medium text-sm">${caption}</p>
+                            <img src="${data.url}" alt="${data.caption}" class="w-12 h-12 object-cover rounded-lg">
+                            <div class="flex-1">
+                                <p class="text-sm font-medium">${data.caption || 'Himanshu Bhai'}</p>
+                                <p class="text-xs text-gray-400">${data.uploadedAt ? new Date(data.uploadedAt.seconds * 1000).toLocaleDateString() : 'Just now'}</p>
                             </div>
                         `;
-                        div.addEventListener('click', () => {
-                            modalImage.src = url;
-                            modalCaption.textContent = caption;
-                            imageModal.classList.remove('hidden');
-                        });
-                        galleryGrid.appendChild(div);
+                        recentContainer.appendChild(div);
                     });
                 } else {
-                    galleryGrid.innerHTML = `<div class="col-span-full text-center py-20"><p class="text-3xl mb-2">🎈</p><p class="text-gray-400">No memories uploaded yet. Add some via Admin Panel!</p></div>`;
+                    recentContainer.innerHTML = '<p class="text-gray-400 text-sm text-center">No uploads yet</p>';
                 }
-            } catch (e) {
-                console.error("Error fetching images: ", e);
-                galleryGrid.innerHTML = `<div class="col-span-full text-center py-20 text-red-400">Failed to load memories. Check console.</div>`;
+            } catch (error) {
+                console.error("Error loading recent uploads:", error);
+            }
+        }
+        
+        // Upload functionality
+        document.getElementById('uploadBtn').addEventListener('click', async () => {
+            const fileInput = document.getElementById('imageInput');
+            const caption = document.getElementById('captionInput').value.trim() || 'Himanshu Bhai';
+            const statusDiv = document.getElementById('status');
+            const loadingSpinner = document.getElementById('loadingSpinner');
+            const uploadIcon = document.getElementById('uploadIcon');
+            const uploadText = document.getElementById('uploadText');
+            
+            if (!fileInput.files || !fileInput.files[0]) {
+                statusDiv.innerHTML = '<p class="text-red-400">❌ Please select an image first.</p>';
+                return;
+            }
+            
+            const file = fileInput.files[0];
+            
+            // Disable button and show loading
+            loadingSpinner.style.display = 'inline-block';
+            uploadIcon.style.display = 'none';
+            uploadText.textContent = 'UPLOADING...';
+            uploadBtn.disabled = true;
+            
+            statusDiv.innerHTML = '<p class="text-yellow-400"><i class="fas fa-spinner fa-spin"></i> Uploading to ImgBB...</p>';
+            
+            try {
+                const formData = new FormData();
+                formData.append('image', file);
+                
+                const imgbbResponse = await fetch(`https://api.imgbb.com/1/upload?key=${IMGBB_API_KEY}`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                const imgbbData = await imgbbResponse.json();
+                if (!imgbbData.success) {
+                    throw new Error('ImgBB upload failed');
+                }
+                const imageUrl = imgbbData.data.url;
+                
+                statusDiv.innerHTML = '<p class="text-blue-400">✅ Uploaded to ImgBB. Saving to Firebase...</p>';
+                
+                await db.collection('birthday_images').add({
+                    url: imageUrl,
+                    caption: caption,
+                    uploadedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    active: true
+                });
+                
+                statusDiv.innerHTML = '<p class="text-green-400">🎉 Memory added successfully! It will appear in the gallery.</p>';
+                
+                // Reset form
+                fileInput.value = '';
+                document.getElementById('captionInput').value = '';
+                document.getElementById('imagePreview').style.display = 'none';
+                
+                // Reload recent uploads
+                loadRecentUploads();
+                
+            } catch (error) {
+                console.error(error);
+                statusDiv.innerHTML = `<p class="text-red-400">❌ Error: ${error.message}</p>`;
             } finally {
-                loading.style.display = 'none';
-            }
-        }
-        
-        // Music player toggle
-        const musicBtn = document.getElementById('playMusicBtn');
-        const music = document.getElementById('birthdayMusic');
-        musicBtn.addEventListener('click', () => {
-            if (music.paused) {
-                music.play();
-                musicBtn.innerHTML = '<i class="fas fa-pause"></i> PAUSE MUSIC';
-            } else {
-                music.pause();
-                musicBtn.innerHTML = '<i class="fas fa-music"></i> PLAY SURPRISE';
+                // Re-enable button
+                loadingSpinner.style.display = 'none';
+                uploadIcon.style.display = 'inline';
+                uploadText.textContent = 'UPLOAD & SAVE';
+                uploadBtn.disabled = false;
             }
         });
         
-        // Create confetti pieces
-        function createConfetti() {
-            const container = document.getElementById('confettiContainer');
-            const colors = ['#FFD700', '#FF6B6B', '#4ECDC4', '#FF9F43', '#A29BFE', '#FD79A8', '#FDCB6E', '#00B894'];
-            
-            for (let i = 0; i < 50; i++) {
-                const confetti = document.createElement('div');
-                confetti.className = 'confetti-piece';
-                confetti.style.left = Math.random() * 100 + '%';
-                confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
-                confetti.style.animationDuration = (Math.random() * 3 + 2) + 's';
-                confetti.style.animationDelay = Math.random() * 5 + 's';
-                confetti.style.width = (Math.random() * 8 + 5) + 'px';
-                confetti.style.height = (Math.random() * 15 + 10) + 'px';
-                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
-                container.appendChild(confetti);
-            }
-        }
-        createConfetti();
-        setInterval(createConfetti, 8000);
-        
-        // Initialize gallery
-        fetchBirthdayImages();
-
-        // Three.js Background with Birthday Theme
-        const canvas = document.getElementById('birthdayCanvas');
-        const renderer = new THREE.WebGLRenderer({ canvas, alpha: true });
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-        const scene = new THREE.Scene();
-        const camera = new THREE.PerspectiveCamera(75, window.innerWidth/window.innerHeight, 0.1, 1000);
-        camera.position.z = 5;
-        
-        // Create birthday-themed particles (gold and colorful)
-        const particlesGeo = new THREE.BufferGeometry();
-        const particlesCount = 800;
-        const posArray = new Float32Array(particlesCount * 3);
-        const colorArray = new Float32Array(particlesCount * 3);
-        
-        for(let i = 0; i < particlesCount; i++) {
-            posArray[i * 3] = (Math.random() - 0.5) * 20;
-            posArray[i * 3 + 1] = (Math.random() - 0.5) * 20;
-            posArray[i * 3 + 2] = (Math.random() - 0.5) * 10;
-            
-            // Random colors
-            colorArray[i * 3] = Math.random();
-            colorArray[i * 3 + 1] = Math.random();
-            colorArray[i * 3 + 2] = Math.random();
-        }
-        
-        particlesGeo.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
-        particlesGeo.setAttribute('color', new THREE.BufferAttribute(colorArray, 3));
-        
-        const particlesMat = new THREE.PointsMaterial({
-            size: 0.05,
-            vertexColors: true,
-            transparent: true,
-            blending: THREE.AdditiveBlending,
-            opacity: 0.8
-        });
-        
-        const particlesMesh = new THREE.Points(particlesGeo, particlesMat);
-        scene.add(particlesMesh);
-        
-        // Add a glowing sphere in center
-        const sphereGeo = new THREE.SphereGeometry(0.3, 32, 32);
-        const sphereMat = new THREE.MeshStandardMaterial({
-            color: 0xFFD700,
-            emissive: 0xFFD700,
-            emissiveIntensity: 0.5,
-            metalness: 0.8,
-            roughness: 0.2
-        });
-        const sphere = new THREE.Mesh(sphereGeo, sphereMat);
-        scene.add(sphere);
-        
-        const light = new THREE.AmbientLight(0xffffff, 0.5);
-        scene.add(light);
-        const pointLight = new THREE.PointLight(0xFFD700, 1, 10);
-        pointLight.position.set(0, 0, 2);
-        scene.add(pointLight);
-        
-        function animateParticles() {
-            requestAnimationFrame(animateParticles);
-            particlesMesh.rotation.y += 0.0005;
-            particlesMesh.rotation.x += 0.0002;
-            sphere.rotation.x += 0.01;
-            sphere.rotation.y += 0.01;
-            renderer.render(scene, camera);
-        }
-        animateParticles();
-        
-        window.addEventListener('resize', () => {
-            camera.aspect = window.innerWidth/window.innerHeight;
-            camera.updateProjectionMatrix();
-            renderer.setSize(window.innerWidth, window.innerHeight);
-        });
+        // Load recent uploads on page load
+        loadRecentUploads();
     </script>
 </body>
 </html>
